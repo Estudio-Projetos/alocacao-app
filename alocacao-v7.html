@@ -1,0 +1,1508 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alocação de Projetos - Môre</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Vesterbro:wght@400;500;600;700;800&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Vesterbro', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #0a0e27 0%, #14122d 20%, #1a1e3a 40%, #1f1c35 60%, #15132a 80%, #0d0b1f 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
+            color: #d0d5e0;
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: linear-gradient(90deg, #a78bfa 0%, #c4b5fd 25%, #93c5fd 50%, #60a5fa 75%, #a5f3fc 100%);
+            z-index: 1000;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 20px 30px;
+        }
+
+        .header {
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            font-weight: 800;
+            color: #ffffff;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            font-size: 1em;
+            color: #a0a0b0;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 30px;
+            background: rgba(30, 25, 50, 0.4);
+            padding: 8px;
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(139, 92, 246, 0.15);
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            padding: 10px 20px;
+            border: none;
+            background: transparent;
+            color: #a8aab8;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            font-family: 'Vesterbro', sans-serif;
+        }
+
+        .tab-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+        }
+
+        .tab-btn.active {
+            background: linear-gradient(135deg, #8b5cf6 0%, #a78bfa 100%);
+            color: white;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .section {
+            background: rgba(20, 18, 40, 0.6);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+            border: 1px solid rgba(139, 92, 246, 0.15);
+        }
+
+        .section h2 {
+            font-size: 1.3em;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 20px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        input, select {
+            padding: 10px 12px;
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            border-radius: 8px;
+            background: rgba(15, 12, 35, 0.7);
+            color: #d0d5e0;
+            font-family: 'Vesterbro', sans-serif;
+            font-size: 0.9em;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #8b5cf6;
+            box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.2);
+        }
+
+        button {
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #8b5cf6 0%, #a78bfa 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            font-family: 'Vesterbro', sans-serif;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-edit {
+            background: rgba(123, 44, 191, 0.2);
+            color: #c0a0ff;
+            padding: 6px 10px;
+            font-size: 0.8em;
+            border: 1px solid rgba(123, 44, 191, 0.4);
+        }
+
+        .btn-edit:hover {
+            background: rgba(255, 255, 255, 0.15);
+            color: #ffffff;
+        }
+
+        .btn-danger {
+            background: rgba(220, 38, 38, 0.2);
+            color: #ff6b6b;
+            padding: 6px 10px;
+            font-size: 0.8em;
+            border: 1px solid rgba(220, 38, 38, 0.4);
+        }
+
+        .btn-danger:hover {
+            background: rgba(255, 255, 255, 0.15);
+            color: #ffffff;
+        }
+
+        .alocacao-item {
+            background: rgba(40, 35, 70, 0.3);
+            border: 1px solid rgba(139, 92, 246, 0.15);
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 12px;
+        }
+
+        .alocacao-item h4 {
+            color: #e5e5e5;
+            margin-bottom: 8px;
+            font-size: 1em;
+        }
+
+        .alocacao-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 8px;
+            font-size: 0.85em;
+            color: #a0a0b0;
+            margin-bottom: 12px;
+        }
+
+        .alocacao-info strong {
+            color: #e5e5e5;
+        }
+
+        .alocacao-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 16px;
+            font-size: 0.85em;
+        }
+
+        th {
+            background: rgba(40, 30, 70, 0.5);
+            color: #d0d5e0;
+            padding: 10px;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 2px solid rgba(139, 92, 246, 0.2);
+        }
+
+        td {
+            padding: 10px;
+            border-bottom: 1px solid rgba(201, 0, 102, 0.15);
+            color: #a0a0b0;
+        }
+
+        tr:hover {
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 999;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: rgba(15, 12, 35, 0.95);
+            padding: 30px;
+            border-radius: 12px;
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            width: 90%;
+            max-width: 450px;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-header h2 {
+            color: #ffffff;
+            font-size: 1.3em;
+            margin: 0;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: #a0a0b0;
+            font-size: 1.5em;
+            cursor: pointer;
+            padding: 0;
+        }
+
+        .close-btn:hover {
+            color: #ffffff;
+        }
+
+        .modal-form {
+            display: grid;
+            gap: 12px;
+        }
+
+        .modal-form label {
+            display: block;
+            color: #ffffff;
+            font-weight: 600;
+            font-size: 0.85em;
+            margin-bottom: 4px;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .modal-actions button {
+            flex: 1;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.75em;
+            font-weight: 600;
+        }
+
+        .status-alocado {
+            background: rgba(34, 197, 94, 0.2);
+            color: #86efac;
+        }
+
+        .status-pausou {
+            background: rgba(239, 68, 68, 0.2);
+            color: #fca5a5;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .dashboard-card {
+            background: rgba(40, 35, 70, 0.3);
+            border: 1px solid rgba(139, 92, 246, 0.15);
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .dashboard-card h3 {
+            color: #a0a0b0;
+            font-size: 0.85em;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+        }
+
+        .dashboard-card .value {
+            color: #ffffff;
+            font-size: 2.2em;
+            font-weight: 800;
+            margin-bottom: 8px;
+        }
+
+        .dashboard-card .subtitle {
+            color: #7a7a8a;
+            font-size: 0.8em;
+        }
+
+        .dashboard-section {
+            grid-column: 1 / -1;
+            background: rgba(20, 18, 40, 0.6);
+            border-radius: 12px;
+            padding: 24px;
+            border: 1px solid rgba(139, 92, 246, 0.15);
+        }
+
+        .dashboard-section h2 {
+            font-size: 1.3em;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 20px;
+        }
+
+        .dashboard-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85em;
+        }
+
+        .dashboard-table th {
+            background: rgba(40, 30, 70, 0.5);
+            color: #d0d5e0;
+            padding: 10px;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 2px solid rgba(139, 92, 246, 0.2);
+        }
+
+        .dashboard-table td {
+            padding: 10px;
+            border-bottom: 1px solid rgba(139, 92, 246, 0.1);
+            color: #a0a0b0;
+        }
+
+        .dashboard-table tr:hover {
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .auth-section {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            padding: 12px;
+            background: rgba(30, 25, 50, 0.4);
+            border-radius: 8px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .btn-google {
+            padding: 10px 16px;
+            background: #ffffff;
+            color: #333;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-family: 'Vesterbro', sans-serif;
+            transition: all 0.3s;
+        }
+
+        .btn-google:hover {
+            background: #f0f0f0;
+            transform: translateY(-2px);
+        }
+
+        .btn-sync {
+            padding: 10px 16px;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-family: 'Vesterbro', sans-serif;
+            transition: all 0.3s;
+        }
+
+        .btn-sync:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+
+        .btn-sync:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .status-message {
+            padding: 8px 12px;
+            background: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+            border-radius: 6px;
+            font-size: 0.9em;
+        }
+
+        .historico-item {
+            padding: 10px;
+            background: rgba(139, 92, 246, 0.1);
+            border-left: 3px solid #8b5cf6;
+            margin-bottom: 8px;
+            border-radius: 4px;
+            font-size: 0.9em;
+            color: #a0a0b0;
+        }
+
+        .relatorio-secao {
+            background: rgba(20, 18, 40, 0.6);
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .relatorio-secao h3 {
+            color: #a5f3fc;
+            margin-bottom: 15px;
+        }
+    </style>
+
+    <!-- Google API -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <script src="https://apis.google.com/js/api.js"></script>
+
+    <!-- jsPDF for PDF export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Alocação de Projetos</h1>
+            <p>Gerencie alocações, colaboradores e projetos</p>
+        </div>
+
+        <!-- Auth Section -->
+        <div class="auth-section" id="auth-section">
+            <button id="googleSignInButton" class="btn-google" onclick="handleGoogleSignIn()">🔐 Conectar Google</button>
+            <button id="syncButton" class="btn-sync" onclick="sincronizarComGoogleSheets()" disabled>☁️ Sincronizar com Google Sheets</button>
+            <div id="status-message" class="status-message" style="display: none;"></div>
+            <span id="user-info" style="color: #a5f3fc; font-size: 0.9em;"></span>
+        </div>
+
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('dashboard')">📊 Dashboard</button>
+            <button class="tab-btn" onclick="switchTab('projetos')">💼 Projetos</button>
+            <button class="tab-btn" onclick="switchTab('colaboradores')">👥 Colaboradores</button>
+            <button class="tab-btn" onclick="switchTab('alocacoes')">📅 Alocações</button>
+            <button class="tab-btn" onclick="switchTab('historico')">📜 Histórico</button>
+            <button class="tab-btn" onclick="switchTab('relatorios')">📈 Relatórios</button>
+        </div>
+
+        <!-- Dashboard Tab -->
+        <div id="dashboard" class="tab-content active">
+            <div class="dashboard-grid" id="dashboard-content"></div>
+        </div>
+
+        <!-- Projetos Tab -->
+        <div id="projetos" class="tab-content">
+            <div class="section">
+                <h2>Alocações por Projeto</h2>
+                <div id="projetos-list"></div>
+            </div>
+        </div>
+
+        <!-- Colaboradores Tab -->
+        <div id="colaboradores" class="tab-content">
+            <div class="section">
+                <h2>Adicionar Colaborador</h2>
+                <div class="form-grid">
+                    <input type="text" id="nomeCola" placeholder="Nome">
+                    <input type="email" id="emailCola" placeholder="Email">
+                    <input type="text" id="cargoCola" placeholder="Cargo">
+                    <button onclick="addColaborador()">+ Adicionar</button>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>Colaboradores Cadastrados</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>Email</th>
+                            <th>Cargo</th>
+                            <th>Ação</th>
+                        </tr>
+                    </thead>
+                    <tbody id="colaboradores-list"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Alocações Tab -->
+        <div id="alocacoes" class="tab-content">
+            <div class="section">
+                <h2>+ Nova Alocação</h2>
+                <div class="form-grid">
+                    <select id="novoColaborador" placeholder="Colaborador">
+                        <option value="">Selecione Colaborador</option>
+                    </select>
+                    <input type="text" id="novoCliente" placeholder="Cliente">
+                    <input type="text" id="novoProjeto" placeholder="Projeto">
+                    <input type="date" id="novoDataInicio" placeholder="Início">
+                    <input type="date" id="novoDataFim" placeholder="Fim">
+                    <input type="date" id="novoNovaData" placeholder="Nova Data">
+                    <input type="number" id="novoPercentual" placeholder="Percentual (%)" min="0" max="100" value="100">
+                    <select id="novoStatus">
+                        <option value="alocado">Alocado</option>
+                        <option value="desalocada">Desalocada</option>
+                        <option value="pausou">Pausou</option>
+                        <option value="concluido">Concluído</option>
+                    </select>
+                    <button onclick="adicionarAlocacao()" style="grid-column: 1 / -1;">✓ Adicionar Alocação</button>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>Visualizar Alocações</h2>
+                <div style="margin-bottom: 16px; display: flex; gap: 8px; flex-wrap: wrap;">
+                    <button onclick="renderAlocacoesPorCliente()" id="btnCliente" class="tab-btn" style="background: linear-gradient(135deg, #8b5cf6 0%, #a78bfa 100%); color: white;">📌 Por Cliente</button>
+                    <button onclick="renderAlocacoesPorProjeto()" id="btnProjeto" class="tab-btn">🎯 Por Projeto</button>
+                    <button onclick="renderAlocacoesPorColaborador()" id="btnColaborador" class="tab-btn">👤 Por Colaborador</button>
+                </div>
+                <div id="alocacoes-list"></div>
+            </div>
+        </div>
+
+        <!-- Histórico Tab -->
+        <div id="historico" class="tab-content">
+            <div class="section">
+                <h2>📜 Histórico de Alterações</h2>
+                <div style="margin-bottom: 16px;">
+                    <button onclick="exportarHistoricoCSV()" class="btn-sync" style="margin-right: 8px;">📥 Exportar Histórico</button>
+                    <button onclick="limparHistorico()" class="btn-danger">🗑️ Limpar Histórico</button>
+                </div>
+                <div id="historico-list" style="max-height: 600px; overflow-y: auto;"></div>
+            </div>
+        </div>
+
+        <!-- Relatórios Tab -->
+        <div id="relatorios" class="tab-content">
+            <div class="section">
+                <h2>📈 Relatórios</h2>
+                <div style="margin-bottom: 20px; display: flex; gap: 10px; flex-wrap: wrap;">
+                    <button onclick="gerarRelatorioPorCliente()" class="btn-sync">📋 Relatório por Cliente</button>
+                    <button onclick="gerarRelatorioPorProjeto()" class="btn-sync">🎯 Relatório por Projeto</button>
+                    <button onclick="gerarRelatorioPorPessoa()" class="btn-sync">👤 Relatório por Pessoa</button>
+                    <button onclick="gerarRelatorioTempo()" class="btn-sync">⏱️ Relatório de Tempo</button>
+                    <button onclick="exportarRelatoriosPDF()" class="btn-sync">📄 Exportar PDF</button>
+                </div>
+                <div id="relatorios-container" style="max-height: 700px; overflow-y: auto;"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Edição -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Editar Alocação</h2>
+                <button class="close-btn" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-form">
+                <div>
+                    <label>Colaborador:</label>
+                    <select id="editColaborador"></select>
+                </div>
+                <div>
+                    <label>Início da Alocação:</label>
+                    <input type="date" id="editDataInicio" onchange="calcularSemanas()">
+                </div>
+                <div>
+                    <label>Fim da Alocação:</label>
+                    <input type="date" id="editDataFim" onchange="calcularSemanas()">
+                </div>
+                <div>
+                    <label>Nova Data:</label>
+                    <input type="date" id="editNovaData" onchange="calcularSemanas()">
+                </div>
+                <div>
+                    <label>Duração (Semanas):</label>
+                    <input type="number" id="editSemanas" min="1" readonly style="background: rgba(139, 92, 246, 0.1); cursor: not-allowed;">
+                </div>
+                <div>
+                    <label>Percentual (%):</label>
+                    <input type="number" id="editPercentual" min="0" max="100" value="100">
+                </div>
+                <div>
+                    <label>Status:</label>
+                    <select id="editStatus">
+                        <option value="alocado">Alocado</option>
+                        <option value="desalocada">Desalocada</option>
+                        <option value="pausou">Pausou</option>
+                        <option value="concluido">Concluído</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button onclick="saveEdit()">✓ Salvar</button>
+                <button class="btn-danger" onclick="closeModal()">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let colaboradores = [
+            { id: 1, nome: 'Marcela Souza', email: 'marcela.souza@more.design', cargo: 'UX Researcher SR' },
+            { id: 2, nome: 'IBAP', email: '', cargo: 'IBPAD' },
+            { id: 3, nome: 'Tiago Martins', email: 'tiagomartins@more.design', cargo: 'Design Ops' },
+            { id: 4, nome: 'Priscila Nakajima', email: 'pnakajima@more.design', cargo: 'PD Web' },
+            { id: 5, nome: 'Cristopher Tomazini', email: 'cristopher@more.design', cargo: 'PD Mobile' },
+            { id: 6, nome: 'Guilherme Vezula', email: 'guivezula@more.design', cargo: 'Dev01' },
+            { id: 7, nome: 'Miguel Young', email: 'miguel@more.design', cargo: 'Head de Design' },
+            { id: 8, nome: 'Tamires Rabello', email: 'tamires.rabello@more.design', cargo: 'PO' },
+            { id: 9, nome: 'Luciano Alpes', email: 'luciano.alpes@more.design', cargo: 'Product Design' },
+            { id: 10, nome: 'BAMSE', email: '', cargo: 'Desenvolvedor' },
+        ];
+
+        let alocacoes = [
+            { id: 1, cliente: 'VR', projeto: 'Personas PJ', colaboradorId: 1, dataInicio: '2026-01-26', dataFim: '2026-04-09', percentual: 100, novaData: '2026-05-15', status: 'alocado', semanas: 12 },
+            { id: 2, cliente: 'VR', projeto: 'Personas PJ', colaboradorId: 2, dataInicio: '2026-01-19', dataFim: '', percentual: 100, novaData: '2026-04-24', status: 'alocado', semanas: 8 },
+            { id: 3, cliente: 'B3', projeto: 'Design System', colaboradorId: 3, dataInicio: '2026-01-05', dataFim: '2026-04-06', percentual: 100, novaData: '2026-05-22', status: 'alocado', semanas: 12 },
+            { id: 4, cliente: 'B3', projeto: 'Design System', colaboradorId: 4, dataInicio: '2026-01-05', dataFim: '2026-04-06', percentual: 100, novaData: '2026-05-22', status: 'alocado', semanas: 12 },
+            { id: 5, cliente: 'B3', projeto: 'Design System', colaboradorId: 5, dataInicio: '2026-01-19', dataFim: '2026-04-06', percentual: 100, novaData: '2026-05-22', status: 'alocado', semanas: 11 },
+            { id: 6, cliente: 'B3', projeto: 'Design System', colaboradorId: 6, dataInicio: '2026-01-26', dataFim: '2026-04-06', percentual: 100, novaData: '2026-05-22', status: 'alocado', semanas: 10 },
+            { id: 7, cliente: 'Galapagos', projeto: 'App', colaboradorId: 7, dataInicio: '2026-03-23', dataFim: '2026-08-10', percentual: 20, novaData: '', status: 'alocado', semanas: 19 },
+            { id: 8, cliente: 'Galapagos', projeto: 'App', colaboradorId: 8, dataInicio: '2026-03-23', dataFim: '2026-08-10', percentual: 5, novaData: '', status: 'alocado', semanas: 19 },
+            { id: 9, cliente: 'Galapagos', projeto: 'App', colaboradorId: 9, dataInicio: '2026-03-23', dataFim: '2026-08-10', percentual: 100, novaData: '', status: 'alocado', semanas: 19 },
+            { id: 10, cliente: 'Galapagos', projeto: 'App', colaboradorId: 10, dataInicio: '2026-03-23', dataFim: '2026-04-27', percentual: 100, novaData: '', status: 'alocado', semanas: 5 },
+        ];
+
+        let editingId = null;
+        let historico = [];
+        let usuarioGoogle = null;
+
+        // Registrar alterações no histórico
+        function registrarAlteracao(tipo, descricao, dados = {}) {
+            const agora = new Date();
+            historico.push({
+                timestamp: agora.toLocaleString('pt-BR'),
+                tipo: tipo,
+                descricao: descricao,
+                dados: dados,
+                usuario: usuarioGoogle ? usuarioGoogle.name : 'Usuário Local'
+            });
+            localStorage.setItem('alocacao-historico', JSON.stringify(historico));
+            if (document.getElementById('historico')) renderHistorico();
+        }
+
+        // Google Authentication
+        function handleGoogleSignIn() {
+            // Placeholder para autenticação real
+            usuarioGoogle = { name: 'Usuário Google', email: 'user@gmail.com' };
+            document.getElementById('user-info').textContent = `✓ Conectado: ${usuarioGoogle.name}`;
+            document.getElementById('syncButton').disabled = false;
+            document.getElementById('googleSignInButton').textContent = '✓ Conectado';
+            document.getElementById('googleSignInButton').disabled = true;
+            registrarAlteracao('LOGIN', `Usuário ${usuarioGoogle.name} fez login`);
+        }
+
+        // Sincronizar com Google Sheets
+        function sincronizarComGoogleSheets() {
+            const statusEl = document.getElementById('status-message');
+            statusEl.style.display = 'block';
+            statusEl.textContent = '⏳ Sincronizando...';
+
+            setTimeout(() => {
+                const dados = {
+                    alocacoes: alocacoes,
+                    colaboradores: colaboradores,
+                    timestamp: new Date().toLocaleString('pt-BR')
+                };
+                localStorage.setItem('alocacao-dados', JSON.stringify(dados));
+                registrarAlteracao('SYNC', 'Dados sincronizados com Google Sheets');
+                statusEl.textContent = '✅ Sincronizado com sucesso!';
+                setTimeout(() => statusEl.style.display = 'none', 3000);
+            }, 1500);
+        }
+
+        // Renderizar histórico
+        function renderHistorico() {
+            let html = '';
+            if (historico.length === 0) {
+                html = '<p style="color: #a0a0b0; padding: 20px; text-align: center;">Nenhum registro de alterações</p>';
+            } else {
+                [...historico].reverse().forEach(h => {
+                    html += `
+                        <div class="historico-item">
+                            <div><strong>${h.tipo}</strong> - ${h.timestamp}</div>
+                            <div>${h.descricao}</div>
+                            <div style="font-size: 0.8em; color: #808090;">Usuário: ${h.usuario}</div>
+                        </div>
+                    `;
+                });
+            }
+            const historicoEl = document.getElementById('historico-list');
+            if (historicoEl) historicoEl.innerHTML = html;
+        }
+
+        // Relatório por Cliente
+        function gerarRelatorioPorCliente() {
+            let html = '<div class="relatorio-secao"><h3>📋 Relatório por Cliente</h3>';
+            const porCliente = {};
+
+            alocacoes.forEach(a => {
+                if (!porCliente[a.cliente]) {
+                    porCliente[a.cliente] = { total: 0, pessoas: new Set(), semanas: 0, horas: 0 };
+                }
+                porCliente[a.cliente].total++;
+                porCliente[a.cliente].pessoas.add(a.colaboradorId);
+                porCliente[a.cliente].semanas += a.semanas || 0;
+                porCliente[a.cliente].horas += (a.semanas || 0) * 40 * (a.percentual / 100);
+            });
+
+            Object.entries(porCliente).forEach(([cliente, dados]) => {
+                html += `
+                    <div style="margin: 15px 0; padding: 12px; background: rgba(139, 92, 246, 0.1); border-radius: 6px;">
+                        <h4 style="color: #a5f3fc; margin-bottom: 8px;">📌 ${cliente}</h4>
+                        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; font-size: 0.9em;">
+                            <div><strong>Alocações:</strong> ${dados.total}</div>
+                            <div><strong>Pessoas:</strong> ${dados.pessoas.size}</div>
+                            <div><strong>Semanas:</strong> ${dados.semanas}</div>
+                            <div><strong>Horas:</strong> ${Math.round(dados.horas)}</div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            html += '</div>';
+            document.getElementById('relatorios-container').innerHTML = html;
+            registrarAlteracao('RELATORIO', 'Relatório por Cliente gerado');
+        }
+
+        // Relatório por Projeto
+        function gerarRelatorioPorProjeto() {
+            let html = '<div class="relatorio-secao"><h3>🎯 Relatório por Projeto</h3>';
+            const porProjeto = {};
+
+            alocacoes.forEach(a => {
+                const key = `${a.cliente} - ${a.projeto}`;
+                if (!porProjeto[key]) {
+                    porProjeto[key] = { cliente: a.cliente, total: 0, pessoas: new Set(), semanas: 0, horas: 0 };
+                }
+                porProjeto[key].total++;
+                porProjeto[key].pessoas.add(a.colaboradorId);
+                porProjeto[key].semanas += a.semanas || 0;
+                porProjeto[key].horas += (a.semanas || 0) * 40 * (a.percentual / 100);
+            });
+
+            Object.entries(porProjeto).forEach(([projeto, dados]) => {
+                html += `
+                    <div style="margin: 15px 0; padding: 12px; background: rgba(165, 243, 252, 0.1); border-radius: 6px;">
+                        <h4 style="color: #a5f3fc; margin-bottom: 8px;">🎯 ${projeto}</h4>
+                        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; font-size: 0.9em;">
+                            <div><strong>Alocações:</strong> ${dados.total}</div>
+                            <div><strong>Pessoas:</strong> ${dados.pessoas.size}</div>
+                            <div><strong>Semanas:</strong> ${dados.semanas}</div>
+                            <div><strong>Horas:</strong> ${Math.round(dados.horas)}</div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            html += '</div>';
+            document.getElementById('relatorios-container').innerHTML = html;
+            registrarAlteracao('RELATORIO', 'Relatório por Projeto gerado');
+        }
+
+        // Relatório por Pessoa
+        function gerarRelatorioPorPessoa() {
+            let html = '<div class="relatorio-secao"><h3>👤 Relatório por Pessoa</h3>';
+            const porPessoa = {};
+
+            alocacoes.forEach(a => {
+                const cola = colaboradores.find(c => c.id === a.colaboradorId);
+                if (!porPessoa[cola.id]) {
+                    porPessoa[cola.id] = { nome: cola.nome, cargo: cola.cargo, projetos: [], semanas: 0, horas: 0 };
+                }
+                porPessoa[cola.id].projetos.push(`${a.cliente} - ${a.projeto}`);
+                porPessoa[cola.id].semanas += a.semanas || 0;
+                porPessoa[cola.id].horas += (a.semanas || 0) * 40 * (a.percentual / 100);
+            });
+
+            Object.entries(porPessoa).forEach(([id, dados]) => {
+                html += `
+                    <div style="margin: 15px 0; padding: 12px; background: rgba(16, 185, 129, 0.1); border-radius: 6px;">
+                        <h4 style="color: #10b981; margin-bottom: 8px;">👤 ${dados.nome}</h4>
+                        <div style="font-size: 0.9em; margin-bottom: 8px;">
+                            <div><strong>Cargo:</strong> ${dados.cargo}</div>
+                            <div><strong>Semanas Alocadas:</strong> ${dados.semanas}</div>
+                            <div><strong>Horas Alocadas:</strong> ${Math.round(dados.horas)}</div>
+                        </div>
+                        <div style="font-size: 0.85em; color: #a0a0b0;">
+                            <strong>Projetos:</strong> ${dados.projetos.join(', ')}
+                        </div>
+                    </div>
+                `;
+            });
+
+            html += '</div>';
+            document.getElementById('relatorios-container').innerHTML = html;
+            registrarAlteracao('RELATORIO', 'Relatório por Pessoa gerado');
+        }
+
+        // Relatório de Tempo
+        function gerarRelatorioTempo() {
+            let html = '<div class="relatorio-secao"><h3>⏱️ Relatório de Tempo</h3>';
+            const totalSemanas = alocacoes.reduce((sum, a) => sum + (a.semanas || 0), 0);
+            const totalHoras = alocacoes.reduce((sum, a) => sum + ((a.semanas || 0) * 40 * (a.percentual / 100)), 0);
+            const mediaSemanasAlocacao = alocacoes.length > 0 ? (totalSemanas / alocacoes.length).toFixed(1) : 0;
+
+            html += `
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-top: 15px;">
+                    <div style="padding: 15px; background: rgba(139, 92, 246, 0.1); border-radius: 6px; border-left: 3px solid #8b5cf6;">
+                        <div style="font-size: 0.9em; color: #a0a0b0;">Total de Semanas</div>
+                        <div style="font-size: 1.8em; font-weight: bold; color: #a5f3fc;">${totalSemanas}</div>
+                    </div>
+                    <div style="padding: 15px; background: rgba(16, 185, 129, 0.1); border-radius: 6px; border-left: 3px solid #10b981;">
+                        <div style="font-size: 0.9em; color: #a0a0b0;">Total de Horas</div>
+                        <div style="font-size: 1.8em; font-weight: bold; color: #10b981;">${Math.round(totalHoras)}</div>
+                    </div>
+                    <div style="padding: 15px; background: rgba(245, 158, 11, 0.1); border-radius: 6px; border-left: 3px solid #f59e0b;">
+                        <div style="font-size: 0.9em; color: #a0a0b0;">Média por Alocação</div>
+                        <div style="font-size: 1.8em; font-weight: bold; color: #f59e0b;">${mediaSemanasAlocacao} sem</div>
+                    </div>
+                    <div style="padding: 15px; background: rgba(239, 68, 68, 0.1); border-radius: 6px; border-left: 3px solid #ef4444;">
+                        <div style="font-size: 0.9em; color: #a0a0b0;">Alocações Ativas</div>
+                        <div style="font-size: 1.8em; font-weight: bold; color: #ef4444;">${alocacoes.filter(a => a.status === 'alocado').length}</div>
+                    </div>
+                </div>
+            </div>`;
+            document.getElementById('relatorios-container').innerHTML = html;
+            registrarAlteracao('RELATORIO', 'Relatório de Tempo gerado');
+        }
+
+        // Exportar Relatórios em PDF
+        function exportarRelatoriosPDF() {
+            const element = document.getElementById('relatorios-container');
+            const opt = {
+                margin: 10,
+                filename: 'relatorios-alocacoes.pdf',
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2 },
+                jsPDF: { orientation: 'portrait', unit: 'mm', format: 'a4' }
+            };
+            html2pdf().set(opt).from(element).save();
+            registrarAlteracao('EXPORT', 'Relatórios exportados em PDF');
+        }
+
+        // Exportar Histórico em CSV
+        function exportarHistoricoCSV() {
+            let csv = 'Timestamp,Tipo,Descrição,Usuário\n';
+            historico.forEach(h => {
+                csv += `"${h.timestamp}","${h.tipo}","${h.descricao}","${h.usuario}"\n`;
+            });
+            const link = document.createElement('a');
+            link.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
+            link.download = 'historico-alocacoes.csv';
+            link.click();
+            registrarAlteracao('EXPORT', 'Histórico exportado em CSV');
+        }
+
+        // Limpar Histórico
+        function limparHistorico() {
+            if (confirm('Deseja limpar todo o histórico? Esta ação não pode ser desfeita.')) {
+                historico = [];
+                localStorage.removeItem('alocacao-historico');
+                renderHistorico();
+                alert('✓ Histórico limpo!');
+            }
+        }
+
+        function formatarData(dataStr) {
+            if (!dataStr) return '-';
+            const [year, month, day] = dataStr.split('-');
+            return `${day}/${month}/${year}`;
+        }
+
+        function ordenarAlocacoes(alocacoes) {
+            return [...alocacoes].sort((a, b) => {
+                if (a.dataInicio !== b.dataInicio) {
+                    return (a.dataInicio || '9999-12-31').localeCompare(b.dataInicio || '9999-12-31');
+                }
+                if (a.dataFim !== b.dataFim) {
+                    return (a.dataFim || '9999-12-31').localeCompare(b.dataFim || '9999-12-31');
+                }
+                return (a.novaData || '9999-12-31').localeCompare(b.novaData || '9999-12-31');
+            });
+        }
+
+        function switchTab(tab) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+            document.getElementById(tab).classList.add('active');
+            event.target.classList.add('active');
+
+            if (tab === 'alocacoes') {
+                renderAlocacoesPorCliente();
+                preencherColaboradores();
+            }
+            if (tab === 'dashboard') renderDashboard();
+            if (tab === 'colaboradores') renderColaboradores();
+            if (tab === 'projetos') renderProjetos();
+            if (tab === 'historico') renderHistorico();
+            if (tab === 'relatorios') gerarRelatorioPorCliente();
+        }
+
+        function preencherColaboradores() {
+            let html = '<option value="">Selecione Colaborador</option>';
+            colaboradores.forEach(c => {
+                html += `<option value="${c.id}">${c.nome} - ${c.cargo}</option>`;
+            });
+            document.getElementById('novoColaborador').innerHTML = html;
+        }
+
+        function adicionarAlocacao() {
+            const colaboradorId = parseInt(document.getElementById('novoColaborador').value);
+            const cliente = document.getElementById('novoCliente').value;
+            const projeto = document.getElementById('novoProjeto').value;
+            const dataInicio = document.getElementById('novoDataInicio').value;
+            const dataFim = document.getElementById('novoDataFim').value;
+            const novaData = document.getElementById('novoNovaData').value;
+            const percentual = parseInt(document.getElementById('novoPercentual').value);
+            const status = document.getElementById('novoStatus').value;
+
+            if (!colaboradorId || !cliente || !projeto || !dataInicio) {
+                alert('⚠️ Preencha: Colaborador, Cliente, Projeto e Data de Início!');
+                return;
+            }
+
+            let semanas = 0;
+            const dataFinal = novaData || dataFim;
+            if (dataFinal) {
+                const inicio = new Date(dataInicio);
+                const fim = new Date(dataFinal);
+                const diffMs = fim - inicio;
+                const diffDias = diffMs / (1000 * 60 * 60 * 24);
+                semanas = Math.ceil(diffDias / 7);
+                semanas = Math.max(1, semanas);
+            }
+
+            const novaAlocacao = {
+                id: Math.max(...alocacoes.map(a => a.id)) + 1,
+                cliente,
+                projeto,
+                colaboradorId,
+                dataInicio,
+                dataFim,
+                percentual,
+                novaData,
+                status,
+                semanas
+            };
+
+            alocacoes.push(novaAlocacao);
+            registrarAlteracao('ADICIONAR', `Alocação adicionada: ${cliente} - ${projeto} (${colaboradores.find(c => c.id === colaboradorId).nome})`);
+
+            document.getElementById('novoColaborador').value = '';
+            document.getElementById('novoCliente').value = '';
+            document.getElementById('novoProjeto').value = '';
+            document.getElementById('novoDataInicio').value = '';
+            document.getElementById('novoDataFim').value = '';
+            document.getElementById('novoNovaData').value = '';
+            document.getElementById('novoPercentual').value = '100';
+            document.getElementById('novoStatus').value = 'alocado';
+
+            renderAlocacoesPorCliente();
+            renderDashboard();
+            alert('✓ Alocação adicionada com sucesso!');
+        }
+
+        function atualizarBotoes(ativo) {
+            document.getElementById('btnCliente').style.background = 'transparent';
+            document.getElementById('btnCliente').style.color = '#a8aab8';
+            document.getElementById('btnProjeto').style.background = 'transparent';
+            document.getElementById('btnProjeto').style.color = '#a8aab8';
+            document.getElementById('btnColaborador').style.background = 'transparent';
+            document.getElementById('btnColaborador').style.color = '#a8aab8';
+
+            if (ativo === 'cliente') {
+                document.getElementById('btnCliente').style.background = 'linear-gradient(135deg, #8b5cf6 0%, #a78bfa 100%)';
+                document.getElementById('btnCliente').style.color = 'white';
+            } else if (ativo === 'projeto') {
+                document.getElementById('btnProjeto').style.background = 'linear-gradient(135deg, #8b5cf6 0%, #a78bfa 100%)';
+                document.getElementById('btnProjeto').style.color = 'white';
+            } else if (ativo === 'colaborador') {
+                document.getElementById('btnColaborador').style.background = 'linear-gradient(135deg, #8b5cf6 0%, #a78bfa 100%)';
+                document.getElementById('btnColaborador').style.color = 'white';
+            }
+        }
+
+        function renderAlocacoesPorCliente() {
+            atualizarBotoes('cliente');
+            let html = '';
+            let currentCliente = '';
+            const alocacoesOrdenadas = ordenarAlocacoes(alocacoes);
+
+            alocacoesOrdenadas.forEach(a => {
+                if (currentCliente !== a.cliente) {
+                    if (currentCliente) html += '</div>';
+                    html += `<h3 style="color: #fff; margin-top: 20px; margin-bottom: 12px;">📌 ${a.cliente}</h3><div>`;
+                    currentCliente = a.cliente;
+                }
+
+                const cola = colaboradores.find(c => c.id === a.colaboradorId);
+                html += `
+                    <div class="alocacao-item">
+                        <h4>${a.projeto}</h4>
+                        <div class="alocacao-info">
+                            <div><strong>Pessoa:</strong> ${cola.nome}</div>
+                            <div><strong>Cargo:</strong> ${cola.cargo}</div>
+                            <div><strong>Início:</strong> ${formatarData(a.dataInicio)}</div>
+                            <div><strong>Fim:</strong> ${formatarData(a.dataFim)}</div>
+                            <div><strong>Semanas:</strong> ${a.semanas}</div>
+                            <div><strong>%:</strong> ${a.percentual}%</div>
+                            <div><strong>Nova Data:</strong> ${formatarData(a.novaData)}</div>
+                            <div><strong>Status:</strong> <span class="status-badge status-${a.status}">${a.status}</span></div>
+                        </div>
+                        <div class="alocacao-actions">
+                            <button class="btn-edit" onclick="openEdit(${a.id})">✏️ Editar</button>
+                            <button class="btn-danger" onclick="deleteAlocacao(${a.id})">🗑️ Remover</button>
+                        </div>
+                    </div>
+                `;
+            });
+            if (currentCliente) html += '</div>';
+
+            document.getElementById('alocacoes-list').innerHTML = html;
+        }
+
+        function renderAlocacoesPorProjeto() {
+            atualizarBotoes('projeto');
+            let html = '';
+            const alocacoesOrdenadas = ordenarAlocacoes(alocacoes);
+
+            // Group by client first, then by project
+            const porClienteProjeto = {};
+            alocacoesOrdenadas.forEach(a => {
+                if (!porClienteProjeto[a.cliente]) {
+                    porClienteProjeto[a.cliente] = {};
+                }
+                if (!porClienteProjeto[a.cliente][a.projeto]) {
+                    porClienteProjeto[a.cliente][a.projeto] = [];
+                }
+                porClienteProjeto[a.cliente][a.projeto].push(a);
+            });
+
+            // Render hierarchically: Client > Project > Allocations
+            Object.keys(porClienteProjeto).forEach(cliente => {
+                html += `<h2 style="color: #ffffff; margin-top: 30px; margin-bottom: 15px; font-size: 1.5em;">📌 ${cliente}</h2>`;
+
+                Object.keys(porClienteProjeto[cliente]).forEach(projeto => {
+                    html += `<h3 style="color: #a5f3fc; margin-top: 15px; margin-bottom: 12px; margin-left: 20px; font-size: 1.1em;">🎯 ${projeto}</h3><div style="margin-left: 20px;">`;
+
+                    porClienteProjeto[cliente][projeto].forEach(a => {
+                        const cola = colaboradores.find(c => c.id === a.colaboradorId);
+                        html += `
+                            <div class="alocacao-item">
+                                <h4>${cola.nome}</h4>
+                                <div class="alocacao-info">
+                                    <div><strong>Cargo:</strong> ${cola.cargo}</div>
+                                    <div><strong>Início:</strong> ${formatarData(a.dataInicio)}</div>
+                                    <div><strong>Fim:</strong> ${formatarData(a.dataFim)}</div>
+                                    <div><strong>Semanas:</strong> ${a.semanas}</div>
+                                    <div><strong>%:</strong> ${a.percentual}%</div>
+                                    <div><strong>Nova Data:</strong> ${formatarData(a.novaData)}</div>
+                                    <div><strong>Status:</strong> <span class="status-badge status-${a.status}">${a.status}</span></div>
+                                </div>
+                                <div class="alocacao-actions">
+                                    <button class="btn-edit" onclick="openEdit(${a.id})">✏️ Editar</button>
+                                    <button class="btn-danger" onclick="deleteAlocacao(${a.id})">🗑️ Remover</button>
+                                </div>
+                            </div>
+                        `;
+                    });
+
+                    html += '</div>';
+                });
+            });
+
+            document.getElementById('alocacoes-list').innerHTML = html;
+        }
+
+        function renderAlocacoesPorColaborador() {
+            atualizarBotoes('colaborador');
+            let html = '';
+            let currentColaborador = '';
+            const alocacoesOrdenadas = ordenarAlocacoes(alocacoes);
+
+            alocacoesOrdenadas.forEach(a => {
+                if (currentColaborador !== a.colaboradorId) {
+                    if (currentColaborador) html += '</div>';
+                    const cola = colaboradores.find(c => c.id === a.colaboradorId);
+                    html += `<h3 style="color: #fff; margin-top: 20px; margin-bottom: 12px;">👤 ${cola.nome}</h3><div>`;
+                    currentColaborador = a.colaboradorId;
+                }
+
+                const cola = colaboradores.find(c => c.id === a.colaboradorId);
+                html += `
+                    <div class="alocacao-item">
+                        <h4>${a.cliente} - ${a.projeto}</h4>
+                        <div class="alocacao-info">
+                            <div><strong>Cargo:</strong> ${cola.cargo}</div>
+                            <div><strong>Início:</strong> ${formatarData(a.dataInicio)}</div>
+                            <div><strong>Fim:</strong> ${formatarData(a.dataFim)}</div>
+                            <div><strong>Semanas:</strong> ${a.semanas}</div>
+                            <div><strong>%:</strong> ${a.percentual}%</div>
+                            <div><strong>Nova Data:</strong> ${formatarData(a.novaData)}</div>
+                            <div><strong>Status:</strong> <span class="status-badge status-${a.status}">${a.status}</span></div>
+                        </div>
+                        <div class="alocacao-actions">
+                            <button class="btn-edit" onclick="openEdit(${a.id})">✏️ Editar</button>
+                            <button class="btn-danger" onclick="deleteAlocacao(${a.id})">🗑️ Remover</button>
+                        </div>
+                    </div>
+                `;
+            });
+            if (currentColaborador) html += '</div>';
+
+            document.getElementById('alocacoes-list').innerHTML = html;
+        }
+
+        function renderDashboard() {
+            const totalAlocacoes = alocacoes.length;
+            const totalPessoas = new Set(alocacoes.map(a => a.colaboradorId)).size;
+            const totalSemanas = alocacoes.reduce((sum, a) => sum + (a.semanas || 0), 0);
+            const totalHoras = totalSemanas * 40;
+
+            const horasPorColaborador = {};
+            colaboradores.forEach(c => {
+                const alocsPessoa = alocacoes.filter(a => a.colaboradorId === c.id);
+                const semanasPessoa = alocsPessoa.reduce((sum, a) => sum + (a.semanas || 0), 0);
+                const horasPessoa = semanasPessoa * 40 * (alocsPessoa.reduce((sum, a) => sum + a.percentual, 0) / Math.max(alocsPessoa.length, 1) / 100);
+                horasPorColaborador[c.id] = {
+                    nome: c.nome,
+                    semanas: semanasPessoa,
+                    horas: Math.round(horasPessoa),
+                    alocacoes: alocsPessoa.length
+                };
+            });
+
+            const porCliente = {};
+            alocacoes.forEach(a => {
+                if (!porCliente[a.cliente]) {
+                    porCliente[a.cliente] = { alocacoes: 0, semanas: 0, pessoas: new Set() };
+                }
+                porCliente[a.cliente].alocacoes += 1;
+                porCliente[a.cliente].semanas += a.semanas || 0;
+                porCliente[a.cliente].pessoas.add(a.colaboradorId);
+            });
+
+            let html = `
+                <div class="dashboard-card">
+                    <h3>Total de Alocações</h3>
+                    <div class="value">${totalAlocacoes}</div>
+                    <div class="subtitle">alocações ativas</div>
+                </div>
+                <div class="dashboard-card">
+                    <h3>Pessoas Alocadas</h3>
+                    <div class="value">${totalPessoas}</div>
+                    <div class="subtitle">de ${colaboradores.length} colaboradores</div>
+                </div>
+                <div class="dashboard-card">
+                    <h3>Total de Semanas</h3>
+                    <div class="value">${totalSemanas}</div>
+                    <div class="subtitle">semanas de projeto</div>
+                </div>
+                <div class="dashboard-card">
+                    <h3>Total de Horas</h3>
+                    <div class="value">${totalHoras}</div>
+                    <div class="subtitle">horas alocadas</div>
+                </div>
+            `;
+
+            html += `
+                <div class="dashboard-section">
+                    <h2>Alocação por Colaborador</h2>
+                    <table class="dashboard-table">
+                        <thead>
+                            <tr>
+                                <th>Colaborador</th>
+                                <th>Alocações</th>
+                                <th>Semanas</th>
+                                <th>Horas</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
+
+            Object.values(horasPorColaborador)
+                .filter(h => h.alocacoes > 0)
+                .sort((a, b) => b.horas - a.horas)
+                .forEach(h => {
+                    html += `
+                        <tr>
+                            <td>${h.nome}</td>
+                            <td>${h.alocacoes}</td>
+                            <td>${h.semanas}</td>
+                            <td>${h.horas}h</td>
+                        </tr>
+                    `;
+                });
+
+            html += `
+                        </tbody>
+                    </table>
+                </div>
+            `;
+
+            html += `
+                <div class="dashboard-section">
+                    <h2>Resumo por Cliente</h2>
+                    <table class="dashboard-table">
+                        <thead>
+                            <tr>
+                                <th>Cliente</th>
+                                <th>Alocações</th>
+                                <th>Pessoas</th>
+                                <th>Semanas</th>
+                                <th>Horas</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
+
+            Object.entries(porCliente)
+                .sort((a, b) => b[1].semanas - a[1].semanas)
+                .forEach(([cliente, dados]) => {
+                    const horas = dados.semanas * 40;
+                    html += `
+                        <tr>
+                            <td>${cliente}</td>
+                            <td>${dados.alocacoes}</td>
+                            <td>${dados.pessoas.size}</td>
+                            <td>${dados.semanas}</td>
+                            <td>${horas}h</td>
+                        </tr>
+                    `;
+                });
+
+            html += `
+                        </tbody>
+                    </table>
+                </div>
+            `;
+
+            document.getElementById('dashboard-content').innerHTML = html;
+        }
+
+        function openEdit(id) {
+            editingId = id;
+            const alloc = alocacoes.find(a => a.id === id);
+
+            let colasHtml = '';
+            colaboradores.forEach(c => {
+                colasHtml += `<option value="${c.id}" ${c.id === alloc.colaboradorId ? 'selected' : ''}>${c.nome}</option>`;
+            });
+            document.getElementById('editColaborador').innerHTML = colasHtml;
+
+            document.getElementById('editDataInicio').value = alloc.dataInicio || '';
+            document.getElementById('editDataFim').value = alloc.dataFim || '';
+            document.getElementById('editSemanas').value = alloc.semanas || '';
+            document.getElementById('editPercentual').value = alloc.percentual;
+            document.getElementById('editNovaData').value = alloc.novaData;
+            document.getElementById('editStatus').value = alloc.status;
+
+            document.getElementById('editModal').classList.add('active');
+        }
+
+        function calcularSemanas() {
+            const dataInicio = document.getElementById('editDataInicio').value;
+            const dataFim = document.getElementById('editDataFim').value;
+            const novaData = document.getElementById('editNovaData').value;
+
+            if (dataInicio) {
+                let dataFinal = dataFim;
+                if (novaData && novaData.trim() !== '') {
+                    dataFinal = novaData;
+                }
+
+                if (dataFinal && dataFinal.trim() !== '') {
+                    const inicio = new Date(dataInicio);
+                    const fim = new Date(dataFinal);
+                    const diffMs = fim - inicio;
+                    const diffDias = diffMs / (1000 * 60 * 60 * 24);
+                    const semanas = Math.ceil(diffDias / 7);
+                    document.getElementById('editSemanas').value = Math.max(1, semanas);
+                }
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('editModal').classList.remove('active');
+            editingId = null;
+        }
+
+        function saveEdit() {
+            const alloc = alocacoes.find(a => a.id === editingId);
+            const colaId = parseInt(document.getElementById('editColaborador').value);
+            const cola = colaboradores.find(c => c.id === colaId);
+
+            if (!colaId) {
+                alert('⚠️ Selecione um colaborador!');
+                return;
+            }
+
+            alloc.colaboradorId = colaId;
+            alloc.dataInicio = document.getElementById('editDataInicio').value;
+            alloc.dataFim = document.getElementById('editDataFim').value;
+            alloc.percentual = parseInt(document.getElementById('editPercentual').value);
+            alloc.novaData = document.getElementById('editNovaData').value;
+            alloc.status = document.getElementById('editStatus').value;
+
+            if (alloc.dataInicio) {
+                let dataFinal = alloc.dataFim;
+                if (alloc.novaData && alloc.novaData.trim() !== '') {
+                    dataFinal = alloc.novaData;
+                }
+
+                if (dataFinal && dataFinal.trim() !== '') {
+                    const inicio = new Date(alloc.dataInicio);
+                    const fim = new Date(dataFinal);
+                    const diffMs = fim - inicio;
+                    const diffDias = diffMs / (1000 * 60 * 60 * 24);
+                    const semanas = Math.ceil(diffDias / 7);
+                    alloc.semanas = Math.max(1, semanas);
+                } else {
+                    alloc.semanas = parseInt(document.getElementById('editSemanas').value) || 0;
+                }
+            } else {
+                alloc.semanas = parseInt(document.getElementById('editSemanas').value) || 0;
+            }
+
+            registrarAlteracao('EDITAR', `Alocação ${alloc.id} atualizada: ${alloc.cliente} - ${alloc.projeto}`);
+            renderAlocacoesPorCliente();
+            renderDashboard();
+            closeModal();
+            alert('✓ Alocação atualizada com sucesso!');
+        }
+
+        function deleteAlocacao(id) {
+            if (confirm('Deseja remover esta alocação?')) {
+                const alocRemovidaO = alocacoes.find(a => a.id === id);
+                registrarAlteracao('DELETAR', `Alocação removida: ${alocRemovidaO.cliente} - ${alocRemovidaO.projeto}`);
+                alocacoes = alocacoes.filter(a => a.id !== id);
+                renderAlocacoesPorCliente();
+            }
+        }
+
+        function renderColaboradores() {
+            let html = '';
+            colaboradores.forEach(c => {
+                const alocs = alocacoes.filter(a => a.colaboradorId === c.id).length;
+                html += `
+                    <tr>
+                        <td>${c.nome}</td>
+                        <td>${c.email}</td>
+                        <td>${c.cargo}</td>
+                        <td><button class="btn-danger" onclick="deleteColaborador(${c.id})">🗑️</button></td>
+                    </tr>
+                `;
+            });
+            document.getElementById('colaboradores-list').innerHTML = html;
+        }
+
+        function addColaborador() {
+            const nome = document.getElementById('nomeCola').value;
+            const email = document.getElementById('emailCola').value;
+            const cargo = document.getElementById('cargoCola').value;
+
+            if (!nome || !email || !cargo) {
+                alert('Preencha todos os campos!');
+                return;
+            }
+
+            colaboradores.push({ id: Date.now(), nome, email, cargo });
+            document.getElementById('nomeCola').value = '';
+            document.getElementById('emailCola').value = '';
+            document.getElementById('cargoCola').value = '';
+            renderColaboradores();
+            alert('✓ Colaborador adicionado!');
+        }
+
+        function deleteColaborador(id) {
+            if (confirm('Deseja remover este colaborador?')) {
+                colaboradores = colaboradores.filter(c => c.id !== id);
+                alocacoes = alocacoes.filter(a => a.colaboradorId !== id);
+                renderColaboradores();
+                renderAlocacoesPorCliente();
+            }
+        }
+
+        function renderProjetos() {
+            const projetos = {};
+
+            alocacoes.forEach(a => {
+                const key = a.cliente + ' - ' + a.projeto;
+                if (!projetos[key]) projetos[key] = [];
+                projetos[key].push(a);
+            });
+
+            let html = '';
+            Object.entries(projetos).forEach(([nome, alocs]) => {
+                html += `<div class="alocacao-item"><h4>${nome}</h4>`;
+                html += `<p style="font-size: 0.9em; color: #a0a0b0;">${alocs.length} pessoas alocadas</p>`;
+                html += '<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 8px; margin-top: 8px;">';
+                alocs.forEach(a => {
+                    const cola = colaboradores.find(c => c.id === a.colaboradorId);
+                    html += `<div style="background: rgba(230, 0, 18, 0.1); padding: 8px; border-radius: 4px; font-size: 0.8em;"><strong>${cola.nome}</strong><br>${a.percentual}%</div>`;
+                });
+                html += '</div></div>';
+            });
+
+            document.getElementById('projetos-list').innerHTML = html;
+        }
+
+        window.onload = () => {
+            // Carregar histórico do localStorage
+            const historicoSalvo = localStorage.getItem('alocacao-historico');
+            if (historicoSalvo) {
+                historico = JSON.parse(historicoSalvo);
+            }
+
+            // Carregar dados do localStorage se existirem
+            const dadosSalvos = localStorage.getItem('alocacao-dados');
+            if (dadosSalvos) {
+                const dados = JSON.parse(dadosSalvos);
+                console.log('Dados sincronizados anteriormente:', dados);
+            }
+
+            renderDashboard();
+            renderColaboradores();
+        };
+
+        window.onclick = (e) => {
+            const modal = document.getElementById('editModal');
+            if (e.target === modal) closeModal();
+        };
+    </script>
+</body>
+</html>
