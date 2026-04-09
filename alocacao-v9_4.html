@@ -1,0 +1,1701 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alocação de Projetos v9 - Môre</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #0a0e27 0%, #14122d 20%, #1a1e3a 40%, #1f1c35 60%, #15132a 80%, #0d0b1f 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
+            color: #d0d5e0;
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            bottom: 0; left: 0; right: 0;
+            height: 6px;
+            background: linear-gradient(90deg, #a78bfa 0%, #c4b5fd 25%, #93c5fd 50%, #60a5fa 75%, #a5f3fc 100%);
+            z-index: 1000;
+        }
+
+        .container { max-width: 1400px; margin: 0 auto; padding: 40px 20px 60px; }
+
+        .header { margin-bottom: 32px; }
+        .header h1 { font-size: 2.2em; font-weight: 800; color: #ffffff; margin-bottom: 6px; }
+        .header p { font-size: 0.95em; color: #a0a0b0; }
+
+        /* ── ALERTS ── */
+        #alerts-bar { margin-bottom: 20px; }
+        .alert-item {
+            display: flex; align-items: center; gap: 10px;
+            padding: 10px 16px; border-radius: 8px; margin-bottom: 8px;
+            font-size: 0.88em; font-weight: 500;
+        }
+        .alert-warn  { background: rgba(245,158,11,0.15); border: 1px solid rgba(245,158,11,0.3); color: #fcd34d; }
+        .alert-error { background: rgba(239,68,68,0.15);  border: 1px solid rgba(239,68,68,0.3);  color: #fca5a5; }
+        .alert-info  { background: rgba(99,102,241,0.15); border: 1px solid rgba(99,102,241,0.3);  color: #a5b4fc; }
+
+        /* ── TABS ── */
+        .tabs {
+            display: flex; gap: 6px; margin-bottom: 28px;
+            background: rgba(30,25,50,0.4); padding: 6px;
+            border-radius: 12px; backdrop-filter: blur(10px);
+            border: 1px solid rgba(139,92,246,0.15); flex-wrap: wrap;
+        }
+        .tab-btn {
+            padding: 9px 18px; border: none; background: transparent;
+            color: #a8aab8; border-radius: 8px; cursor: pointer;
+            font-weight: 600; font-size: 0.88em;
+            transition: all 0.2s; font-family: inherit;
+        }
+        .tab-btn:hover { background: rgba(255,255,255,0.08); color: #fff; }
+        .tab-btn.active { background: linear-gradient(135deg,#8b5cf6,#a78bfa); color: #fff; }
+
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        /* ── SECTION ── */
+        .section {
+            background: rgba(20,18,40,0.6); border-radius: 12px;
+            padding: 22px; margin-bottom: 22px;
+            border: 1px solid rgba(139,92,246,0.15);
+        }
+        .section h2 { font-size: 1.2em; font-weight: 700; color: #fff; margin-bottom: 18px; }
+        .section-sub { font-size: 0.8em; color: #7a7a8a; font-weight: 400; margin-left: 8px; }
+
+        /* ── FORM ── */
+        .form-grid {
+            display: grid; grid-template-columns: repeat(auto-fit,minmax(150px,1fr));
+            gap: 10px; margin-bottom: 14px;
+        }
+        .form-group { display: flex; flex-direction: column; gap: 4px; }
+        .form-group label { font-size: 0.78em; color: #9090a0; font-weight: 600; text-transform: uppercase; letter-spacing: 0.4px; }
+
+        input, select, textarea {
+            padding: 9px 11px;
+            border: 1px solid rgba(139,92,246,0.2); border-radius: 8px;
+            background: rgba(15,12,35,0.7); color: #d0d5e0;
+            font-family: inherit; font-size: 0.88em;
+        }
+        input:focus, select:focus, textarea:focus {
+            outline: none; border-color: #8b5cf6;
+            box-shadow: 0 0 0 2px rgba(139,92,246,0.2);
+        }
+        textarea { resize: vertical; min-height: 60px; }
+        select option { background: #1a1630; }
+
+        /* ── BUTTONS ── */
+        button {
+            padding: 9px 18px;
+            background: linear-gradient(135deg,#8b5cf6,#a78bfa);
+            color: #fff; border: none; border-radius: 8px;
+            cursor: pointer; font-weight: 600; font-size: 0.88em;
+            transition: all 0.2s; font-family: inherit;
+        }
+        button:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(139,92,246,0.3); }
+
+        .btn-sm { padding: 5px 10px; font-size: 0.78em; }
+        .btn-edit { background: rgba(123,44,191,0.2); color: #c0a0ff; border: 1px solid rgba(123,44,191,0.4); }
+        .btn-edit:hover { background: rgba(139,92,246,0.3); color: #fff; }
+        .btn-danger { background: rgba(220,38,38,0.2); color: #ff8080; border: 1px solid rgba(220,38,38,0.4); }
+        .btn-danger:hover { background: rgba(239,68,68,0.3); color: #fff; }
+        .btn-success { background: rgba(16,185,129,0.2); color: #6ee7b7; border: 1px solid rgba(16,185,129,0.4); }
+        .btn-success:hover { background: rgba(16,185,129,0.3); color: #fff; }
+        .btn-ghost { background: transparent; color: #a0a0b0; border: 1px solid rgba(255,255,255,0.1); }
+        .btn-ghost:hover { background: rgba(255,255,255,0.08); color: #fff; }
+
+        /* ── BADGES ── */
+        .badge {
+            display: inline-block; padding: 3px 8px;
+            border-radius: 4px; font-size: 0.72em; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 0.3px;
+        }
+        .badge-alocado    { background: rgba(34,197,94,0.2);  color: #86efac; }
+        .badge-pausou     { background: rgba(239,68,68,0.2);  color: #fca5a5; }
+        .badge-desalocada { background: rgba(100,116,139,0.2);color: #94a3b8; }
+        .badge-concluido  { background: rgba(99,102,241,0.2); color: #a5b4fc; }
+
+        /* projeto status */
+        .badge-em-andamento { background: rgba(34,197,94,0.2);  color: #86efac; }
+        .badge-em-proposta  { background: rgba(245,158,11,0.2); color: #fcd34d; }
+        .badge-pausado      { background: rgba(239,68,68,0.2);  color: #fca5a5; }
+        .badge-encerrado    { background: rgba(100,116,139,0.2);color: #94a3b8; }
+
+        /* over-allocation badge */
+        .badge-over { background: rgba(239,68,68,0.25); color: #fca5a5; border: 1px solid rgba(239,68,68,0.4); }
+
+        /* ── CARDS ── */
+        .card-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(220px,1fr)); gap: 16px; }
+        .dash-card {
+            background: rgba(40,35,70,0.3); border: 1px solid rgba(139,92,246,0.15);
+            border-radius: 12px; padding: 18px;
+        }
+        .dash-card h3 { font-size: 0.78em; color: #7a7a8a; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px; }
+        .dash-card .value { font-size: 2em; font-weight: 800; color: #fff; margin-bottom: 4px; }
+        .dash-card .sub { font-size: 0.78em; color: #7a7a8a; }
+
+        .section-wide { grid-column: 1 / -1; background: rgba(20,18,40,0.6); border-radius: 12px; padding: 22px; border: 1px solid rgba(139,92,246,0.15); }
+        .section-wide h2 { font-size: 1.1em; font-weight: 700; color: #fff; margin-bottom: 16px; }
+
+        /* ── TABLES ── */
+        table { width: 100%; border-collapse: collapse; font-size: 0.84em; }
+        th { background: rgba(40,30,70,0.5); color: #c0c0d0; padding: 9px 10px; text-align: left; font-weight: 600; border-bottom: 2px solid rgba(139,92,246,0.2); white-space: nowrap; }
+        td { padding: 9px 10px; border-bottom: 1px solid rgba(139,92,246,0.1); color: #a0a0b0; }
+        tr:hover td { background: rgba(255,255,255,0.04); }
+
+        /* ── ALOCACAO ITEMS ── */
+        .alloc-item {
+            background: rgba(40,35,70,0.3); border: 1px solid rgba(139,92,246,0.15);
+            border-radius: 8px; padding: 14px; margin-bottom: 10px;
+        }
+        .alloc-item.over-alloc { border-color: rgba(239,68,68,0.4); background: rgba(60,20,20,0.3); }
+        .alloc-item h4 { color: #e5e5e5; margin-bottom: 8px; font-size: 0.95em; }
+        .alloc-meta {
+            display: grid; grid-template-columns: repeat(auto-fit,minmax(110px,1fr));
+            gap: 6px; font-size: 0.82em; color: #a0a0b0; margin-bottom: 10px;
+        }
+        .alloc-meta strong { color: #e0e0e0; }
+        .alloc-actions { display: flex; gap: 6px; flex-wrap: wrap; }
+
+        /* ── PROJECT CARDS ── */
+        .proj-card {
+            background: rgba(30,25,55,0.5); border: 1px solid rgba(139,92,246,0.2);
+            border-radius: 10px; padding: 18px; margin-bottom: 14px;
+        }
+        .proj-card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; flex-wrap: wrap; gap: 8px; }
+        .proj-card-header h3 { font-size: 1.05em; font-weight: 700; color: #fff; margin-bottom: 2px; }
+        .proj-card-header .cliente-label { font-size: 0.8em; color: #a78bfa; font-weight: 600; }
+        .proj-meta { display: grid; grid-template-columns: repeat(auto-fit,minmax(120px,1fr)); gap: 8px; font-size: 0.82em; margin-bottom: 12px; }
+        .proj-meta-item { background: rgba(15,12,35,0.5); border-radius: 6px; padding: 8px 10px; }
+        .proj-meta-item .label { color: #7a7a8a; font-size: 0.85em; margin-bottom: 2px; }
+        .proj-meta-item .val { color: #e0e0e0; font-weight: 600; }
+        .proj-team { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+        .proj-team-chip {
+            background: rgba(139,92,246,0.15); border: 1px solid rgba(139,92,246,0.25);
+            border-radius: 20px; padding: 3px 10px; font-size: 0.78em; color: #c4b5fd;
+        }
+        .proj-team-chip.over { background: rgba(239,68,68,0.2); border-color: rgba(239,68,68,0.4); color: #fca5a5; }
+        .proj-actions { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 12px; }
+
+        /* prazo bar */
+        .prazo-bar { height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; margin-top: 8px; overflow: hidden; }
+        .prazo-fill { height: 100%; border-radius: 2px; transition: width 0.5s; }
+
+        /* ── AVAILABILITY ── */
+        .avail-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(200px,1fr)); gap: 12px; }
+        .avail-card {
+            background: rgba(30,25,55,0.5); border: 1px solid rgba(139,92,246,0.2);
+            border-radius: 10px; padding: 14px;
+        }
+        .avail-card .name { font-size: 0.92em; font-weight: 700; color: #fff; margin-bottom: 4px; }
+        .avail-card .role { font-size: 0.78em; color: #7a7a8a; margin-bottom: 10px; }
+        .avail-pct-bar { height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; margin-bottom: 6px; overflow: hidden; }
+        .avail-pct-fill { height: 100%; border-radius: 3px; }
+        .avail-detail { font-size: 0.78em; color: #a0a0b0; }
+
+        /* ── MODAL ── */
+        .modal {
+            display: none; position: fixed; z-index: 999;
+            left: 0; top: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.75); backdrop-filter: blur(4px);
+        }
+        .modal.active { display: flex; align-items: center; justify-content: center; padding: 20px; }
+        .modal-box {
+            background: rgba(15,12,38,0.98); padding: 26px; border-radius: 14px;
+            border: 1px solid rgba(139,92,246,0.25); width: 100%; max-width: 520px;
+            max-height: 90vh; overflow-y: auto;
+        }
+        .modal-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .modal-head h2 { color: #fff; font-size: 1.2em; margin: 0; }
+        .close-btn { background: none; border: none; color: #a0a0b0; font-size: 1.4em; cursor: pointer; line-height: 1; padding: 0; }
+        .close-btn:hover { color: #fff; transform: none; box-shadow: none; }
+        .modal-form { display: grid; gap: 12px; }
+        .modal-actions { display: flex; gap: 8px; margin-top: 18px; }
+        .modal-actions button { flex: 1; }
+
+        /* ── HISTORICO ── */
+        .hist-item {
+            padding: 10px 14px; background: rgba(139,92,246,0.08);
+            border-left: 3px solid #8b5cf6; margin-bottom: 8px;
+            border-radius: 0 6px 6px 0; font-size: 0.85em;
+        }
+
+        /* ── AUTH ── */
+        .auth-bar {
+            display: flex; gap: 10px; align-items: center;
+            padding: 10px 14px; background: rgba(30,25,50,0.4);
+            border-radius: 8px; margin-bottom: 18px; flex-wrap: wrap;
+            border: 1px solid rgba(139,92,246,0.1);
+        }
+        .btn-google { background: #fff; color: #333; font-weight: 600; }
+        .btn-google:hover { background: #f0f0f0; transform: translateY(-1px); }
+        .btn-sync { background: linear-gradient(135deg,#10b981,#059669); }
+        .btn-sync:hover { opacity: 0.9; }
+        .btn-sync:disabled { opacity: 0.4; cursor: not-allowed; }
+        .status-msg { padding: 6px 12px; background: rgba(16,185,129,0.15); color: #34d399; border-radius: 6px; font-size: 0.85em; }
+
+        /* relatorios */
+        .rel-section { background: rgba(20,18,40,0.6); border: 1px solid rgba(139,92,246,0.2); border-radius: 10px; padding: 18px; margin-bottom: 18px; }
+        .rel-section h3 { color: #a5f3fc; margin-bottom: 14px; font-size: 1em; }
+
+        /* ── RESPONSIVE ── */
+        @media (max-width: 600px) {
+            .header h1 { font-size: 1.6em; }
+            .tab-btn { padding: 7px 12px; font-size: 0.82em; }
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+</head>
+<body>
+<div class="container">
+
+    <div class="header">
+        <h1>Alocação de Projetos</h1>
+        <p>Gestão de projetos, colaboradores e alocações · Môre Design</p>
+    </div>
+
+    <!-- Auth bar -->
+    <div class="auth-bar">
+        <button id="googleSignInButton" class="btn-google" onclick="handleGoogleSignIn()">🔐 Conectar Google</button>
+        <button id="syncButton" class="btn-sync" onclick="sincronizar()" disabled>☁️ Sincronizar</button>
+        <span id="status-msg" class="status-msg" style="display:none"></span>
+        <span id="user-info" style="color:#a5f3fc;font-size:0.85em;margin-left:auto"></span>
+    </div>
+
+    <!-- Alertas -->
+    <div id="alerts-bar"></div>
+
+    <!-- Tabs -->
+    <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('dashboard',this)">📊 Dashboard</button>
+        <button class="tab-btn" onclick="switchTab('projetos',this)">💼 Projetos</button>
+        <button class="tab-btn" onclick="switchTab('colaboradores',this)">👥 Colaboradores</button>
+        <button class="tab-btn" onclick="switchTab('alocacoes',this)">📅 Alocações</button>
+        <button class="tab-btn" onclick="switchTab('disponibilidade',this)">🔓 Disponibilidade</button>
+        <button class="tab-btn" onclick="switchTab('historico',this)">📜 Histórico</button>
+        <button class="tab-btn" onclick="switchTab('relatorios',this)">📈 Relatórios</button>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════ DASHBOARD -->
+    <div id="dashboard" class="tab-content active">
+        <div id="dashboard-alerts" style="margin-bottom:16px"></div>
+        <div class="card-grid" id="dash-cards"></div>
+        <div style="display:grid;gap:16px;margin-top:16px" id="dash-tables"></div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════ PROJETOS -->
+    <div id="projetos" class="tab-content">
+        <div class="section">
+            <h2>+ Novo Projeto</h2>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Cliente *</label>
+                    <input type="text" id="pCliente" placeholder="ex: B3">
+                </div>
+                <div class="form-group">
+                    <label>Nome do Projeto *</label>
+                    <input type="text" id="pNome" placeholder="ex: Design System">
+                </div>
+                <div class="form-group">
+                    <label>Tipo</label>
+                    <select id="pTipo">
+                        <option value="fixo">Escopo Fixo</option>
+                        <option value="tm">T&M</option>
+                        <option value="retainer">Retainer</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Status</label>
+                    <select id="pStatus">
+                        <option value="em-andamento">Em andamento</option>
+                        <option value="em-proposta">Em proposta</option>
+                        <option value="pausado">Pausado</option>
+                        <option value="encerrado">Encerrado</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Início Contratado</label>
+                    <input type="date" id="pInicio">
+                </div>
+                <div class="form-group">
+                    <label>Fim Contratado</label>
+                    <input type="date" id="pFim">
+                </div>
+                <div class="form-group">
+                    <label>Valor (R$)</label>
+                    <input type="number" id="pValor" placeholder="0" min="0" step="1000">
+                </div>
+                <div class="form-group">
+                    <label>Observações</label>
+                    <input type="text" id="pObs" placeholder="Notas sobre o projeto">
+                </div>
+            </div>
+            <button onclick="salvarProjeto()">+ Adicionar Projeto</button>
+        </div>
+
+        <div class="section">
+            <h2>Projetos Cadastrados</h2>
+            <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap">
+                <button class="btn-ghost btn-sm" onclick="filtrarProjetos('todos')" id="fpTodos">Todos</button>
+                <button class="btn-ghost btn-sm" onclick="filtrarProjetos('em-andamento')" id="fpAtivos">Em andamento</button>
+                <button class="btn-ghost btn-sm" onclick="filtrarProjetos('em-proposta')" id="fpProposta">Em proposta</button>
+                <button class="btn-ghost btn-sm" onclick="filtrarProjetos('encerrado')" id="fpEncerrados">Encerrados</button>
+            </div>
+            <div id="projetos-list"></div>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════ COLABORADORES -->
+    <div id="colaboradores" class="tab-content">
+        <div class="section">
+            <h2>+ Adicionar Colaborador</h2>
+            <div class="form-grid">
+                <div class="form-group"><label>Nome *</label><input type="text" id="cNome" placeholder="Nome completo"></div>
+                <div class="form-group"><label>Email</label><input type="email" id="cEmail" placeholder="email@more.design"></div>
+                <div class="form-group"><label>Cargo *</label><input type="text" id="cCargo" placeholder="ex: Product Designer"></div>
+                <div class="form-group"><label>Tipo</label>
+                    <select id="cTipo">
+                        <option value="interno">Interno</option>
+                        <option value="freelancer">Freelancer</option>
+                        <option value="parceiro">Parceiro</option>
+                    </select>
+                </div>
+            </div>
+            <button onclick="addColaborador()">+ Adicionar</button>
+        </div>
+        <div class="section">
+            <h2>Colaboradores</h2>
+            <table>
+                <thead><tr><th>Nome</th><th>Email</th><th>Cargo</th><th>Tipo</th><th>Alocações</th><th>% Total</th><th>Ação</th></tr></thead>
+                <tbody id="colaboradores-list"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════ ALOCAÇÕES -->
+    <div id="alocacoes" class="tab-content">
+        <div class="section">
+            <h2>+ Nova Alocação</h2>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Colaborador *</label>
+                    <select id="aColaborador"><option value="">Selecione</option></select>
+                </div>
+                <div class="form-group">
+                    <label>Projeto *</label>
+                    <select id="aProjeto" onchange="autoFillClienteFromProjeto()"><option value="">Selecione o projeto</option></select>
+                </div>
+                <div class="form-group">
+                    <label>Cliente</label>
+                    <input type="text" id="aCliente" placeholder="Preenchido automaticamente" readonly style="opacity:0.6">
+                </div>
+                <div class="form-group">
+                    <label>Início *</label>
+                    <input type="date" id="aInicio">
+                </div>
+                <div class="form-group">
+                    <label>Fim Contratado</label>
+                    <input type="date" id="aFim">
+                </div>
+                <div class="form-group">
+                    <label>Nova Data (extensão)</label>
+                    <input type="date" id="aNovaData">
+                </div>
+                <div class="form-group">
+                    <label>% Alocação</label>
+                    <input type="number" id="aPercentual" value="100" min="1" max="100">
+                </div>
+                <div class="form-group">
+                    <label>Status</label>
+                    <select id="aStatus">
+                        <option value="alocado">Alocado</option>
+                        <option value="desalocada">Desalocada</option>
+                        <option value="pausou">Pausou</option>
+                        <option value="concluido">Concluído</option>
+                    </select>
+                </div>
+            </div>
+            <div id="over-alloc-warning" style="display:none;padding:10px 14px;background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.3);border-radius:8px;color:#fca5a5;font-size:0.85em;margin-bottom:12px"></div>
+            <button onclick="adicionarAlocacao()">✓ Adicionar Alocação</button>
+        </div>
+
+        <div class="section">
+            <h2>Visualizar Alocações</h2>
+            <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap">
+                <button id="btnCliente" class="tab-btn active" onclick="renderAlocacoes('cliente')">📌 Por Cliente</button>
+                <button id="btnProjeto" class="tab-btn" onclick="renderAlocacoes('projeto')">🎯 Por Projeto</button>
+                <button id="btnColaborador" class="tab-btn" onclick="renderAlocacoes('colaborador')">👤 Por Colaborador</button>
+            </div>
+            <div id="alocacoes-list"></div>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════ DISPONIBILIDADE -->
+    <div id="disponibilidade" class="tab-content">
+        <div class="section">
+            <h2>🔓 Disponibilidade da Equipe <span class="section-sub">Baseado em alocações ativas</span></h2>
+            <div id="avail-grid" class="avail-grid"></div>
+        </div>
+        <div class="section">
+            <h2>📆 Liberações Próximas <span class="section-sub">Projetos encerrando nos próximos 30 dias</span></h2>
+            <div id="liberacoes-list"></div>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════ HISTORICO -->
+    <div id="historico" class="tab-content">
+        <!-- Sub-tabs -->
+        <div style="display:flex;gap:6px;margin-bottom:20px;background:rgba(30,25,50,0.3);padding:6px;border-radius:10px;border:1px solid rgba(139,92,246,0.12);width:fit-content">
+            <button id="hTabAlteracoes" class="tab-btn active" onclick="switchHistTab('alteracoes')">📜 Alterações</button>
+            <button id="hTabArquivo"    class="tab-btn"        onclick="switchHistTab('arquivo')">🗂️ Arquivo de Alocações</button>
+        </div>
+
+        <!-- Alterações -->
+        <div id="hPanelAlteracoes" class="section">
+            <h2>📜 Histórico de Alterações</h2>
+            <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap">
+                <button class="btn-success btn-sm" onclick="exportarHistoricoCSV()">📥 Exportar CSV</button>
+                <button class="btn-danger btn-sm" onclick="limparHistorico()">🗑️ Limpar</button>
+            </div>
+            <div id="historico-list" style="max-height:600px;overflow-y:auto"></div>
+        </div>
+
+        <!-- Arquivo -->
+        <div id="hPanelArquivo" class="section" style="display:none">
+            <h2>🗂️ Arquivo de Alocações Encerradas</h2>
+            <p style="font-size:0.85em;color:#7a7a8a;margin-bottom:16px">Alocações com status <strong>concluído</strong> ou <strong>desalocada</strong>, ou cujo fim efetivo já passou.</p>
+            <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap">
+                <button class="btn-success btn-sm" onclick="exportarArquivoCSV()">📥 Exportar Arquivo CSV</button>
+            </div>
+            <div id="arquivo-list"></div>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════ RELATÓRIOS -->
+    <div id="relatorios" class="tab-content">
+        <div class="section">
+            <h2>📈 Relatórios</h2>
+            <div style="display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap">
+                <button class="btn-success btn-sm" onclick="gerarRelatorio('cliente')">📋 Por Cliente</button>
+                <button class="btn-success btn-sm" onclick="gerarRelatorio('projeto')">🎯 Por Projeto</button>
+                <button class="btn-success btn-sm" onclick="gerarRelatorio('pessoa')">👤 Por Pessoa</button>
+                <button class="btn-success btn-sm" onclick="gerarRelatorio('tempo')">⏱️ Tempo</button>
+                <button class="btn-sm" onclick="exportarPDF()">📄 Exportar PDF</button>
+            </div>
+            <div id="relatorios-container" style="max-height:700px;overflow-y:auto"></div>
+        </div>
+    </div>
+
+</div><!-- /container -->
+
+<!-- ═══ MODAL EDITAR ALOCAÇÃO ═══ -->
+<div id="editModal" class="modal">
+    <div class="modal-box">
+        <div class="modal-head">
+            <h2>Editar Alocação</h2>
+            <button class="close-btn" onclick="closeModal('editModal')">&times;</button>
+        </div>
+        <div class="modal-form">
+            <div class="form-group"><label>Colaborador</label><select id="eColaborador"></select></div>
+            <div class="form-group"><label>Projeto</label><select id="eProjeto" onchange="autoFillClienteEdit()"></select></div>
+            <div class="form-group"><label>Cliente</label><input type="text" id="eCliente" readonly style="opacity:0.6"></div>
+            <div class="form-group"><label>Início</label><input type="date" id="eInicio" onchange="calcSemanas()"></div>
+            <div class="form-group"><label>Fim Contratado</label><input type="date" id="eFim" onchange="calcSemanas()"></div>
+            <div class="form-group"><label>Nova Data</label><input type="date" id="eNovaData" onchange="calcSemanas()"></div>
+            <div class="form-group"><label>Duração (semanas)</label><input type="number" id="eSemanas" readonly style="opacity:0.6"></div>
+            <div class="form-group"><label>% Alocação</label><input type="number" id="ePercentual" min="1" max="100"></div>
+            <div class="form-group"><label>Status</label>
+                <select id="eStatus">
+                    <option value="alocado">Alocado</option>
+                    <option value="desalocada">Desalocada</option>
+                    <option value="pausou">Pausou</option>
+                    <option value="concluido">Concluído</option>
+                </select>
+            </div>
+        </div>
+        <div class="modal-actions">
+            <button onclick="saveEdit()">✓ Salvar</button>
+            <button class="btn-danger" onclick="closeModal('editModal')">Cancelar</button>
+        </div>
+    </div>
+</div>
+
+<!-- ═══ MODAL EDITAR PROJETO ═══ -->
+<div id="projetoModal" class="modal">
+    <div class="modal-box">
+        <div class="modal-head">
+            <h2>Editar Projeto</h2>
+            <button class="close-btn" onclick="closeModal('projetoModal')">&times;</button>
+        </div>
+        <div class="modal-form">
+            <div class="form-group"><label>Cliente *</label><input type="text" id="epCliente"></div>
+            <div class="form-group"><label>Nome do Projeto *</label><input type="text" id="epNome"></div>
+            <div class="form-group"><label>Tipo</label>
+                <select id="epTipo">
+                    <option value="fixo">Escopo Fixo</option>
+                    <option value="tm">T&M</option>
+                    <option value="retainer">Retainer</option>
+                </select>
+            </div>
+            <div class="form-group"><label>Status</label>
+                <select id="epStatus">
+                    <option value="em-andamento">Em andamento</option>
+                    <option value="em-proposta">Em proposta</option>
+                    <option value="pausado">Pausado</option>
+                    <option value="encerrado">Encerrado</option>
+                </select>
+            </div>
+            <div class="form-group"><label>Início</label><input type="date" id="epInicio"></div>
+            <div class="form-group"><label>Fim</label><input type="date" id="epFim"></div>
+            <div class="form-group"><label>Valor (R$)</label><input type="number" id="epValor" min="0"></div>
+            <div class="form-group"><label>Observações</label><textarea id="epObs"></textarea></div>
+        </div>
+        <div class="modal-actions">
+            <button onclick="saveProjeto()">✓ Salvar</button>
+            <button class="btn-danger" onclick="closeModal('projetoModal')">Cancelar</button>
+        </div>
+    </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════════════════════
+// DATA
+// ══════════════════════════════════════════════════════════════
+
+let colaboradores = [
+    { id:1,  nome:'Marcela Souza',      email:'marcela.souza@more.design',  cargo:'UX Researcher SR', tipo:'interno' },
+    { id:2,  nome:'IBAP',               email:'',                            cargo:'IBPAD',            tipo:'parceiro' },
+    { id:3,  nome:'Tiago Martins',      email:'tiagomartins@more.design',    cargo:'Design Ops',       tipo:'interno' },
+    { id:4,  nome:'Priscila Nakajima',  email:'pnakajima@more.design',       cargo:'PD Web',           tipo:'interno' },
+    { id:5,  nome:'Cristopher Tomazini',email:'cristopher@more.design',      cargo:'PD Mobile',        tipo:'interno' },
+    { id:6,  nome:'Guilherme Vezula',   email:'guivezula@more.design',       cargo:'Dev01',            tipo:'interno' },
+    { id:7,  nome:'Miguel Young',       email:'miguel@more.design',          cargo:'Head de Design',   tipo:'interno' },
+    { id:8,  nome:'Tamires Rabello',    email:'tamires.rabello@more.design', cargo:'PO',               tipo:'interno' },
+    { id:9,  nome:'Luciano Alpes',      email:'luciano.alpes@more.design',   cargo:'Product Design',   tipo:'interno' },
+    { id:10, nome:'BAMSE',              email:'',                            cargo:'Desenvolvedor',    tipo:'freelancer' },
+];
+
+let projetos = [
+    { id:101, cliente:'VR',        nome:'Personas PJ',   tipo:'fixo',    status:'em-andamento', inicio:'2026-01-26', fim:'2026-05-15', valor:0,     obs:'' },
+    { id:102, cliente:'B3',        nome:'Design System', tipo:'retainer',status:'em-andamento', inicio:'2026-01-05', fim:'2026-05-22', valor:0,     obs:'' },
+    { id:103, cliente:'Galapagos', nome:'App',           tipo:'fixo',    status:'em-andamento', inicio:'2026-03-23', fim:'2026-08-10', valor:0,     obs:'' },
+];
+
+let alocacoes = [
+    { id:1,  projetoId:101, cliente:'VR',        projeto:'Personas PJ',   colaboradorId:1,  dataInicio:'2026-01-26', dataFim:'2026-04-09', novaData:'2026-05-15', percentual:100, status:'alocado', semanas:12 },
+    { id:2,  projetoId:101, cliente:'VR',        projeto:'Personas PJ',   colaboradorId:2,  dataInicio:'2026-01-19', dataFim:'',          novaData:'2026-04-24', percentual:100, status:'alocado', semanas:8  },
+    { id:3,  projetoId:102, cliente:'B3',        projeto:'Design System', colaboradorId:3,  dataInicio:'2026-01-05', dataFim:'2026-04-06', novaData:'2026-05-22', percentual:100, status:'alocado', semanas:12 },
+    { id:4,  projetoId:102, cliente:'B3',        projeto:'Design System', colaboradorId:4,  dataInicio:'2026-01-05', dataFim:'2026-04-06', novaData:'2026-05-22', percentual:100, status:'alocado', semanas:12 },
+    { id:5,  projetoId:102, cliente:'B3',        projeto:'Design System', colaboradorId:5,  dataInicio:'2026-01-19', dataFim:'2026-04-06', novaData:'2026-05-22', percentual:100, status:'alocado', semanas:11 },
+    { id:6,  projetoId:102, cliente:'B3',        projeto:'Design System', colaboradorId:6,  dataInicio:'2026-01-26', dataFim:'2026-04-06', novaData:'2026-05-22', percentual:100, status:'alocado', semanas:10 },
+    { id:7,  projetoId:103, cliente:'Galapagos', projeto:'App',           colaboradorId:7,  dataInicio:'2026-03-23', dataFim:'2026-08-10', novaData:'',          percentual:20,  status:'alocado', semanas:19 },
+    { id:8,  projetoId:103, cliente:'Galapagos', projeto:'App',           colaboradorId:8,  dataInicio:'2026-03-23', dataFim:'2026-08-10', novaData:'',          percentual:5,   status:'alocado', semanas:19 },
+    { id:9,  projetoId:103, cliente:'Galapagos', projeto:'App',           colaboradorId:9,  dataInicio:'2026-03-23', dataFim:'2026-08-10', novaData:'',          percentual:100, status:'alocado', semanas:19 },
+    { id:10, projetoId:103, cliente:'Galapagos', projeto:'App',           colaboradorId:10, dataInicio:'2026-03-23', dataFim:'2026-04-27', novaData:'',          percentual:100, status:'alocado', semanas:5  },
+];
+
+let historico = [];
+let usuarioGoogle = null;
+let editingAllocId = null;
+let editingProjId = null;
+let filtroProjetoAtual = 'todos';
+let viewAlocacao = 'cliente';
+
+// ══════════════════════════════════════════════════════════════
+// UTILS
+// ══════════════════════════════════════════════════════════════
+
+function fmtData(s) {
+    if (!s) return '–';
+    const [y,m,d] = s.split('-');
+    return `${d}/${m}/${y}`;
+}
+
+function fmtValor(v) {
+    if (!v || v === 0) return '–';
+    return 'R$ ' + Number(v).toLocaleString('pt-BR');
+}
+
+function calcSem(inicio, fim) {
+    if (!inicio || !fim) return 0;
+    const ms = new Date(fim) - new Date(inicio);
+    return Math.max(1, Math.ceil(ms / (1000*60*60*24*7)));
+}
+
+function dataEfetiva(a) {
+    return a.novaData || a.dataFim || '';
+}
+
+function getProjetoLabel(projetoId) {
+    const p = projetos.find(p => p.id === projetoId);
+    return p ? `${p.cliente} · ${p.nome}` : '–';
+}
+
+function pctTotal(colaboradorId) {
+    return alocacoes
+        .filter(a => a.colaboradorId === colaboradorId && a.status === 'alocado')
+        .reduce((s, a) => s + a.percentual, 0);
+}
+
+function isOverAlloc(colaboradorId) {
+    return pctTotal(colaboradorId) > 100;
+}
+
+function diasParaFim(dataStr) {
+    if (!dataStr) return Infinity;
+    const hoje = new Date();
+    hoje.setHours(0,0,0,0);
+    const fim = new Date(dataStr);
+    return Math.round((fim - hoje) / (1000*60*60*24));
+}
+
+function prazoProgress(inicio, fim) {
+    if (!inicio || !fim) return 0;
+    const total = new Date(fim) - new Date(inicio);
+    const decorrido = Date.now() - new Date(inicio);
+    return Math.min(100, Math.max(0, Math.round(decorrido / total * 100)));
+}
+
+function prazoColor(pct) {
+    if (pct >= 90) return '#ef4444';
+    if (pct >= 70) return '#f59e0b';
+    return '#10b981';
+}
+
+// ══════════════════════════════════════════════════════════════
+// ALERTAS
+// ══════════════════════════════════════════════════════════════
+
+function renderAlertas() {
+    const alerts = [];
+
+    // Over-allocation
+    colaboradores.forEach(c => {
+        const pct = pctTotal(c.id);
+        if (pct > 100) {
+            alerts.push({ tipo:'error', msg:`⚠️ Over-alocação: <strong>${c.nome}</strong> está com ${pct}% alocado (máx 100%)` });
+        }
+    });
+
+    // Projetos vencendo em 14 dias
+    const hoje = new Date(); hoje.setHours(0,0,0,0);
+    projetos.filter(p => p.status === 'em-andamento').forEach(p => {
+        const dias = diasParaFim(p.fim);
+        if (dias >= 0 && dias <= 14) {
+            alerts.push({ tipo:'warn', msg:`🕐 Projeto <strong>${p.cliente} · ${p.nome}</strong> encerra em ${dias} dia${dias===1?'':'s'} (${fmtData(p.fim)})` });
+        }
+    });
+
+    // Alocações sem projeto vinculado
+    const semProjeto = alocacoes.filter(a => !a.projetoId || !projetos.find(p => p.id === a.projetoId));
+    if (semProjeto.length > 0) {
+        alerts.push({ tipo:'info', msg:`ℹ️ ${semProjeto.length} alocação(ões) sem projeto cadastrado vinculado.` });
+    }
+
+    const bar = document.getElementById('alerts-bar');
+    if (alerts.length === 0) { bar.innerHTML = ''; return; }
+    bar.innerHTML = alerts.map(a => `<div class="alert-item alert-${a.tipo}">${a.msg}</div>`).join('');
+}
+
+// ══════════════════════════════════════════════════════════════
+// AUTH / SYNC
+// ══════════════════════════════════════════════════════════════
+
+function handleGoogleSignIn() {
+    usuarioGoogle = { name:'Usuário Google', email:'user@gmail.com' };
+    document.getElementById('user-info').textContent = `✓ ${usuarioGoogle.name}`;
+    document.getElementById('syncButton').disabled = false;
+    document.getElementById('googleSignInButton').textContent = '✓ Conectado';
+    document.getElementById('googleSignInButton').disabled = true;
+    registrarAlteracao('LOGIN', `Login: ${usuarioGoogle.name}`);
+}
+
+function sincronizar() {
+    const el = document.getElementById('status-msg');
+    el.style.display = 'block'; el.textContent = '⏳ Sincronizando...';
+    setTimeout(() => {
+        salvarLocal();
+        registrarAlteracao('SYNC','Dados sincronizados');
+        el.textContent = '✅ Sincronizado!';
+        setTimeout(() => el.style.display = 'none', 3000);
+    }, 1200);
+}
+
+function salvarLocal() {
+    localStorage.setItem('more-dados', JSON.stringify({ colaboradores, projetos, alocacoes, ts: Date.now() }));
+    localStorage.setItem('more-historico', JSON.stringify(historico));
+}
+
+function carregarLocal() {
+    const d = localStorage.getItem('more-dados');
+    if (d) {
+        const obj = JSON.parse(d);
+        if (obj.colaboradores) colaboradores = obj.colaboradores;
+        if (obj.projetos)      projetos      = obj.projetos;
+        if (obj.alocacoes)     alocacoes     = obj.alocacoes;
+    }
+    const h = localStorage.getItem('more-historico');
+    if (h) historico = JSON.parse(h);
+}
+
+// ══════════════════════════════════════════════════════════════
+// HISTORICO
+// ══════════════════════════════════════════════════════════════
+
+function registrarAlteracao(tipo, desc) {
+    historico.push({
+        timestamp: new Date().toLocaleString('pt-BR'),
+        tipo, desc,
+        usuario: usuarioGoogle ? usuarioGoogle.name : 'Local'
+    });
+    salvarLocal();
+}
+
+function renderHistorico() {
+    const el = document.getElementById('historico-list');
+    if (!el) return;
+    if (historico.length === 0) {
+        el.innerHTML = '<p style="color:#7a7a8a;text-align:center;padding:20px">Nenhum registro</p>';
+        return;
+    }
+    el.innerHTML = [...historico].reverse().map(h => `
+        <div class="hist-item">
+            <div><strong>${h.tipo}</strong> · ${h.timestamp} · <span style="color:#7a7a8a">${h.usuario}</span></div>
+            <div style="margin-top:4px;color:#c0c0d0">${h.desc}</div>
+        </div>
+    `).join('');
+}
+
+function exportarHistoricoCSV() {
+    let csv = 'Timestamp,Tipo,Descrição,Usuário\n';
+    historico.forEach(h => { csv += `"${h.timestamp}","${h.tipo}","${h.desc}","${h.usuario}"\n`; });
+    const a = document.createElement('a');
+    a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
+    a.download = 'historico-more.csv'; a.click();
+}
+
+function limparHistorico() {
+    if (confirm('Limpar todo o histórico?')) { historico = []; salvarLocal(); renderHistorico(); }
+}
+
+function switchHistTab(tab) {
+    const isAlteracoes = tab === 'alteracoes';
+    document.getElementById('hTabAlteracoes').classList.toggle('active',  isAlteracoes);
+    document.getElementById('hTabArquivo').classList.toggle('active',    !isAlteracoes);
+    document.getElementById('hPanelAlteracoes').style.display = isAlteracoes ? '' : 'none';
+    document.getElementById('hPanelArquivo').style.display    = isAlteracoes ? 'none' : '';
+    if (!isAlteracoes) renderArquivo();
+}
+
+function alocacoesArquivadas() {
+    const hoje = new Date(); hoje.setHours(0,0,0,0);
+    return alocacoes.filter(a => {
+        if (a.status === 'concluido' || a.status === 'desalocada') return true;
+        const fimEf = a.novaData || a.dataFim;
+        if (fimEf) { const d = new Date(fimEf); d.setHours(0,0,0,0); if (d < hoje) return true; }
+        return false;
+    });
+}
+
+function renderArquivo() {
+    const el = document.getElementById('arquivo-list');
+    if (!el) return;
+    const lista = [...alocacoesArquivadas()].sort((a,b) =>
+        (b.novaData||b.dataFim||'').localeCompare(a.novaData||a.dataFim||''));
+
+    if (lista.length === 0) {
+        el.innerHTML = '<p style="color:#7a7a8a;text-align:center;padding:24px">Nenhuma alocação arquivada</p>';
+        return;
+    }
+
+    // Group by person
+    const byColab = {};
+    lista.forEach(a => {
+        const cid = a.colaboradorId;
+        if (!byColab[cid]) byColab[cid] = [];
+        byColab[cid].push(a);
+    });
+
+    let html = '';
+    Object.entries(byColab).forEach(([cid, alocs]) => {
+        const c = colaboradores.find(x => x.id === parseInt(cid));
+        html += `<div style="margin-bottom:20px">
+            <h4 style="color:#a5b4fc;margin-bottom:10px;font-size:0.92em">👤 ${c ? c.nome : '?'} <span style="color:#6a6a7a;font-weight:400">· ${c ? c.cargo : ''}</span></h4>
+            <table style="font-size:0.82em">
+                <thead><tr>
+                    <th>Projeto</th><th>Cliente</th>
+                    <th>Início</th><th>Fim contratado</th><th>Nova data</th><th>Fim efetivo</th>
+                    <th>Semanas</th><th>Sem. ext.</th><th>Horas</th><th>%</th><th>Status</th>
+                </tr></thead>
+                <tbody>
+                ${alocs.map(a => {
+                    const semExt   = semanasExtendidas(a);
+                    const fimEf    = a.novaData || a.dataFim;
+                    const hrs      = Math.round((a.semanas||0)*40*(a.percentual/100));
+                    return `<tr>
+                        <td style="color:#e0e0e0">${a.projeto}</td>
+                        <td>${a.cliente}</td>
+                        <td>${fmtData(a.dataInicio)}</td>
+                        <td>${fmtData(a.dataFim)}</td>
+                        <td>${fmtData(a.novaData)}</td>
+                        <td style="color:${a.novaData?'#f59e0b':'#a0a0b0'}">${fmtData(fimEf)}</td>
+                        <td>${a.semanas||0}</td>
+                        <td>${semExt>0?`<span style="color:#f59e0b;font-weight:600">+${semExt}</span>`:'–'}</td>
+                        <td>${hrs}h</td>
+                        <td>${a.percentual}%</td>
+                        <td><span class="badge badge-${a.status}">${a.status}</span></td>
+                    </tr>`;
+                }).join('')}
+                </tbody>
+            </table>
+        </div>`;
+    });
+    el.innerHTML = html;
+}
+
+function exportarArquivoCSV() {
+    const lista = alocacoesArquivadas();
+    let csv = 'Colaborador,Cargo,Projeto,Cliente,Início,Fim Contratado,Nova Data,Fim Efetivo,Semanas,Sem Extendidas,Horas,Percentual,Status\n';
+    lista.forEach(a => {
+        const c      = colaboradores.find(x => x.id === a.colaboradorId);
+        const semExt = semanasExtendidas(a);
+        const fimEf  = a.novaData || a.dataFim;
+        const hrs    = Math.round((a.semanas||0)*40*(a.percentual/100));
+        csv += `"${c?c.nome:'?'}","${c?c.cargo:''}","${a.projeto}","${a.cliente}","${fmtData(a.dataInicio)}","${fmtData(a.dataFim)}","${fmtData(a.novaData)}","${fmtData(fimEf)}",${a.semanas||0},${semExt},${hrs},${a.percentual}%,"${a.status}"\n`;
+    });
+    const link = document.createElement('a');
+    link.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
+    link.download = 'arquivo-alocacoes-more.csv';
+    link.click();
+    registrarAlteracao('EXPORT','Arquivo de alocações exportado CSV');
+}
+
+// ══════════════════════════════════════════════════════════════
+// PROJETOS
+// ══════════════════════════════════════════════════════════════
+
+function salvarProjeto() {
+    const cliente = document.getElementById('pCliente').value.trim();
+    const nome    = document.getElementById('pNome').value.trim();
+    if (!cliente || !nome) { alert('Preencha Cliente e Nome do Projeto'); return; }
+
+    const p = {
+        id:      Date.now(),
+        cliente, nome,
+        tipo:    document.getElementById('pTipo').value,
+        status:  document.getElementById('pStatus').value,
+        inicio:  document.getElementById('pInicio').value,
+        fim:     document.getElementById('pFim').value,
+        valor:   parseFloat(document.getElementById('pValor').value) || 0,
+        obs:     document.getElementById('pObs').value.trim(),
+    };
+    projetos.push(p);
+    registrarAlteracao('PROJETO_NOVO', `Projeto criado: ${cliente} · ${nome}`);
+    ['pCliente','pNome','pInicio','pFim','pValor','pObs'].forEach(id => document.getElementById(id).value = '');
+    renderProjetos();
+    preencherSelects();
+    renderAlertas();
+}
+
+function openEditProjeto(id) {
+    editingProjId = id;
+    const p = projetos.find(x => x.id === id);
+    document.getElementById('epCliente').value = p.cliente;
+    document.getElementById('epNome').value    = p.nome;
+    document.getElementById('epTipo').value    = p.tipo;
+    document.getElementById('epStatus').value  = p.status;
+    document.getElementById('epInicio').value  = p.inicio || '';
+    document.getElementById('epFim').value     = p.fim || '';
+    document.getElementById('epValor').value   = p.valor || '';
+    document.getElementById('epObs').value     = p.obs || '';
+    openModal('projetoModal');
+}
+
+function saveProjeto() {
+    const p = projetos.find(x => x.id === editingProjId);
+    if (!p) return;
+    p.cliente = document.getElementById('epCliente').value.trim();
+    p.nome    = document.getElementById('epNome').value.trim();
+    p.tipo    = document.getElementById('epTipo').value;
+    p.status  = document.getElementById('epStatus').value;
+    p.inicio  = document.getElementById('epInicio').value;
+    p.fim     = document.getElementById('epFim').value;
+    p.valor   = parseFloat(document.getElementById('epValor').value) || 0;
+    p.obs     = document.getElementById('epObs').value.trim();
+    // sync alocacoes cliente/projeto name
+    alocacoes.filter(a => a.projetoId === p.id).forEach(a => { a.cliente = p.cliente; a.projeto = p.nome; });
+    registrarAlteracao('PROJETO_EDIT', `Projeto atualizado: ${p.cliente} · ${p.nome}`);
+    closeModal('projetoModal');
+    renderProjetos(); preencherSelects(); renderAlertas();
+}
+
+function deleteProjeto(id) {
+    const p = projetos.find(x => x.id === id);
+    const temAlocs = alocacoes.some(a => a.projetoId === id);
+    if (temAlocs && !confirm(`O projeto "${p.nome}" tem alocações vinculadas. Remover mesmo assim?`)) return;
+    if (!temAlocs && !confirm(`Remover projeto "${p.nome}"?`)) return;
+    projetos = projetos.filter(x => x.id !== id);
+    registrarAlteracao('PROJETO_DEL', `Projeto removido: ${p.cliente} · ${p.nome}`);
+    renderProjetos(); preencherSelects(); renderAlertas();
+}
+
+function filtrarProjetos(f) {
+    filtroProjetoAtual = f;
+    renderProjetos();
+}
+
+function renderProjetos() {
+    const lista = filtroProjetoAtual === 'todos'
+        ? projetos
+        : projetos.filter(p => p.status === filtroProjetoAtual);
+
+    const el = document.getElementById('projetos-list');
+    if (!el) return;
+
+    if (lista.length === 0) {
+        el.innerHTML = '<p style="color:#7a7a8a;text-align:center;padding:24px">Nenhum projeto encontrado</p>';
+        return;
+    }
+
+    el.innerHTML = lista.map(p => {
+        const alocs = alocacoes.filter(a => a.projetoId === p.id);
+        const pct   = prazoProgress(p.inicio, p.fim);
+        const cor   = prazoColor(pct);
+        const dias  = diasParaFim(p.fim);
+        const diasLabel = dias === Infinity ? '' : dias < 0 ? `${Math.abs(dias)}d atrasado` : `${dias}d restantes`;
+        const tipoLabel = { fixo:'Fixo', tm:'T&M', retainer:'Retainer' }[p.tipo] || p.tipo;
+
+        const chips = alocs.map(a => {
+            const c = colaboradores.find(x => x.id === a.colaboradorId);
+            const over = isOverAlloc(a.colaboradorId);
+            return `<span class="proj-team-chip${over?' over':''}">${c ? c.nome : '?'} · ${a.percentual}%</span>`;
+        }).join('');
+
+        return `
+        <div class="proj-card">
+            <div class="proj-card-header">
+                <div>
+                    <div class="cliente-label">${p.cliente}</div>
+                    <h3>${p.nome}</h3>
+                </div>
+                <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
+                    <span class="badge badge-${p.status}">${p.status.replace('-',' ')}</span>
+                    <span class="badge" style="background:rgba(139,92,246,0.15);color:#c4b5fd">${tipoLabel}</span>
+                </div>
+            </div>
+            <div class="proj-meta">
+                <div class="proj-meta-item"><div class="label">Início</div><div class="val">${fmtData(p.inicio)}</div></div>
+                <div class="proj-meta-item"><div class="label">Fim contratado</div><div class="val">${fmtData(p.fim)}</div></div>
+                <div class="proj-meta-item"><div class="label">Valor</div><div class="val">${fmtValor(p.valor)}</div></div>
+                <div class="proj-meta-item"><div class="label">Equipe</div><div class="val">${alocs.length} pessoa${alocs.length!==1?'s':''}</div></div>
+            </div>
+            ${p.inicio && p.fim ? `
+            <div>
+                <div style="display:flex;justify-content:space-between;font-size:0.78em;color:#7a7a8a;margin-bottom:4px">
+                    <span>Progresso de prazo</span><span style="color:${cor}">${pct}% · ${diasLabel}</span>
+                </div>
+                <div class="prazo-bar"><div class="prazo-fill" style="width:${pct}%;background:${cor}"></div></div>
+            </div>` : ''}
+            ${chips ? `<div class="proj-team" style="margin-top:12px">${chips}</div>` : ''}
+            ${p.obs ? `<div style="font-size:0.82em;color:#7a7a8a;margin-top:8px;padding-top:8px;border-top:1px solid rgba(255,255,255,0.06)">${p.obs}</div>` : ''}
+            <div class="proj-actions">
+                <button class="btn-edit btn-sm" onclick="openEditProjeto(${p.id})">✏️ Editar</button>
+                <button class="btn-danger btn-sm" onclick="deleteProjeto(${p.id})">🗑️ Remover</button>
+            </div>
+        </div>`;
+    }).join('');
+}
+
+// ══════════════════════════════════════════════════════════════
+// COLABORADORES
+// ══════════════════════════════════════════════════════════════
+
+function addColaborador() {
+    const nome  = document.getElementById('cNome').value.trim();
+    const email = document.getElementById('cEmail').value.trim();
+    const cargo = document.getElementById('cCargo').value.trim();
+    const tipo  = document.getElementById('cTipo').value;
+    if (!nome || !cargo) { alert('Preencha Nome e Cargo'); return; }
+    colaboradores.push({ id: Date.now(), nome, email, cargo, tipo });
+    registrarAlteracao('COLAB_NOVO', `Colaborador: ${nome}`);
+    ['cNome','cEmail','cCargo'].forEach(id => document.getElementById(id).value = '');
+    renderColaboradores(); preencherSelects();
+}
+
+function deleteColaborador(id) {
+    if (!confirm('Remover colaborador?')) return;
+    const c = colaboradores.find(x => x.id === id);
+    colaboradores = colaboradores.filter(x => x.id !== id);
+    alocacoes     = alocacoes.filter(a => a.colaboradorId !== id);
+    registrarAlteracao('COLAB_DEL', `Removido: ${c.nome}`);
+    renderColaboradores(); renderAlocacoes(viewAlocacao); renderAlertas();
+}
+
+function renderColaboradores() {
+    const el = document.getElementById('colaboradores-list');
+    if (!el) return;
+    el.innerHTML = colaboradores.map(c => {
+        const alocs = alocacoes.filter(a => a.colaboradorId === c.id && a.status === 'alocado');
+        const pct   = pctTotal(c.id);
+        const over  = pct > 100;
+        return `<tr${over?' style="background:rgba(239,68,68,0.06)"':''}>
+            <td>${c.nome}</td>
+            <td>${c.email || '–'}</td>
+            <td>${c.cargo}</td>
+            <td><span class="badge" style="background:rgba(99,102,241,0.15);color:#a5b4fc">${c.tipo}</span></td>
+            <td>${alocs.length}</td>
+            <td><span class="badge ${over?'badge-over':''}">${pct}%</span></td>
+            <td><button class="btn-danger btn-sm" onclick="deleteColaborador(${c.id})">🗑️</button></td>
+        </tr>`;
+    }).join('');
+}
+
+// ══════════════════════════════════════════════════════════════
+// SELECTS PREENCHIMENTO
+// ══════════════════════════════════════════════════════════════
+
+function preencherSelects() {
+    const colasOpts = '<option value="">Selecione</option>' + colaboradores.map(c =>
+        `<option value="${c.id}">${c.nome} · ${c.cargo}</option>`).join('');
+    ['aColaborador','eColaborador'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.innerHTML = colasOpts;
+    });
+
+    const projOpts = '<option value="">Selecione o projeto</option>' + projetos.map(p =>
+        `<option value="${p.id}">${p.cliente} · ${p.nome}</option>`).join('');
+    ['aProjeto','eProjeto'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.innerHTML = projOpts;
+    });
+}
+
+function autoFillClienteFromProjeto() {
+    const pid = parseInt(document.getElementById('aProjeto').value);
+    const p   = projetos.find(x => x.id === pid);
+    document.getElementById('aCliente').value = p ? p.cliente : '';
+    verificarOverAlloc();
+}
+
+function autoFillClienteEdit() {
+    const pid = parseInt(document.getElementById('eProjeto').value);
+    const p   = projetos.find(x => x.id === pid);
+    if (p) document.getElementById('eCliente').value = p.cliente;
+}
+
+// ══════════════════════════════════════════════════════════════
+// ALOCAÇÕES
+// ══════════════════════════════════════════════════════════════
+
+function verificarOverAlloc() {
+    const cId  = parseInt(document.getElementById('aColaborador').value);
+    const pct  = parseInt(document.getElementById('aPercentual').value) || 0;
+    const warn = document.getElementById('over-alloc-warning');
+    if (!cId) { warn.style.display = 'none'; return; }
+    const atual = pctTotal(cId);
+    const total = atual + pct;
+    if (total > 100) {
+        warn.style.display = 'block';
+        const c = colaboradores.find(x => x.id === cId);
+        warn.textContent = `⚠️ ${c.nome} ficará com ${total}% de alocação total (atual: ${atual}%). Over-alocação.`;
+    } else {
+        warn.style.display = 'none';
+    }
+}
+
+function adicionarAlocacao() {
+    const cId    = parseInt(document.getElementById('aColaborador').value);
+    const pId    = parseInt(document.getElementById('aProjeto').value);
+    const inicio = document.getElementById('aInicio').value;
+    const fim    = document.getElementById('aFim').value;
+    const nova   = document.getElementById('aNovaData').value;
+    const pct    = parseInt(document.getElementById('aPercentual').value) || 100;
+    const status = document.getElementById('aStatus').value;
+
+    if (!cId || !pId || !inicio) { alert('Preencha Colaborador, Projeto e Data de Início'); return; }
+
+    const proj = projetos.find(p => p.id === pId);
+    const efetiva = nova || fim;
+    const sem = calcSem(inicio, efetiva);
+
+    const nova_aloc = {
+        id:           Date.now(),
+        projetoId:    pId,
+        cliente:      proj ? proj.cliente : '',
+        projeto:      proj ? proj.nome    : '',
+        colaboradorId: cId,
+        dataInicio:   inicio, dataFim: fim, novaData: nova,
+        percentual:   pct, status, semanas: sem
+    };
+    alocacoes.push(nova_aloc);
+    const c = colaboradores.find(x => x.id === cId);
+    registrarAlteracao('ALLOC_NOVO', `Alocação: ${c.nome} → ${proj ? proj.nome : '?'}`);
+    ['aColaborador','aProjeto','aInicio','aFim','aNovaData'].forEach(id => { const el = document.getElementById(id); if(el) el.value=''; });
+    document.getElementById('aPercentual').value = '100';
+    document.getElementById('aCliente').value = '';
+    document.getElementById('over-alloc-warning').style.display = 'none';
+    renderAlocacoes(viewAlocacao);
+    renderDashboard();
+    renderAlertas();
+    renderDisponibilidade();
+    salvarLocal();
+}
+
+function ordenarAlocacoes(list) {
+    return [...list].sort((a,b) => (a.dataInicio||'9999').localeCompare(b.dataInicio||'9999'));
+}
+
+function renderAlocacoes(view) {
+    viewAlocacao = view;
+    ['btnCliente','btnProjeto','btnColaborador'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.classList.remove('active');
+    });
+    const map = { cliente:'btnCliente', projeto:'btnProjeto', colaborador:'btnColaborador' };
+    const btn = document.getElementById(map[view]);
+    if (btn) btn.classList.add('active');
+
+    const el = document.getElementById('alocacoes-list');
+    if (!el) return;
+
+    const sorted = ordenarAlocacoes(alocacoes);
+    let html = '';
+
+    if (view === 'cliente') {
+        const byCliente = {};
+        sorted.forEach(a => { if (!byCliente[a.cliente]) byCliente[a.cliente] = []; byCliente[a.cliente].push(a); });
+        Object.entries(byCliente).forEach(([cli, list]) => {
+            html += `<h3 style="color:#fff;margin:20px 0 12px;font-size:1em">📌 ${cli}</h3>`;
+            list.forEach(a => { html += allocCard(a); });
+        });
+    } else if (view === 'projeto') {
+        const byProj = {};
+        sorted.forEach(a => {
+            const key = `${a.cliente}||${a.projeto}`;
+            if (!byProj[key]) byProj[key] = { cli: a.cliente, proj: a.projeto, list: [] };
+            byProj[key].list.push(a);
+        });
+        Object.values(byProj).forEach(g => {
+            html += `<h3 style="color:#fff;margin:20px 0 8px;font-size:1em">📌 ${g.cli}</h3>`;
+            html += `<h4 style="color:#a5f3fc;margin:0 0 10px 16px;font-size:0.9em">🎯 ${g.proj}</h4>`;
+            g.list.forEach(a => { html += allocCard(a, true); });
+        });
+    } else {
+        const byColab = {};
+        sorted.forEach(a => {
+            if (!byColab[a.colaboradorId]) byColab[a.colaboradorId] = [];
+            byColab[a.colaboradorId].push(a);
+        });
+        Object.entries(byColab).forEach(([cid, list]) => {
+            const c = colaboradores.find(x => x.id === parseInt(cid));
+            const over = isOverAlloc(parseInt(cid));
+            html += `<h3 style="color:${over?'#fca5a5':'#fff'};margin:20px 0 12px;font-size:1em">👤 ${c ? c.nome : '?'}${over ? ' ⚠️' : ''}</h3>`;
+            list.forEach(a => { html += allocCard(a); });
+        });
+    }
+
+    el.innerHTML = html || '<p style="color:#7a7a8a;text-align:center;padding:24px">Nenhuma alocação</p>';
+}
+
+function semanasExtendidas(a) {
+    // Semanas extras entre fim contratado e nova data (extensão pura)
+    if (!a.dataFim || !a.novaData) return 0;
+    return Math.max(0, calcSem(a.dataFim, a.novaData));
+}
+
+function allocCard(a, hideProject) {
+    const c    = colaboradores.find(x => x.id === a.colaboradorId);
+    const over = isOverAlloc(a.colaboradorId);
+    const semExt = semanasExtendidas(a);
+    const semTotal = (a.semanas || 0);
+    const semLabel = semExt > 0
+        ? `<span title="Semanas contratadas + extensão">${semTotal} <span style="color:#f59e0b;font-size:0.85em">(+${semExt} ext)</span></span>`
+        : `${semTotal}`;
+    return `
+    <div class="alloc-item${over?' over-alloc':''}">
+        <h4>${hideProject ? (c ? c.nome : '?') : `${a.projeto}`}${over ? ' <span class="badge badge-over">over</span>' : ''}</h4>
+        <div class="alloc-meta">
+            <div><strong>Pessoa</strong><br>${c ? c.nome : '?'}</div>
+            <div><strong>Cargo</strong><br>${c ? c.cargo : '–'}</div>
+            <div><strong>Início</strong><br>${fmtData(a.dataInicio)}</div>
+            <div><strong>Fim contratado</strong><br>${fmtData(a.dataFim)}</div>
+            <div><strong>Nova data</strong><br>${fmtData(a.novaData)}</div>
+            <div><strong>Semanas totais</strong><br>${semLabel}</div>
+            ${semExt > 0 ? `<div><strong>Sem. extendidas</strong><br><span style="color:#f59e0b;font-weight:600">${semExt} sem</span></div>` : ''}
+            <div><strong>%</strong><br>${a.percentual}%</div>
+            <div><strong>Status</strong><br><span class="badge badge-${a.status}">${a.status}</span></div>
+        </div>
+        <div class="alloc-actions">
+            <button class="btn-edit btn-sm" onclick="openEditAlloc(${a.id})">✏️ Editar</button>
+            <button class="btn-danger btn-sm" onclick="deleteAlocacao(${a.id})">🗑️ Remover</button>
+        </div>
+    </div>`;
+}
+
+function openEditAlloc(id) {
+    editingAllocId = id;
+    const a = alocacoes.find(x => x.id === id);
+    preencherSelects();
+
+    const eColab = document.getElementById('eColaborador');
+    const eProj  = document.getElementById('eProjeto');
+    if (eColab) eColab.value = a.colaboradorId;
+    if (eProj)  eProj.value  = a.projetoId || '';
+    const p = projetos.find(x => x.id === a.projetoId);
+    document.getElementById('eCliente').value    = p ? p.cliente : a.cliente;
+    document.getElementById('eInicio').value     = a.dataInicio || '';
+    document.getElementById('eFim').value        = a.dataFim    || '';
+    document.getElementById('eNovaData').value   = a.novaData   || '';
+    document.getElementById('eSemanas').value    = a.semanas    || '';
+    document.getElementById('ePercentual').value = a.percentual;
+    document.getElementById('eStatus').value     = a.status;
+    openModal('editModal');
+}
+
+function calcSemanas() {
+    const ini  = document.getElementById('eInicio').value;
+    const fim  = document.getElementById('eFim').value;
+    const nova = document.getElementById('eNovaData').value;
+    const eff  = nova || fim;
+    if (ini && eff) document.getElementById('eSemanas').value = calcSem(ini, eff);
+}
+
+function saveEdit() {
+    const a   = alocacoes.find(x => x.id === editingAllocId);
+    const cId = parseInt(document.getElementById('eColaborador').value);
+    const pId = parseInt(document.getElementById('eProjeto').value);
+    if (!cId) { alert('Selecione um colaborador'); return; }
+    const proj = projetos.find(x => x.id === pId);
+    a.colaboradorId = cId;
+    a.projetoId     = pId || null;
+    a.cliente       = proj ? proj.cliente : document.getElementById('eCliente').value;
+    a.projeto       = proj ? proj.nome    : a.projeto;
+    a.dataInicio    = document.getElementById('eInicio').value;
+    a.dataFim       = document.getElementById('eFim').value;
+    a.novaData      = document.getElementById('eNovaData').value;
+    a.percentual    = parseInt(document.getElementById('ePercentual').value) || 100;
+    a.status        = document.getElementById('eStatus').value;
+    const eff       = a.novaData || a.dataFim;
+    a.semanas       = eff ? calcSem(a.dataInicio, eff) : (parseInt(document.getElementById('eSemanas').value)||0);
+    const c = colaboradores.find(x => x.id === cId);
+    registrarAlteracao('ALLOC_EDIT', `Alocação editada: ${c ? c.nome : '?'} → ${a.projeto}`);
+    closeModal('editModal');
+    renderAlocacoes(viewAlocacao);
+    renderDashboard();
+    renderAlertas();
+    renderDisponibilidade();
+    salvarLocal();
+}
+
+function deleteAlocacao(id) {
+    if (!confirm('Remover esta alocação?')) return;
+    const a = alocacoes.find(x => x.id === id);
+    const c = colaboradores.find(x => x.id === a.colaboradorId);
+    alocacoes = alocacoes.filter(x => x.id !== id);
+    registrarAlteracao('ALLOC_DEL', `Alocação removida: ${c ? c.nome : '?'} → ${a.projeto}`);
+    renderAlocacoes(viewAlocacao);
+    renderDashboard();
+    renderAlertas();
+    renderDisponibilidade();
+    salvarLocal();
+}
+
+// ══════════════════════════════════════════════════════════════
+// DISPONIBILIDADE
+// ══════════════════════════════════════════════════════════════
+
+function renderDisponibilidade() {
+    // Grid de disponibilidade
+    const grid = document.getElementById('avail-grid');
+    if (!grid) return;
+
+    grid.innerHTML = colaboradores.map(c => {
+        const alocs  = alocacoes.filter(a => a.colaboradorId === c.id && a.status === 'alocado');
+        const usado  = Math.min(pctTotal(c.id), 100);
+        const livre  = 100 - usado;
+        const over   = pctTotal(c.id) > 100;
+        const barCol = over ? '#ef4444' : livre > 40 ? '#10b981' : livre > 10 ? '#f59e0b' : '#ef4444';
+        const projLabel = alocs.map(a => `${a.projeto} (${a.percentual}%)`).join(', ') || 'Sem alocações';
+
+        return `
+        <div class="avail-card">
+            <div class="name">${c.nome}${over ? ' ⚠️' : ''}</div>
+            <div class="role">${c.cargo}</div>
+            <div class="avail-pct-bar">
+                <div class="avail-pct-fill" style="width:${Math.min(usado,100)}%;background:${barCol}"></div>
+            </div>
+            <div class="avail-detail" style="margin-bottom:6px">
+                <span style="color:${barCol};font-weight:600">${over ? 'OVER' : livre + '% livre'}</span>
+                · ${usado}% ocupado
+            </div>
+            <div class="avail-detail" style="color:#6a6a7a;font-size:0.75em">${projLabel}</div>
+        </div>`;
+    }).join('');
+
+    // Liberações próximas
+    const libEl = document.getElementById('liberacoes-list');
+    if (!libEl) return;
+    const hoje = new Date(); hoje.setHours(0,0,0,0);
+    const proximos = alocacoes
+        .filter(a => a.status === 'alocado')
+        .map(a => {
+            const dataRef = a.novaData || a.dataFim;
+            if (!dataRef) return null;
+            const dias = diasParaFim(dataRef);
+            if (dias < 0 || dias > 30) return null;
+            return { ...a, diasRestantes: dias, dataEfetiva: dataRef };
+        })
+        .filter(Boolean)
+        .sort((a,b) => a.diasRestantes - b.diasRestantes);
+
+    if (proximos.length === 0) {
+        libEl.innerHTML = '<p style="color:#7a7a8a;text-align:center;padding:16px">Nenhuma liberação nos próximos 30 dias</p>';
+        return;
+    }
+    libEl.innerHTML = proximos.map(a => {
+        const c   = colaboradores.find(x => x.id === a.colaboradorId);
+        const cor = a.diasRestantes <= 7 ? '#fca5a5' : '#fcd34d';
+        return `
+        <div class="alloc-item" style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">
+            <div style="flex:1;min-width:160px">
+                <div style="font-weight:700;color:#e0e0e0">${c ? c.nome : '?'}</div>
+                <div style="font-size:0.82em;color:#7a7a8a">${c ? c.cargo : ''}</div>
+            </div>
+            <div style="flex:1;min-width:120px;font-size:0.85em;color:#a0a0b0">
+                ${a.projeto}<br><span style="color:#6a6a7a">${a.cliente}</span>
+            </div>
+            <div style="text-align:right">
+                <div style="font-weight:700;color:${cor}">${a.diasRestantes === 0 ? 'Hoje' : `${a.diasRestantes}d`}</div>
+                <div style="font-size:0.78em;color:#7a7a8a">${fmtData(a.dataEfetiva)}</div>
+            </div>
+        </div>`;
+    }).join('');
+}
+
+// ══════════════════════════════════════════════════════════════
+// DASHBOARD
+// ══════════════════════════════════════════════════════════════
+
+function renderDashboard() {
+    const totalAlocs    = alocacoes.length;
+    const ativas        = alocacoes.filter(a => a.status === 'alocado').length;
+    const totalPessoas  = new Set(alocacoes.map(a => a.colaboradorId)).size;
+    // semanas totais = contratadas + extendidas por alocação
+    const totalSemanas  = alocacoes.reduce((s,a) => s + (a.semanas||0) + semanasExtendidas(a), 0);
+    // horas totais = semanas totais × 40h × % de cada alocação
+    const totalHoras    = alocacoes.reduce((s,a) => s + ((a.semanas||0) + semanasExtendidas(a)) * 40 * (a.percentual/100), 0);
+    const overCount     = colaboradores.filter(c => isOverAlloc(c.id)).length;
+    const projAtivos    = projetos.filter(p => p.status === 'em-andamento').length;
+
+    // Alertas dashboard
+    const dashAlerts = document.getElementById('dashboard-alerts');
+    const overList   = colaboradores.filter(c => isOverAlloc(c.id));
+    if (dashAlerts) {
+        if (overList.length > 0) {
+            dashAlerts.innerHTML = `<div class="alert-item alert-error">⚠️ Over-alocação detectada em: <strong>${overList.map(c=>c.nome).join(', ')}</strong></div>`;
+        } else {
+            dashAlerts.innerHTML = '';
+        }
+    }
+
+    const cards = document.getElementById('dash-cards');
+    if (cards) cards.innerHTML = `
+        <div class="dash-card"><h3>Projetos ativos</h3><div class="value">${projAtivos}</div><div class="sub">de ${projetos.length} cadastrados</div></div>
+        <div class="dash-card"><h3>Alocações ativas</h3><div class="value">${ativas}</div><div class="sub">de ${totalAlocs} total</div></div>
+        <div class="dash-card"><h3>Pessoas alocadas</h3><div class="value">${totalPessoas}</div><div class="sub">de ${colaboradores.length} colaboradores</div></div>
+        <div class="dash-card"><h3>Semanas totais</h3><div class="value">${totalSemanas}</div><div class="sub">contratadas + extensões</div></div>
+        <div class="dash-card"><h3>Horas totais</h3><div class="value">${Math.round(totalHoras)}h</div><div class="sub">sobre semanas totais</div></div>
+        <div class="dash-card" style="${overCount>0?'border-color:rgba(239,68,68,0.4)':''}">
+            <h3>Over-alocados</h3>
+            <div class="value" style="${overCount>0?'color:#fca5a5':''}">${overCount}</div>
+            <div class="sub">${overCount>0?'⚠️ Ação necessária':'Tudo ok'}</div>
+        </div>
+    `;
+
+    // Tabela equipe — semanas e horas totais (contratadas + ext)
+    const horasPorColab = {};
+    colaboradores.forEach(c => {
+        const as  = alocacoes.filter(a => a.colaboradorId === c.id);
+        const sem = as.reduce((s,a) => s + (a.semanas||0) + semanasExtendidas(a), 0);
+        const hrs = as.reduce((s,a) => s + ((a.semanas||0) + semanasExtendidas(a)) * 40 * (a.percentual/100), 0);
+        horasPorColab[c.id] = { nome: c.nome, cargo: c.cargo, alocs: as.length, sem, hrs: Math.round(hrs), pct: pctTotal(c.id) };
+    });
+
+    // Tabela clientes — semanas e horas totais (contratadas + ext)
+    const porCliente = {};
+    alocacoes.forEach(a => {
+        const semTot = (a.semanas||0) + semanasExtendidas(a);
+        if (!porCliente[a.cliente]) porCliente[a.cliente] = { alocs:0, sem:0, hrs:0, pessoas: new Set() };
+        porCliente[a.cliente].alocs++;
+        porCliente[a.cliente].sem  += semTot;
+        porCliente[a.cliente].hrs  += semTot * 40 * (a.percentual/100);
+        porCliente[a.cliente].pessoas.add(a.colaboradorId);
+    });
+
+    const tables = document.getElementById('dash-tables');
+    if (!tables) return;
+
+    let html = `
+    <div class="section-wide">
+        <h2>Equipe por utilização</h2>
+        <table>
+            <thead><tr><th>Colaborador</th><th>Cargo</th><th>Projetos</th><th>Semanas totais</th><th>Horas totais</th><th>% Total</th></tr></thead>
+            <tbody>
+            ${Object.values(horasPorColab).filter(h=>h.alocs>0).sort((a,b)=>b.pct-a.pct).map(h=>`
+                <tr>
+                    <td>${h.nome}</td><td>${h.cargo}</td><td>${h.alocs}</td><td>${h.sem}</td><td>${h.hrs}h</td>
+                    <td><span class="badge ${h.pct>100?'badge-over':''}">${h.pct}%</span></td>
+                </tr>`).join('')}
+            </tbody>
+        </table>
+    </div>
+    <div class="section-wide">
+        <h2>Resumo por cliente</h2>
+        <table>
+            <thead><tr><th>Cliente</th><th>Alocações</th><th>Pessoas</th><th>Semanas totais</th><th>Horas totais</th></tr></thead>
+            <tbody>
+            ${Object.entries(porCliente).sort((a,b)=>b[1].sem-a[1].sem).map(([cli,d])=>`
+                <tr>
+                    <td>${cli}</td><td>${d.alocs}</td><td>${d.pessoas.size}</td><td>${d.sem}</td><td>${Math.round(d.hrs)}h</td>
+                </tr>`).join('')}
+            </tbody>
+        </table>
+    </div>`;
+
+    // Projetos vencendo
+    const vencendo = projetos.filter(p => {
+        const d = diasParaFim(p.fim);
+        return p.status === 'em-andamento' && d >= 0 && d <= 30;
+    });
+    if (vencendo.length > 0) {
+        html += `
+        <div class="section-wide">
+            <h2>⏰ Prazos críticos (próximos 30 dias)</h2>
+            <table>
+                <thead><tr><th>Cliente</th><th>Projeto</th><th>Fim</th><th>Dias restantes</th><th>Equipe</th></tr></thead>
+                <tbody>
+                ${vencendo.sort((a,b)=>diasParaFim(a.fim)-diasParaFim(b.fim)).map(p=>{
+                    const dias = diasParaFim(p.fim);
+                    const eq = alocacoes.filter(a=>a.projetoId===p.id).map(a=>{
+                        const c = colaboradores.find(x=>x.id===a.colaboradorId);
+                        return c ? c.nome : '?';
+                    }).join(', ');
+                    return `<tr>
+                        <td>${p.cliente}</td><td>${p.nome}</td><td>${fmtData(p.fim)}</td>
+                        <td><span class="badge" style="background:rgba(239,68,68,0.2);color:#fca5a5">${dias}d</span></td>
+                        <td style="font-size:0.82em">${eq||'–'}</td>
+                    </tr>`;
+                }).join('')}
+                </tbody>
+            </table>
+        </div>`;
+    }
+
+    tables.innerHTML = html;
+}
+
+// ══════════════════════════════════════════════════════════════
+// RELATÓRIOS
+// ══════════════════════════════════════════════════════════════
+
+function gerarRelatorio(tipo) {
+    const el = document.getElementById('relatorios-container');
+    let html = '';
+
+    if (tipo === 'cliente') {
+        html = '<div class="rel-section"><h3>📋 Por Cliente</h3>';
+        const d = {};
+        alocacoes.forEach(a => {
+            if (!d[a.cliente]) d[a.cliente] = { total:0, pessoas:new Set(), sem:0, hrs:0 };
+            d[a.cliente].total++; d[a.cliente].pessoas.add(a.colaboradorId);
+            d[a.cliente].sem += a.semanas||0;
+            d[a.cliente].hrs += (a.semanas||0)*40*(a.percentual/100);
+        });
+        Object.entries(d).forEach(([cli,v]) => {
+            html += `<div style="margin:12px 0;padding:12px;background:rgba(139,92,246,0.08);border-radius:6px">
+                <h4 style="color:#a5f3fc;margin-bottom:8px">${cli}</h4>
+                <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:6px;font-size:0.85em">
+                    <div><strong>Alocações:</strong> ${v.total}</div><div><strong>Pessoas:</strong> ${v.pessoas.size}</div>
+                    <div><strong>Semanas:</strong> ${v.sem}</div><div><strong>Horas:</strong> ${Math.round(v.hrs)}h</div>
+                </div></div>`;
+        });
+        html += '</div>';
+    } else if (tipo === 'projeto') {
+        html = '<div class="rel-section"><h3>🎯 Por Projeto</h3>';
+        const d = {};
+        alocacoes.forEach(a => {
+            const k = `${a.cliente} · ${a.projeto}`;
+            if (!d[k]) d[k] = { total:0, pessoas:new Set(), sem:0, hrs:0 };
+            d[k].total++; d[k].pessoas.add(a.colaboradorId);
+            d[k].sem += a.semanas||0;
+            d[k].hrs += (a.semanas||0)*40*(a.percentual/100);
+        });
+        Object.entries(d).forEach(([proj,v]) => {
+            html += `<div style="margin:12px 0;padding:12px;background:rgba(16,185,129,0.08);border-radius:6px">
+                <h4 style="color:#6ee7b7;margin-bottom:8px">${proj}</h4>
+                <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:6px;font-size:0.85em">
+                    <div><strong>Alocações:</strong> ${v.total}</div><div><strong>Pessoas:</strong> ${v.pessoas.size}</div>
+                    <div><strong>Semanas:</strong> ${v.sem}</div><div><strong>Horas:</strong> ${Math.round(v.hrs)}h</div>
+                </div></div>`;
+        });
+        html += '</div>';
+    } else if (tipo === 'pessoa') {
+        html = '<div class="rel-section"><h3>👤 Por Pessoa</h3>';
+        // Group allocations by person
+        const d = {};
+        alocacoes.forEach(a => {
+            const c = colaboradores.find(x => x.id === a.colaboradorId);
+            if (!c) return;
+            const semExt  = semanasExtendidas(a);
+            const semTot  = (a.semanas||0) + semExt;           // contratadas + extendidas
+            const hrsTot  = semTot * 40 * (a.percentual/100);  // horas sobre total
+            if (!d[c.id]) d[c.id] = { colab: c, alocs: [], semTotal:0, hrsTotal:0 };
+            d[c.id].alocs.push(a);
+            d[c.id].semTotal += semTot;
+            d[c.id].hrsTotal += hrsTot;
+        });
+        Object.values(d).forEach(v => {
+            const over = isOverAlloc(v.colab.id);
+            const pct  = pctTotal(v.colab.id);
+            html += `
+            <div style="margin:16px 0;padding:16px;background:rgba(245,158,11,0.06);border-radius:8px;border:1px solid ${over?'rgba(239,68,68,0.3)':'rgba(245,158,11,0.15)'}">
+                <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:12px">
+                    <div>
+                        <h4 style="color:#fcd34d;font-size:1em;margin-bottom:2px">${v.colab.nome}${over?' ⚠️':''}</h4>
+                        <div style="font-size:0.8em;color:#9090a0">${v.colab.cargo} · <span style="color:#a5b4fc">${v.colab.tipo||'interno'}</span></div>
+                    </div>
+                    <div style="display:flex;gap:10px;font-size:0.82em;text-align:center">
+                        <div style="padding:6px 12px;background:rgba(245,158,11,0.1);border-radius:6px">
+                            <div style="color:#7a7a8a">Semanas totais</div>
+                            <div style="color:#fcd34d;font-weight:700;font-size:1.1em">${v.semTotal}</div>
+                            <div style="color:#6a6a7a;font-size:0.78em">contratadas + ext.</div>
+                        </div>
+                        <div style="padding:6px 12px;background:rgba(16,185,129,0.1);border-radius:6px">
+                            <div style="color:#7a7a8a">Horas totais</div>
+                            <div style="color:#6ee7b7;font-weight:700;font-size:1.1em">${Math.round(v.hrsTotal)}h</div>
+                            <div style="color:#6a6a7a;font-size:0.78em">sobre sem. totais</div>
+                        </div>
+                        <div style="padding:6px 12px;background:${over?'rgba(239,68,68,0.15)':'rgba(99,102,241,0.1)'};border-radius:6px">
+                            <div style="color:#7a7a8a">% alocado</div>
+                            <div style="color:${over?'#fca5a5':'#a5b4fc'};font-weight:700;font-size:1.1em">${pct}%</div>
+                        </div>
+                    </div>
+                </div>
+                <table style="font-size:0.82em">
+                    <thead>
+                        <tr>
+                            <th>Projeto</th>
+                            <th>Cliente</th>
+                            <th>Início</th>
+                            <th>Fim contratado</th>
+                            <th>Nova data</th>
+                            <th>Fim efetivo</th>
+                            <th>Sem. contrat.</th>
+                            <th>Sem. ext.</th>
+                            <th>Sem. totais</th>
+                            <th>Horas totais</th>
+                            <th>%</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    ${v.alocs.map(a => {
+                        const semExt    = semanasExtendidas(a);
+                        const semTotRow = (a.semanas||0) + semExt;
+                        const hrsTotRow = Math.round(semTotRow * 40 * (a.percentual/100));
+                        const fimEfetivo = a.novaData || a.dataFim;
+                        return `<tr>
+                            <td style="color:#e0e0e0;font-weight:500">${a.projeto}</td>
+                            <td>${a.cliente}</td>
+                            <td>${fmtData(a.dataInicio)}</td>
+                            <td>${fmtData(a.dataFim)}</td>
+                            <td>${fmtData(a.novaData)}</td>
+                            <td style="color:${a.novaData?'#f59e0b':'#a0a0b0'}">${fmtData(fimEfetivo)}</td>
+                            <td>${a.semanas||0}</td>
+                            <td>${semExt > 0 ? `<span style="color:#f59e0b;font-weight:600">+${semExt}</span>` : '–'}</td>
+                            <td style="color:#fcd34d;font-weight:600">${semTotRow}</td>
+                            <td style="color:#6ee7b7;font-weight:600">${hrsTotRow}h</td>
+                            <td>${a.percentual}%</td>
+                            <td><span class="badge badge-${a.status}">${a.status}</span></td>
+                        </tr>`;
+                    }).join('')}
+                    </tbody>
+                </table>
+            </div>`;
+        });
+        html += '</div>';
+    } else if (tipo === 'tempo') {
+        const totSem = alocacoes.reduce((s,a) => s+(a.semanas||0), 0);
+        const totHrs = alocacoes.reduce((s,a) => s+(a.semanas||0)*40*(a.percentual/100), 0);
+        const media  = alocacoes.length > 0 ? (totSem/alocacoes.length).toFixed(1) : 0;
+        html = `<div class="rel-section"><h3>⏱️ Resumo de Tempo</h3>
+            <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:12px">
+                ${[['Total semanas',totSem,'#a5b4fc'],['Total horas (est.)',Math.round(totHrs)+'h','#6ee7b7'],['Média por alocação',media+' sem','#fcd34d'],['Alocações ativas',alocacoes.filter(a=>a.status==='alocado').length,'#86efac']].map(([l,v,cor])=>`
+                <div style="padding:14px;background:rgba(255,255,255,0.04);border-radius:8px;border-left:3px solid ${cor}">
+                    <div style="font-size:0.82em;color:#7a7a8a">${l}</div>
+                    <div style="font-size:1.6em;font-weight:700;color:${cor};margin-top:4px">${v}</div>
+                </div>`).join('')}
+            </div></div>`;
+    }
+
+    el.innerHTML = html;
+    registrarAlteracao('RELATORIO', `Relatório gerado: ${tipo}`);
+}
+
+function exportarPDF() {
+    const el = document.getElementById('relatorios-container');
+    if (!el || !el.innerHTML.trim()) { alert('Gere um relatório primeiro'); return; }
+    html2pdf().set({ margin:10, filename:'relatorio-more.pdf', html2canvas:{scale:2}, jsPDF:{unit:'mm',format:'a4'} }).from(el).save();
+    registrarAlteracao('EXPORT','PDF exportado');
+}
+
+// ══════════════════════════════════════════════════════════════
+// MODAL / TABS
+// ══════════════════════════════════════════════════════════════
+
+function openModal(id)  { document.getElementById(id).classList.add('active'); }
+function closeModal(id) { document.getElementById(id).classList.remove('active'); editingAllocId = null; editingProjId = null; }
+
+function switchTab(tab, btn) {
+    document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+    document.getElementById(tab).classList.add('active');
+    if (btn) btn.classList.add('active');
+
+    if (tab === 'dashboard')       renderDashboard();
+    if (tab === 'projetos')        { renderProjetos(); }
+    if (tab === 'colaboradores')   renderColaboradores();
+    if (tab === 'alocacoes')       { preencherSelects(); renderAlocacoes(viewAlocacao); }
+    if (tab === 'disponibilidade') renderDisponibilidade();
+    if (tab === 'historico')       renderHistorico();
+    if (tab === 'relatorios')      gerarRelatorio('cliente');
+}
+
+// ══════════════════════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════════════════════
+
+window.onclick = e => {
+    ['editModal','projetoModal'].forEach(id => {
+        const m = document.getElementById(id);
+        if (e.target === m) closeModal(id);
+    });
+};
+
+window.onload = () => {
+    carregarLocal();
+    preencherSelects();
+    renderDashboard();
+    renderAlertas();
+};
+</script>
+</body>
+</html>
