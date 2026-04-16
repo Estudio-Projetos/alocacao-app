@@ -1,12 +1,1360 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Index</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Studio OS — Môre Design</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+  --bg:      #f5f3ef;
+  --surface: #ffffff;
+  --border:  #e4e0d8;
+  --border2: #ccc9c0;
+  --text:    #1a1a18;
+  --text2:   #6b6b66;
+  --text3:   #a8a8a0;
+  --accent:  #6d28d9;
+  --accent2: #7c3aed;
+  --green:   #166534; --green-bg: #dcfce7; --green-bd: #bbf7d0;
+  --amber:   #92400e; --amber-bg: #fef3c7; --amber-bd: #fde68a;
+  --red:     #991b1b; --red-bg:   #fee2e2; --red-bd:   #fecaca;
+  --blue:    #1e40af; --blue-bg:  #dbeafe; --blue-bd:  #93c5fd;
+  --gray-bg: #f1f5f9; --gray-bd:  #cbd5e1; --gray-t:   #475569;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);min-height:100vh;color:var(--text);font-size:14px;}
+body::before{content:'';position:fixed;top:0;left:0;right:0;height:3px;background:var(--accent);z-index:1000;}
+
+/* ── LOGIN ── */
+#login-screen{position:fixed;inset:0;z-index:2000;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:20px;}
+.login-box{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:36px 32px;width:100%;max-width:380px;text-align:center;}
+.login-logo{width:40px;height:40px;background:var(--accent);border-radius:10px;margin:0 auto 16px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:1.1em;}
+.login-title{font-size:1.3em;font-weight:700;color:var(--text);margin-bottom:2px;}
+.login-sub{font-size:0.83em;color:var(--text3);margin-bottom:26px;}
+.login-err{display:none;background:var(--red-bg);color:var(--red);font-size:0.8em;padding:6px 10px;border-radius:6px;margin-top:8px;}
+.btn-visitor{width:100%;padding:9px;background:var(--bg);border:1px solid var(--border);color:var(--text2);border-radius:8px;cursor:pointer;font-family:inherit;font-size:0.85em;font-weight:500;transition:background 0.15s;margin-top:0;}
+.btn-visitor:hover{background:var(--border);}
+.login-div{display:flex;align-items:center;gap:10px;margin:16px 0;color:var(--text3);font-size:0.8em;}
+.login-div::before,.login-div::after{content:'';flex:1;height:1px;background:var(--border);}
+
+/* ── APP SHELL ── */
+#app{display:none;}
+.layout{display:flex;min-height:100vh;}
+
+/* ── SIDEBAR ── */
+.sidebar{width:220px;min-width:220px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;position:sticky;top:0;height:100vh;overflow-y:auto;}
+.sidebar-head{padding:20px 16px 14px;border-bottom:1px solid var(--border);}
+.sidebar-logo{display:flex;align-items:center;gap:10px;}
+.sidebar-logo .dot{width:28px;height:28px;background:var(--accent);border-radius:7px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:0.85em;flex-shrink:0;}
+.sidebar-logo .name{font-weight:700;font-size:0.95em;color:var(--text);}
+.sidebar-logo .sub{font-size:0.72em;color:var(--text3);}
+.sidebar-nav{padding:10px 8px;flex:1;}
+.nav-section{font-size:0.68em;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;padding:12px 8px 4px;}
+.nav-item{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:8px;cursor:pointer;color:var(--text2);font-size:0.85em;font-weight:500;transition:all 0.12s;user-select:none;}
+.nav-item:hover{background:var(--bg);color:var(--text);}
+.nav-item.active{background:#f3f0ff;color:var(--accent);font-weight:600;}
+.nav-icon{width:16px;height:16px;flex-shrink:0;opacity:0.6;}
+.nav-item.active .nav-icon{opacity:1;}
+.sidebar-foot{padding:12px 8px;border-top:1px solid var(--border);}
+.mode-badge{display:flex;align-items:center;gap:6px;padding:7px 10px;border-radius:8px;background:var(--bg);font-size:0.78em;color:var(--text2);}
+.mode-dot{width:7px;height:7px;border-radius:50%;}
+
+/* ── MAIN ── */
+.main{flex:1;min-width:0;padding:28px 28px 60px;}
+.page{display:none;}
+.page.active{display:block;}
+.page-header{margin-bottom:24px;}
+.page-header h1{font-size:1.25em;font-weight:700;color:var(--text);letter-spacing:-0.2px;}
+.page-header p{font-size:0.83em;color:var(--text3);margin-top:2px;}
+
+/* ── ALERTS ── */
+#alerts-bar{margin-bottom:16px;}
+.alert{display:flex;align-items:flex-start;gap:10px;padding:10px 14px;border-radius:8px;margin-bottom:8px;font-size:0.83em;font-weight:500;}
+.alert-err{background:var(--red-bg);border:1px solid var(--red-bd);color:var(--red);}
+.alert-warn{background:var(--amber-bg);border:1px solid var(--amber-bd);color:var(--amber);}
+.alert-info{background:var(--blue-bg);border:1px solid var(--blue-bd);color:var(--blue);}
+
+/* ── CARDS ── */
+.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-bottom:24px;}
+.kpi{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px;}
+.kpi-label{font-size:0.72em;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;}
+.kpi-val{font-size:1.8em;font-weight:700;color:var(--text);letter-spacing:-0.5px;line-height:1;}
+.kpi-sub{font-size:0.75em;color:var(--text3);margin-top:4px;}
+.kpi-bar{height:3px;width:32px;background:var(--accent);border-radius:2px;margin-top:10px;}
+
+/* ── SECTION ── */
+.section{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:18px;}
+.section-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px;}
+.section-head h2{font-size:0.95em;font-weight:600;color:var(--text);}
+.section-sub{font-size:0.78em;color:var(--text3);font-weight:400;margin-left:6px;}
+
+/* ── FORM ── */
+.form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:14px;}
+.fg{display:flex;flex-direction:column;gap:4px;}
+.fg label{font-size:0.72em;color:var(--text2);font-weight:600;text-transform:uppercase;letter-spacing:0.4px;}
+input,select,textarea{padding:7px 10px;border:1px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);font-family:inherit;font-size:0.85em;transition:border-color 0.15s;}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(109,40,217,0.08);background:var(--surface);}
+textarea{resize:vertical;min-height:56px;}
+select option{background:var(--surface);}
+input[readonly]{opacity:0.55;cursor:default;}
+
+/* ── BUTTONS ── */
+button{padding:7px 14px;background:var(--accent);color:#fff;border:none;border-radius:8px;cursor:pointer;font-weight:600;font-size:0.83em;transition:background 0.15s;font-family:inherit;}
+button:hover{background:var(--accent2);}
+.btn-sm{padding:4px 9px;font-size:0.75em;}
+.btn-ghost{background:transparent;color:var(--text2);border:1px solid var(--border);}
+.btn-ghost:hover{background:var(--bg);color:var(--text);}
+.btn-edit{background:#f3f0ff;color:#5b21b6;border:1px solid #ddd6fe;}
+.btn-edit:hover{background:#ede9fe;}
+.btn-del{background:var(--red-bg);color:var(--red);border:1px solid var(--red-bd);}
+.btn-del:hover{background:#fecaca;}
+.btn-ok{background:var(--green-bg);color:var(--green);border:1px solid var(--green-bd);}
+.btn-ok:hover{background:#bbf7d0;}
+
+/* ── BADGES ── */
+.badge{display:inline-block;padding:2px 8px;border-radius:20px;font-size:0.7em;font-weight:600;}
+.b-green{background:var(--green-bg);color:var(--green);}
+.b-amber{background:var(--amber-bg);color:var(--amber);}
+.b-red{background:var(--red-bg);color:var(--red);}
+.b-blue{background:var(--blue-bg);color:var(--blue);}
+.b-gray{background:var(--gray-bg);color:var(--gray-t);}
+.b-purple{background:#f3f0ff;color:#5b21b6;}
+
+/* ── TABLE ── */
+.table-wrap{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;font-size:0.83em;}
+th{background:var(--bg);color:var(--text2);padding:8px 10px;text-align:left;font-weight:600;font-size:0.78em;border-bottom:1px solid var(--border);white-space:nowrap;text-transform:uppercase;letter-spacing:0.3px;}
+td{padding:8px 10px;border-bottom:1px solid var(--border);color:var(--text2);vertical-align:middle;}
+td:first-child{color:var(--text);font-weight:500;}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:var(--bg);}
+.td-actions{display:flex;gap:5px;flex-wrap:wrap;}
+
+/* ── STATUS CARDS (Dashboard) ── */
+.status-group{margin-bottom:24px;}
+.status-group-title{font-size:0.78em;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:10px;}
+.proj-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px;}
+.proj-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px;position:relative;}
+.proj-card-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;}
+.proj-card-title{font-size:0.92em;font-weight:600;color:var(--text);}
+.proj-card-client{font-size:0.74em;color:var(--accent);font-weight:600;text-transform:uppercase;letter-spacing:0.3px;margin-bottom:2px;}
+.proj-meta-row{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:10px;}
+.proj-meta-item{font-size:0.76em;color:var(--text2);}
+.proj-meta-item span{color:var(--text);font-weight:500;}
+.prazo-bar{height:3px;background:var(--border);border-radius:2px;margin-bottom:10px;overflow:hidden;}
+.prazo-fill{height:100%;border-radius:2px;transition:width 0.4s;}
+.proj-team{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:10px;}
+.team-chip{background:#f3f0ff;border:1px solid #ddd6fe;border-radius:20px;padding:2px 8px;font-size:0.72em;color:#5b21b6;font-weight:500;}
+.team-chip.over{background:var(--red-bg);border-color:var(--red-bd);color:var(--red);}
+.proj-card-foot{display:flex;align-items:center;justify-content:space-between;padding-top:10px;border-top:1px solid var(--border);}
+.proj-card-foot .days{font-size:0.76em;font-weight:600;}
+
+/* ── MODAL ── */
+.modal{display:none;position:fixed;inset:0;z-index:999;background:rgba(26,26,24,0.45);backdrop-filter:blur(3px);align-items:center;justify-content:center;padding:20px;}
+.modal.active{display:flex;}
+.modal-box{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px;width:100%;max-width:520px;max-height:90vh;overflow-y:auto;}
+.modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;}
+.modal-head h2{font-size:1em;font-weight:600;color:var(--text);}
+.close-btn{background:none;border:none;color:var(--text3);font-size:1.2em;cursor:pointer;line-height:1;padding:0;}
+.close-btn:hover{color:var(--text);background:none;}
+.modal-form{display:grid;gap:11px;}
+.modal-actions{display:flex;gap:8px;margin-top:16px;}
+.modal-actions button{flex:1;}
+
+/* ── TIMELINE ── */
+.timeline{border-left:2px solid var(--border);margin-left:12px;padding-left:20px;}
+.tl-item{position:relative;margin-bottom:16px;}
+.tl-item::before{content:'';position:absolute;left:-27px;top:4px;width:10px;height:10px;border-radius:50%;background:var(--border2);border:2px solid var(--surface);}
+.tl-item.tl-ext::before{background:var(--amber);}
+.tl-item.tl-ok::before{background:var(--green);}
+.tl-date{font-size:0.72em;color:var(--text3);margin-bottom:2px;}
+.tl-desc{font-size:0.83em;color:var(--text);font-weight:500;}
+.tl-detail{font-size:0.76em;color:var(--text2);margin-top:2px;}
+
+/* ── HIST ITEM ── */
+.hist-item{padding:9px 12px;background:var(--bg);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:0 8px 8px 0;margin-bottom:8px;font-size:0.82em;}
+
+/* ── VISITOR BANNER ── */
+#visitor-banner{display:none;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;padding:8px 14px;margin-bottom:16px;background:var(--blue-bg);border:1px solid var(--blue-bd);border-radius:8px;font-size:0.82em;color:var(--blue);}
+
+/* ── ADMIN BAR ── */
+#admin-bar{display:none;align-items:center;gap:8px;padding:8px 12px;background:var(--surface);border:1px solid var(--border);border-radius:10px;margin-bottom:16px;flex-wrap:wrap;}
+.status-msg{padding:4px 10px;background:var(--green-bg);color:var(--green);border-radius:6px;font-size:0.78em;border:1px solid var(--green-bd);}
+
+/* ── SETUP STEPS ── */
+.setup-step{background:var(--bg);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:0 8px 8px 0;padding:12px;margin-bottom:10px;}
+.setup-step h4{font-size:0.85em;font-weight:600;color:var(--text);margin-bottom:4px;}
+.setup-step p{font-size:0.78em;color:var(--text2);line-height:1.6;}
+.setup-step code{background:#f3f0ff;color:#5b21b6;padding:1px 5px;border-radius:4px;font-family:monospace;}
+.setup-step pre{background:#1a1a18;color:#e0e0d8;padding:12px;border-radius:8px;font-size:0.76em;overflow-x:auto;line-height:1.5;margin-top:8px;white-space:pre-wrap;}
+
+@media(max-width:700px){
+  .sidebar{display:none;}
+  .main{padding:16px;}
+}
+</style>
 </head>
 <body>
-    <h1>Welcome to Alocacao App</h1>
-    <p>This is a simple index.html file.</p>
+
+<!-- ═══ APP ═══ -->
+<div id="app" style="display:block">
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <nav class="sidebar">
+    <div class="sidebar-head">
+      <div class="sidebar-logo">
+        <div class="dot">M</div>
+        <div><div class="name">Môre Design</div><div class="sub">Studio OS</div></div>
+      </div>
+    </div>
+    <div class="sidebar-nav">
+      <div class="nav-section">Visão geral</div>
+      <div class="nav-item active" onclick="goTo('dashboard',this)">
+        <svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="1" width="6" height="6" rx="1.5"/><rect x="9" y="1" width="6" height="6" rx="1.5"/><rect x="1" y="9" width="6" height="6" rx="1.5"/><rect x="9" y="9" width="6" height="6" rx="1.5"/></svg>
+        Dashboard
+      </div>
+
+      <div class="nav-section">Comercial</div>
+      <div class="nav-item" onclick="goTo('propostas',this)">
+        <svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 2h10a1 1 0 011 1v10a1 1 0 01-1 1H3a1 1 0 01-1-1V3a1 1 0 011-1z"/><path d="M5 6h6M5 9h4"/></svg>
+        Propostas
+      </div>
+
+      <div class="nav-section">Projetos</div>
+      <div class="nav-item" onclick="goTo('projetos',this)">
+        <svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 4h12M2 8h8M2 12h5"/></svg>
+        Projetos
+      </div>
+      <div class="nav-item" onclick="goTo('alocacoes',this)">
+        <svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="5" r="3"/><path d="M2 14c0-3.314 2.686-6 6-6s6 2.686 6 6"/></svg>
+        Alocações
+      </div>
+
+      <div class="nav-section">Pessoas</div>
+      <div class="nav-item" onclick="goTo('colaboradores',this)">
+        <svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="6" cy="5" r="2.5"/><path d="M1 14c0-2.761 2.239-5 5-5s5 2.239 5 5"/><circle cx="12" cy="5" r="2" stroke-width="1.2"/><path d="M14 13.5c0-2-1.343-3.5-3-3.5"/></svg>
+        Colaboradores
+      </div>
+      <div class="nav-item" onclick="goTo('contratos',this)">
+        <svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 1H4a1 1 0 00-1 1v12a1 1 0 001 1h8a1 1 0 001-1V5L9 1z"/><path d="M9 1v4h4M5 9h6M5 12h4"/></svg>
+        Contratos
+      </div>
+
+      <div class="nav-section">Memória</div>
+      <div class="nav-item" onclick="goTo('historico',this)" id="nav-historico">
+        <svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M8 5v3.5l2 1.5"/></svg>
+        Histórico
+      </div>
+    </div>
+    <div class="sidebar-foot">
+      <div class="mode-badge">
+        <div class="mode-dot" id="mode-dot" style="background:var(--green)"></div>
+        <span id="mode-label">Admin</span>
+        <button class="btn-ghost btn-sm" style="margin-left:auto;padding:3px 8px;font-size:0.72em" onclick="voltarLogin()">Sair</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- MAIN -->
+  <main class="main">
+    <div id="visitor-banner">
+      Modo visitante — somente leitura. Dados carregados do Google Sheets.
+      <button class="btn-ghost btn-sm" onclick="voltarLogin()">Entrar como Admin</button>
+    </div>
+    <div id="admin-bar">
+      <button class="btn-ok btn-sm" onclick="sincronizarSheets()">☁ Salvar no Sheets</button>
+      <button class="btn-ghost btn-sm" onclick="carregarDoSheets()">↺ Carregar</button>
+      <button class="btn-ghost btn-sm" onclick="openModal('setupModal')">⚙ Configurar Sheets</button>
+      <span id="status-msg" class="status-msg" style="display:none"></span>
+    </div>
+    <div id="alerts-bar"></div>
+
+    <!-- ══ DASHBOARD ══ -->
+    <div id="page-dashboard" class="page active">
+      <div class="page-header"><h1>Dashboard</h1><p>Visão geral da vida operacional do Estúdio</p></div>
+      <div class="card-grid" id="dash-kpis"></div>
+      <div id="dash-status"></div>
+    </div>
+
+    <!-- ══ PROPOSTAS ══ -->
+    <div id="page-propostas" class="page">
+      <div class="page-header"><h1>Propostas Comerciais</h1><p>Registro e acompanhamento de propostas enviadas</p></div>
+      <div class="section admin-only">
+        <div class="section-head"><h2>+ Nova proposta</h2></div>
+        <div class="form-grid">
+          <div class="fg"><label>Cliente *</label><input id="pCliente" placeholder="Nome do cliente"></div>
+          <div class="fg"><label>Título *</label><input id="pTitulo" placeholder="Título da proposta"></div>
+          <div class="fg"><label>Valor (R$)</label><input type="number" id="pValor" placeholder="0"></div>
+          <div class="fg"><label>Data envio</label><input type="date" id="pDataEnvio"></div>
+          <div class="fg"><label>Validade</label><input type="date" id="pValidade"></div>
+          <div class="fg"><label>Status</label>
+            <select id="pStatus">
+              <option value="enviada">Enviada</option>
+              <option value="em-negociacao">Em negociação</option>
+              <option value="aprovada">Aprovada</option>
+              <option value="recusada">Recusada</option>
+              <option value="cancelada">Cancelada</option>
+            </select>
+          </div>
+          <div class="fg"><label>Tipo</label>
+            <select id="pTipo">
+              <option value="fixo">Escopo fixo</option>
+              <option value="tm">T&M</option>
+              <option value="retainer">Retainer</option>
+            </select>
+          </div>
+          <div class="fg"><label>Observações</label><input id="pObs" placeholder="Notas"></div>
+        </div>
+        <button onclick="salvarProposta()">+ Adicionar proposta</button>
+      </div>
+      <div class="section">
+        <div class="section-head"><h2>Propostas</h2></div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Cliente</th><th>Título</th><th>Valor</th><th>Envio</th><th>Validade</th><th>Tipo</th><th>Status</th><th class="admin-only">Ação</th></tr></thead>
+          <tbody id="propostas-list"></tbody>
+        </table></div>
+      </div>
+    </div>
+
+    <!-- ══ PROJETOS ══ -->
+    <div id="page-projetos" class="page">
+      <div class="page-header"><h1>Projetos</h1><p>Ciclo de vida completo de cada projeto</p></div>
+      <div class="section admin-only">
+        <div class="section-head"><h2>+ Novo projeto</h2></div>
+        <div class="form-grid">
+          <div class="fg"><label>Cliente *</label><input id="prjCliente" placeholder="ex: B3"></div>
+          <div class="fg"><label>Nome *</label><input id="prjNome" placeholder="ex: Design System"></div>
+          <div class="fg"><label>Proposta vinculada</label><select id="prjProposta"><option value="">Nenhuma</option></select></div>
+          <div class="fg"><label>Tipo</label>
+            <select id="prjTipo"><option value="fixo">Escopo fixo</option><option value="tm">T&M</option><option value="retainer">Retainer</option></select>
+          </div>
+          <div class="fg"><label>Status</label>
+            <select id="prjStatus"><option value="em-andamento">Em andamento</option><option value="em-proposta">Em proposta</option><option value="pausado">Pausado</option><option value="encerrado">Encerrado</option></select>
+          </div>
+          <div class="fg"><label>Início</label><input type="date" id="prjInicio"></div>
+          <div class="fg"><label>Fim contratado</label><input type="date" id="prjFim"></div>
+          <div class="fg"><label>Valor (R$)</label><input type="number" id="prjValor" placeholder="0"></div>
+          <div class="fg"><label>Observações</label><input id="prjObs" placeholder="Notas"></div>
+        </div>
+        <button onclick="salvarProjeto()">+ Adicionar projeto</button>
+      </div>
+      <div class="section">
+        <div class="section-head">
+          <h2>Projetos cadastrados</h2>
+          <div style="display:flex;gap:6px;flex-wrap:wrap">
+            <button class="btn-ghost btn-sm" onclick="filtrarProjetos('todos')">Todos</button>
+            <button class="btn-ghost btn-sm" onclick="filtrarProjetos('em-andamento')">Em andamento</button>
+            <button class="btn-ghost btn-sm" onclick="filtrarProjetos('em-proposta')">Em proposta</button>
+            <button class="btn-ghost btn-sm" onclick="filtrarProjetos('encerrado')">Encerrados</button>
+          </div>
+        </div>
+        <div id="projetos-list"></div>
+      </div>
+    </div>
+
+    <!-- ══ ALOCAÇÕES ══ -->
+    <div id="page-alocacoes" class="page">
+      <div class="page-header"><h1>Alocações</h1><p>Colaboradores alocados por projeto e período</p></div>
+      <div class="section admin-only">
+        <div class="section-head"><h2>+ Nova alocação</h2></div>
+        <div class="form-grid">
+          <div class="fg"><label>Colaborador *</label><select id="aColab"><option value="">Selecione</option></select></div>
+          <div class="fg"><label>Projeto *</label><select id="aProjeto" onchange="autoCliente()"><option value="">Selecione</option></select></div>
+          <div class="fg"><label>Cliente</label><input id="aCliente" readonly placeholder="Auto"></div>
+          <div class="fg"><label>Início *</label><input type="date" id="aInicio"></div>
+          <div class="fg"><label>Fim contratado</label><input type="date" id="aFim" onchange="calcSemUI()"></div>
+          <div class="fg"><label>Nova data (ext.)</label><input type="date" id="aNovaData" onchange="calcSemUI()"></div>
+          <div class="fg"><label>% Alocação</label><input type="number" id="aPct" value="100" min="1" max="100"></div>
+          <div class="fg"><label>Status</label>
+            <select id="aStatus"><option value="alocado">Alocado</option><option value="desalocada">Desalocada</option><option value="pausou">Pausou</option><option value="concluido">Concluído</option></select>
+          </div>
+        </div>
+        <div id="over-warn" style="display:none;padding:8px 12px;background:var(--red-bg);border:1px solid var(--red-bd);border-radius:8px;color:var(--red);font-size:0.8em;margin-bottom:10px"></div>
+        <button onclick="salvarAlocacao()">+ Adicionar alocação</button>
+      </div>
+      <div class="section">
+        <div class="section-head">
+          <h2>Alocações ativas</h2>
+          <div style="display:flex;gap:5px">
+            <button class="btn-ghost btn-sm active-view" id="vCliente" onclick="renderAlocacoes('cliente')">Por cliente</button>
+            <button class="btn-ghost btn-sm" id="vColab" onclick="renderAlocacoes('colab')">Por pessoa</button>
+          </div>
+        </div>
+        <div id="alocacoes-list"></div>
+      </div>
+    </div>
+
+    <!-- ══ COLABORADORES ══ -->
+    <div id="page-colaboradores" class="page">
+      <div class="page-header"><h1>Colaboradores</h1><p>Equipe do Estúdio</p></div>
+      <div class="section admin-only">
+        <div class="section-head"><h2>+ Adicionar colaborador</h2></div>
+        <div class="form-grid">
+          <div class="fg"><label>Nome *</label><input id="cNome" placeholder="Nome completo"></div>
+          <div class="fg"><label>Email</label><input type="email" id="cEmail" placeholder="email@more.design"></div>
+          <div class="fg"><label>Cargo *</label><input id="cCargo" placeholder="ex: Product Designer"></div>
+          <div class="fg"><label>Tipo</label>
+            <select id="cTipo"><option value="interno">Interno</option><option value="freelancer">Freelancer</option><option value="parceiro">Parceiro</option></select>
+          </div>
+        </div>
+        <button onclick="salvarColab()">+ Adicionar</button>
+      </div>
+      <div class="section">
+        <div class="section-head"><h2>Equipe</h2></div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Nome</th><th>Cargo</th><th>Tipo</th><th>Alocações</th><th>% ocupado</th><th class="admin-only">Ação</th></tr></thead>
+          <tbody id="colabs-list"></tbody>
+        </table></div>
+      </div>
+    </div>
+
+    <!-- ══ CONTRATOS ══ -->
+    <div id="page-contratos" class="page">
+      <div class="page-header"><h1>Contratos dos Colaboradores</h1><p>Vigência e histórico de contratos e extensões</p></div>
+      <div class="section admin-only">
+        <div class="section-head"><h2>+ Novo contrato</h2></div>
+        <div class="form-grid">
+          <div class="fg"><label>Colaborador *</label><select id="ctColab"><option value="">Selecione</option></select></div>
+          <div class="fg"><label>Tipo de contrato</label>
+            <select id="ctTipo"><option value="clt">CLT</option><option value="pj">PJ</option><option value="freelance">Freelance</option><option value="estagio">Estágio</option></select>
+          </div>
+          <div class="fg"><label>Início *</label><input type="date" id="ctInicio"></div>
+          <div class="fg"><label>Fim</label><input type="date" id="ctFim"></div>
+          <div class="fg"><label>Valor mensal (R$)</label><input type="number" id="ctValor" placeholder="0"></div>
+          <div class="fg"><label>Status</label>
+            <select id="ctStatus"><option value="ativo">Ativo</option><option value="encerrado">Encerrado</option><option value="suspenso">Suspenso</option></select>
+          </div>
+          <div class="fg"><label>Observações</label><input id="ctObs" placeholder="Notas"></div>
+        </div>
+        <button onclick="salvarContrato()">+ Adicionar contrato</button>
+      </div>
+      <div class="section admin-only">
+        <div class="section-head"><h2>+ Extensão de contrato</h2></div>
+        <div class="form-grid">
+          <div class="fg"><label>Contrato</label><select id="extCtId"><option value="">Selecione</option></select></div>
+          <div class="fg"><label>Nova data fim</label><input type="date" id="extCtFim"></div>
+          <div class="fg"><label>Novo valor (R$)</label><input type="number" id="extCtValor" placeholder="Opcional"></div>
+          <div class="fg"><label>Motivo</label><input id="extCtMotivo" placeholder="ex: renovação anual"></div>
+        </div>
+        <button onclick="salvarExtContrato()">+ Registrar extensão</button>
+      </div>
+      <div class="section">
+        <div class="section-head"><h2>Contratos ativos</h2></div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Colaborador</th><th>Tipo</th><th>Início</th><th>Fim</th><th>Valor/mês</th><th>Status</th><th>Extensões</th><th class="admin-only">Ação</th></tr></thead>
+          <tbody id="contratos-list"></tbody>
+        </table></div>
+      </div>
+    </div>
+
+    <!-- ══ HISTÓRICO ══ -->
+    <div id="page-historico" class="page">
+      <div class="page-header"><h1>Histórico</h1><p>Log de alterações e arquivo de registros</p></div>
+      <div style="display:flex;gap:6px;margin-bottom:16px;background:var(--surface);padding:4px;border-radius:10px;border:1px solid var(--border);width:fit-content">
+        <button class="btn-ghost btn-sm" id="ht-log" onclick="switchHist('log')" style="background:var(--accent);color:#fff">Log</button>
+        <button class="btn-ghost btn-sm" id="ht-ext" onclick="switchHist('ext')">Extensões de projeto</button>
+        <button class="btn-ghost btn-sm" id="ht-arch" onclick="switchHist('arch')">Arquivo alocações</button>
+      </div>
+      <div id="hist-log" class="section">
+        <div class="section-head">
+          <h2>Log de alterações</h2>
+          <div style="display:flex;gap:6px">
+            <button class="btn-ok btn-sm" onclick="exportCSV('historico')">↓ CSV</button>
+            <button class="btn-del btn-sm admin-only" onclick="limparHistorico()">Limpar</button>
+          </div>
+        </div>
+        <div id="hist-list" style="max-height:500px;overflow-y:auto"></div>
+      </div>
+      <div id="hist-ext" class="section" style="display:none">
+        <div class="section-head"><h2>Extensões de projeto</h2><button class="btn-ok btn-sm" onclick="exportCSV('extProjetos')">↓ CSV</button></div>
+        <div id="ext-proj-list"></div>
+      </div>
+      <div id="hist-arch" class="section" style="display:none">
+        <div class="section-head"><h2>Arquivo de alocações encerradas</h2><button class="btn-ok btn-sm" onclick="exportCSV('arquivo')">↓ CSV</button></div>
+        <div id="arch-list"></div>
+      </div>
+    </div>
+
+  </main>
+</div>
+</div>
+
+<!-- ══ MODAIS ══ -->
+<div id="setupModal" class="modal">
+  <div class="modal-box" style="max-width:580px">
+    <div class="modal-head"><h2>⚙ Configurar Google Sheets</h2><button class="close-btn" onclick="closeModal('setupModal')">&times;</button></div>
+    <div class="fg" style="margin-bottom:14px">
+      <label>URL do Apps Script</label>
+      <input type="url" id="sheetsUrl" placeholder="https://script.google.com/macros/s/...">
+      <span style="font-size:0.74em;color:var(--text3);margin-top:3px">Cole a URL gerada após publicar o Apps Script.</span>
+    </div>
+    <button onclick="salvarConfigSheets()" style="margin-bottom:18px">Salvar URL</button>
+    <div style="border-top:1px solid var(--border);padding-top:16px">
+      <p style="font-size:0.83em;font-weight:600;color:var(--text);margin-bottom:12px">Como configurar</p>
+      <div class="setup-step"><h4>1. Crie uma planilha Google Sheets</h4><p>Acesse <a href="https://sheets.google.com" target="_blank">sheets.google.com</a>, crie uma planilha e anote o ID (na URL entre <code>/d/</code> e <code>/edit</code>).</p></div>
+      <div class="setup-step"><h4>2. Abra o Apps Script</h4><p>Na planilha: <code>Extensões → Apps Script</code>. Apague o código e cole o abaixo.</p></div>
+      <div class="setup-step"><h4>3. Cole este código</h4>
+        <pre>const SHEET_ID = 'SEU_ID_AQUI';
+function doPost(e){
+  const d=JSON.parse(e.postData.contents),ss=SpreadsheetApp.openById(SHEET_ID);
+  ['colaboradores','projetos','alocacoes','propostas','contratos','extContratos'].forEach(k=>{if(d[k])salvar(ss,k,d[k]);});
+  return out({ok:true});
+}
+function doGet(){
+  const ss=SpreadsheetApp.openById(SHEET_ID);
+  const keys=['colaboradores','projetos','alocacoes','propostas','contratos','extContratos'];
+  const r={};keys.forEach(k=>r[k]=ler(ss,k));return out(r);
+}
+function salvar(ss,nome,list){
+  let a=ss.getSheetByName(nome)||ss.insertSheet(nome);a.clearContents();
+  if(!list.length)return;const k=Object.keys(list[0]);a.appendRow(k);
+  list.forEach(o=>a.appendRow(k.map(c=>{const v=o[c];return typeof v==='object'&&v?JSON.stringify(v):v??'';})));
+}
+function ler(ss,nome){
+  const a=ss.getSheetByName(nome);if(!a)return[];
+  const r=a.getDataRange().getValues();if(r.length<2)return[];
+  const k=r[0];return r.slice(1).map(row=>{const o={};k.forEach((c,i)=>{try{o[c]=JSON.parse(row[i]);}catch{o[c]=row[i];}});return o;});
+}
+function out(d){return ContentService.createTextOutput(JSON.stringify(d)).setMimeType(ContentService.MimeType.JSON);}</pre>
+      </div>
+      <div class="setup-step"><h4>4. Publique como Web App</h4><p><code>Implantar → Nova implantação</code> → tipo <code>App da Web</code> → acesso <code>Qualquer pessoa</code> → Implantar. Copie a URL e cole acima.</p></div>
+    </div>
+  </div>
+</div>
+
+<div id="editProjetoModal" class="modal">
+  <div class="modal-box">
+    <div class="modal-head"><h2>Editar projeto</h2><button class="close-btn" onclick="closeModal('editProjetoModal')">&times;</button></div>
+    <div class="modal-form">
+      <div class="fg"><label>Cliente</label><input id="ep-cliente"></div>
+      <div class="fg"><label>Nome</label><input id="ep-nome"></div>
+      <div class="fg"><label>Tipo</label><select id="ep-tipo"><option value="fixo">Fixo</option><option value="tm">T&M</option><option value="retainer">Retainer</option></select></div>
+      <div class="fg"><label>Status</label><select id="ep-status"><option value="em-andamento">Em andamento</option><option value="em-proposta">Em proposta</option><option value="pausado">Pausado</option><option value="encerrado">Encerrado</option></select></div>
+      <div class="fg"><label>Início</label><input type="date" id="ep-inicio"></div>
+      <div class="fg"><label>Fim contratado</label><input type="date" id="ep-fim"></div>
+      <div class="fg"><label>Nova data (ext.)</label><input type="date" id="ep-nova" oninput="if(this.value)document.getElementById('ep-motivo-wrap').style.display='block'"></div>
+      <div class="fg" id="ep-motivo-wrap" style="display:none"><label>Motivo da extensão</label><input id="ep-motivo" placeholder="ex: cliente solicitou mais escopo"></div>
+      <div class="fg"><label>Valor (R$)</label><input type="number" id="ep-valor"></div>
+      <div class="fg"><label>Observações</label><textarea id="ep-obs"></textarea></div>
+    </div>
+    <div class="modal-actions"><button onclick="saveEditProjeto()">Salvar</button><button class="btn-del" onclick="closeModal('editProjetoModal')">Cancelar</button></div>
+  </div>
+</div>
+
+<div id="editAlocModal" class="modal">
+  <div class="modal-box">
+    <div class="modal-head"><h2>Editar alocação</h2><button class="close-btn" onclick="closeModal('editAlocModal')">&times;</button></div>
+    <div class="modal-form">
+      <div class="fg"><label>Colaborador</label><select id="ea-colab"></select></div>
+      <div class="fg"><label>Projeto</label><select id="ea-proj" onchange="autoClienteEdit()"></select></div>
+      <div class="fg"><label>Cliente</label><input id="ea-cliente" readonly></div>
+      <div class="fg"><label>Início</label><input type="date" id="ea-inicio"></div>
+      <div class="fg"><label>Fim contratado</label><input type="date" id="ea-fim" onchange="calcSemEdit()"></div>
+      <div class="fg"><label>Nova data</label><input type="date" id="ea-nova" onchange="calcSemEdit()"></div>
+      <div class="fg"><label>Semanas (auto)</label><input type="number" id="ea-sem" readonly></div>
+      <div class="fg"><label>%</label><input type="number" id="ea-pct" min="1" max="100"></div>
+      <div class="fg"><label>Status</label><select id="ea-status"><option value="alocado">Alocado</option><option value="desalocada">Desalocada</option><option value="pausou">Pausou</option><option value="concluido">Concluído</option></select></div>
+    </div>
+    <div class="modal-actions"><button onclick="saveEditAloc()">Salvar</button><button class="btn-del" onclick="closeModal('editAlocModal')">Cancelar</button></div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════
+// CONFIG & STATE
+// ══════════════════════════════════════════
+const SENHA = 'more2024';
+let modoAdmin = false;
+let sheetsUrl = localStorage.getItem('studio-sheets-url') || '';
+let editingProjId = null, editingAlocId = null;
+let filtroProj = 'todos', viewAloc = 'cliente';
+let historico = [];
+
+// ══════════════════════════════════════════
+// DATA
+// ══════════════════════════════════════════
+let colaboradores = [
+  {id:1, nome:'Marcela Souza',       email:'marcela@more.design',   cargo:'UX Researcher SR', tipo:'interno'},
+  {id:2, nome:'Tiago Martins',       email:'tiago@more.design',     cargo:'Design Ops',       tipo:'interno'},
+  {id:3, nome:'Priscila Nakajima',   email:'pri@more.design',       cargo:'PD Web',           tipo:'interno'},
+  {id:4, nome:'Cristopher Tomazini', email:'cris@more.design',      cargo:'PD Mobile',        tipo:'interno'},
+  {id:5, nome:'Guilherme Vezula',    email:'gui@more.design',       cargo:'Dev',              tipo:'interno'},
+  {id:6, nome:'Miguel Young',        email:'miguel@more.design',    cargo:'Head de Design',   tipo:'interno'},
+  {id:7, nome:'Tamires Rabello',     email:'tamires@more.design',   cargo:'PO',               tipo:'interno'},
+  {id:8, nome:'Luciano Alpes',       email:'luciano@more.design',   cargo:'Product Design',   tipo:'interno'},
+  {id:9, nome:'IBAP',                email:'',                      cargo:'IBPAD',            tipo:'parceiro'},
+  {id:10,nome:'BAMSE',               email:'',                      cargo:'Dev Externo',      tipo:'freelancer'},
+];
+
+let propostas = [
+  {id:201, cliente:'B3',        titulo:'Design System',     valor:120000, dataEnvio:'2025-12-01', validade:'2026-01-15', status:'aprovada',      tipo:'retainer', obs:''},
+  {id:202, cliente:'VR',        titulo:'Personas PJ',       valor:80000,  dataEnvio:'2025-12-10', validade:'2026-01-20', status:'aprovada',      tipo:'fixo',    obs:''},
+  {id:203, cliente:'Galapagos', titulo:'App Mobile',        valor:150000, dataEnvio:'2026-02-01', validade:'2026-03-01', status:'aprovada',      tipo:'fixo',    obs:''},
+  {id:204, cliente:'Novo',      titulo:'Proposta Web Site', valor:45000,  dataEnvio:'2026-04-01', validade:'2026-04-30', status:'em-negociacao', tipo:'fixo',    obs:'Aguardando feedback'},
+];
+
+let projetos = [
+  {id:101, cliente:'VR',        nome:'Personas PJ',   propostaId:202, tipo:'fixo',    status:'em-andamento', inicio:'2026-01-26', fim:'2026-04-09', novaData:'2026-05-15', motivoExt:'Extensão do escopo de pesquisa', valor:80000,  obs:''},
+  {id:102, cliente:'B3',        nome:'Design System', propostaId:201, tipo:'retainer',status:'em-andamento', inicio:'2026-01-05', fim:'2026-04-06', novaData:'2026-05-22', motivoExt:'Novas funcionalidades',          valor:120000, obs:''},
+  {id:103, cliente:'Galapagos', nome:'App',           propostaId:203, tipo:'fixo',    status:'em-andamento', inicio:'2026-03-23', fim:'2026-08-10', novaData:'',           motivoExt:'',                               valor:150000, obs:''},
+];
+
+let alocacoes = [
+  {id:1,  projetoId:101, cliente:'VR',        projeto:'Personas PJ',   colaboradorId:1,  dataInicio:'2026-01-26', dataFim:'2026-04-09', novaData:'2026-05-15', percentual:100, status:'alocado', semanas:12},
+  {id:2,  projetoId:101, cliente:'VR',        projeto:'Personas PJ',   colaboradorId:9,  dataInicio:'2026-01-19', dataFim:'',          novaData:'2026-04-24', percentual:100, status:'alocado', semanas:8},
+  {id:3,  projetoId:102, cliente:'B3',        projeto:'Design System', colaboradorId:2,  dataInicio:'2026-01-05', dataFim:'2026-04-06', novaData:'2026-05-22', percentual:100, status:'alocado', semanas:12},
+  {id:4,  projetoId:102, cliente:'B3',        projeto:'Design System', colaboradorId:3,  dataInicio:'2026-01-05', dataFim:'2026-04-06', novaData:'2026-05-22', percentual:100, status:'alocado', semanas:12},
+  {id:5,  projetoId:102, cliente:'B3',        projeto:'Design System', colaboradorId:4,  dataInicio:'2026-01-19', dataFim:'2026-04-06', novaData:'2026-05-22', percentual:100, status:'alocado', semanas:11},
+  {id:6,  projetoId:102, cliente:'B3',        projeto:'Design System', colaboradorId:5,  dataInicio:'2026-01-26', dataFim:'2026-04-06', novaData:'2026-05-22', percentual:100, status:'alocado', semanas:10},
+  {id:7,  projetoId:103, cliente:'Galapagos', projeto:'App',           colaboradorId:6,  dataInicio:'2026-03-23', dataFim:'2026-08-10', novaData:'',          percentual:20,  status:'alocado', semanas:19},
+  {id:8,  projetoId:103, cliente:'Galapagos', projeto:'App',           colaboradorId:7,  dataInicio:'2026-03-23', dataFim:'2026-08-10', novaData:'',          percentual:5,   status:'alocado', semanas:19},
+  {id:9,  projetoId:103, cliente:'Galapagos', projeto:'App',           colaboradorId:8,  dataInicio:'2026-03-23', dataFim:'2026-08-10', novaData:'',          percentual:100, status:'alocado', semanas:19},
+  {id:10, projetoId:103, cliente:'Galapagos', projeto:'App',           colaboradorId:10, dataInicio:'2026-03-23', dataFim:'2026-04-27', novaData:'',          percentual:100, status:'alocado', semanas:5},
+];
+
+let contratos = [
+  {id:301, colaboradorId:1,  tipo:'clt',      inicio:'2023-03-01', fim:'',           valor:8500,  status:'ativo',    obs:''},
+  {id:302, colaboradorId:2,  tipo:'clt',      inicio:'2022-06-01', fim:'',           valor:7000,  status:'ativo',    obs:''},
+  {id:303, colaboradorId:3,  tipo:'pj',       inicio:'2024-01-01', fim:'2026-12-31', valor:9000,  status:'ativo',    obs:''},
+  {id:304, colaboradorId:4,  tipo:'pj',       inicio:'2024-01-01', fim:'2026-12-31', valor:9000,  status:'ativo',    obs:''},
+  {id:305, colaboradorId:5,  tipo:'pj',       inicio:'2023-09-01', fim:'2026-08-31', valor:8000,  status:'ativo',    obs:''},
+  {id:306, colaboradorId:6,  tipo:'clt',      inicio:'2021-01-01', fim:'',           valor:15000, status:'ativo',    obs:'Sócio'},
+  {id:307, colaboradorId:7,  tipo:'clt',      inicio:'2022-03-01', fim:'',           valor:10000, status:'ativo',    obs:''},
+  {id:308, colaboradorId:8,  tipo:'pj',       inicio:'2025-01-01', fim:'2026-12-31', valor:8500,  status:'ativo',    obs:''},
+  {id:309, colaboradorId:9,  tipo:'parceiro', inicio:'2026-01-19', fim:'2026-04-24', valor:12000, status:'ativo',    obs:'IBPAD'},
+  {id:310, colaboradorId:10, tipo:'freelance',inicio:'2026-03-23', fim:'2026-04-27', valor:5000,  status:'ativo',    obs:''},
+];
+
+let extContratos = [];
+
+// ══════════════════════════════════════════
+// UTILS
+// ══════════════════════════════════════════
+const fmtD = s => { if(!s) return '–'; const [y,m,d]=s.split('-'); return `${d}/${m}/${y}`; };
+const fmtR = v => v ? 'R$ '+Number(v).toLocaleString('pt-BR') : '–';
+const calcSem = (a,b) => { if(!a||!b) return 0; return Math.max(1,Math.ceil((new Date(b)-new Date(a))/(1000*60*60*24*7))); };
+const semExt  = a => (!a.dataFim||!a.novaData)?0:Math.max(0,calcSem(a.dataFim,a.novaData));
+const semTot  = a => (a.semanas||0)+semExt(a);
+const pctTot  = cId => alocacoes.filter(a=>a.colaboradorId===cId&&a.status==='alocado').reduce((s,a)=>s+a.percentual,0);
+const isOver  = cId => pctTot(cId)>100;
+const diasAte = s => { if(!s) return Infinity; const d=new Date(s); d.setHours(0,0,0,0); const h=new Date(); h.setHours(0,0,0,0); return Math.round((d-h)/(1000*60*60*24)); };
+const prazoP  = (a,b) => { if(!a||!b) return 0; return Math.min(100,Math.max(0,Math.round((Date.now()-new Date(a))/(new Date(b)-new Date(a))*100))); };
+const prazoC  = p => p>=90?'#b91c1c':p>=70?'#d97706':'#15803d';
+const statusBadge = s => ({
+  'alocado':'<span class="badge b-green">alocado</span>',
+  'desalocada':'<span class="badge b-gray">desalocada</span>',
+  'pausou':'<span class="badge b-amber">pausou</span>',
+  'concluido':'<span class="badge b-purple">concluído</span>',
+  'em-andamento':'<span class="badge b-green">em andamento</span>',
+  'em-proposta':'<span class="badge b-amber">em proposta</span>',
+  'pausado':'<span class="badge b-red">pausado</span>',
+  'encerrado':'<span class="badge b-gray">encerrado</span>',
+  'enviada':'<span class="badge b-blue">enviada</span>',
+  'em-negociacao':'<span class="badge b-amber">negociação</span>',
+  'aprovada':'<span class="badge b-green">aprovada</span>',
+  'recusada':'<span class="badge b-red">recusada</span>',
+  'cancelada':'<span class="badge b-gray">cancelada</span>',
+  'ativo':'<span class="badge b-green">ativo</span>',
+  'suspenso':'<span class="badge b-amber">suspenso</span>',
+}[s]||`<span class="badge b-gray">${s}</span>`);
+
+// ══════════════════════════════════════════
+// AUTH / LOGIN
+// ══════════════════════════════════════════
+function voltarLogin(){ location.reload(); }
+function aplicarModo(){
+  document.getElementById('visitor-banner').style.display = modoAdmin?'none':'flex';
+  document.getElementById('admin-bar').style.display      = modoAdmin?'flex':'none';
+  document.getElementById('nav-historico').style.display  = modoAdmin?'flex':'none';
+  document.querySelectorAll('.admin-only').forEach(function(el){ el.style.display = modoAdmin ? '' : 'none'; });
+  document.getElementById('mode-dot').style.background    = modoAdmin?'var(--green)':'var(--blue)';
+  document.getElementById('mode-label').textContent       = modoAdmin?'Admin':'Visitante';
+}
+
+// ══════════════════════════════════════════
+// STORAGE / SHEETS
+// ══════════════════════════════════════════
+// storage handled at bottom of file
+function salvarConfigSheets(){
+  const u=document.getElementById('sheetsUrl').value.trim();
+  if(!u){alert('Cole a URL');return;}
+  sheetsUrl=u; localStorage.setItem('studio-sheets-url',u);
+  closeModal('setupModal'); mostrarStatus('URL salva!');
+}
+async function sincronizarSheets(){
+  if(!sheetsUrl){openModal('setupModal');return;}
+  mostrarStatus('Salvando...');
+  try{
+    const r=await fetch(sheetsUrl,{method:'POST',body:JSON.stringify({colaboradores,projetos,alocacoes,propostas,contratos,extContratos})});
+    const j=await r.json();
+    if(j.ok){registrar('SYNC','Salvo no Sheets');mostrarStatus('Salvo!');}
+    else mostrarStatus('Erro: '+(j.erro||'?'));
+  }catch{mostrarStatus('Falha na conexão');}
+}
+async function carregarDoSheets(){
+  if(!sheetsUrl)return;
+  mostrarStatus('Carregando...');
+  try{
+    const r=await fetch(sheetsUrl);const j=await r.json();
+    const map={colaboradores,projetos,alocacoes,propostas,contratos,extContratos};
+    if(j.colaboradores&&j.colaboradores.length) colaboradores=j.colaboradores;
+    if(j.projetos&&j.projetos.length)           projetos=j.projetos;
+    if(j.alocacoes&&j.alocacoes.length)         alocacoes=j.alocacoes;
+    if(j.propostas&&j.propostas.length)         propostas=j.propostas;
+    if(j.contratos&&j.contratos.length)         contratos=j.contratos;
+    if(j.extContratos&&j.extContratos.length)   extContratos=j.extContratos;
+    preencherSelects(); renderDashboard(); renderAlertas();
+    ['propostas','projetos','alocacoes','colaboradores','contratos'].forEach(pg=>{
+      const el=document.getElementById('page-'+pg);
+      if(el&&el.classList.contains('active')) goRender(pg);
+    });
+    mostrarStatus('Carregado!');
+  }catch{mostrarStatus('Erro ao carregar');}
+}
+function mostrarStatus(m){
+  const el=document.getElementById('status-msg');
+  el.style.display='block';el.textContent=m;
+  setTimeout(()=>el.style.display='none',3000);
+}
+
+// ══════════════════════════════════════════
+// NAVIGATION
+// ══════════════════════════════════════════
+function goTo(id, btn){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  if(btn) btn.classList.add('active');
+  goRender(id);
+}
+function goRender(id){
+  if(id==='dashboard')    renderDashboard();
+  if(id==='propostas')    renderPropostas();
+  if(id==='projetos')     {preencherSelects();renderProjetos();}
+  if(id==='alocacoes')    {preencherSelects();renderAlocacoes(viewAloc);}
+  if(id==='colaboradores'){renderColabs();}
+  if(id==='contratos')    {preencherSelects();renderContratos();}
+  if(id==='historico')    {renderHistorico();renderExtProjetos();renderArquivo();}
+}
+function openModal(id){document.getElementById(id).classList.add('active');}
+function closeModal(id){document.getElementById(id).classList.remove('active');editingProjId=null;editingAlocId=null;}
+window.onclick=e=>{['setupModal','editProjetoModal','editAlocModal'].forEach(id=>{const m=document.getElementById(id);if(e.target===m)closeModal(id);});};
+
+// ══════════════════════════════════════════
+// SELECTS
+// ══════════════════════════════════════════
+function preencherSelects(){
+  const co='<option value="">Selecione</option>'+colaboradores.map(c=>`<option value="${c.id}">${c.nome}</option>`).join('');
+  const pr='<option value="">Selecione</option>'+projetos.map(p=>`<option value="${p.id}">${p.cliente} · ${p.nome}</option>`).join('');
+  const prop='<option value="">Nenhuma</option>'+propostas.map(p=>`<option value="${p.id}">${p.cliente} · ${p.titulo}</option>`).join('');
+  const ct='<option value="">Selecione</option>'+contratos.map(c=>{const colab=colaboradores.find(x=>x.id===c.colaboradorId);return`<option value="${c.id}">${colab?colab.nome:'?'} (${c.tipo} · ${fmtD(c.inicio)})</option>`;}).join('');
+  ['aColab','ea-colab','ctColab'].forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML=co;});
+  ['aProjeto','ea-proj'].forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML=pr;});
+  const pp=document.getElementById('prjProposta');if(pp)pp.innerHTML=prop;
+  const ec=document.getElementById('extCtId');if(ec)ec.innerHTML=ct;
+}
+function autoCliente(){
+  const pid=parseInt(document.getElementById('aProjeto').value);
+  const p=projetos.find(x=>x.id===pid);
+  document.getElementById('aCliente').value=p?p.cliente:'';
+  verificarOver();
+}
+function autoClienteEdit(){
+  const pid=parseInt(document.getElementById('ea-proj').value);
+  const p=projetos.find(x=>x.id===pid);
+  if(p) document.getElementById('ea-cliente').value=p.cliente;
+}
+function verificarOver(){
+  const cId=parseInt(document.getElementById('aColab').value);
+  const pct=parseInt(document.getElementById('aPct').value)||0;
+  const w=document.getElementById('over-warn');
+  if(!cId){w.style.display='none';return;}
+  const total=pctTot(cId)+pct;
+  if(total>100){const c=colaboradores.find(x=>x.id===cId);w.style.display='block';w.textContent=`⚠ ${c.nome} ficará com ${total}% de alocação.`;}
+  else w.style.display='none';
+}
+function calcSemUI(){
+  // recalcula semanas no formulário de nova alocação (sem ação necessária, semanas calculadas ao salvar)
+}
+function calcSemEdit(){
+  const ini=document.getElementById('ea-inicio').value;
+  const fim=document.getElementById('ea-fim').value;
+  const nova=document.getElementById('ea-nova').value;
+  const eff=nova||fim;
+  if(ini&&eff) document.getElementById('ea-sem').value=calcSem(ini,eff);
+}
+
+// ══════════════════════════════════════════
+// ALERTAS
+// ══════════════════════════════════════════
+function renderAlertas(){
+  const alerts=[];
+  colaboradores.forEach(c=>{if(pctTot(c.id)>100)alerts.push({t:'err',m:`Over-alocação: ${c.nome} com ${pctTot(c.id)}%`});});
+  projetos.filter(p=>p.status==='em-andamento').forEach(p=>{
+    const d=diasAte(p.novaData||p.fim);
+    if(d>=0&&d<=14)alerts.push({t:'warn',m:`Prazo crítico: ${p.cliente} · ${p.nome} encerra em ${d}d (${fmtD(p.novaData||p.fim)})`});
+  });
+  contratos.filter(c=>c.status==='ativo'&&c.fim).forEach(c=>{
+    const d=diasAte(c.fim);
+    const colab=colaboradores.find(x=>x.id===c.colaboradorId);
+    if(d>=0&&d<=30)alerts.push({t:'warn',m:`Contrato vencendo: ${colab?colab.nome:'?'} em ${d}d (${fmtD(c.fim)})`});
+  });
+  const p=propostas.filter(x=>x.status==='em-negociacao');
+  if(p.length)alerts.push({t:'info',m:`${p.length} proposta(s) em negociação`});
+  document.getElementById('alerts-bar').innerHTML=alerts.map(a=>`<div class="alert alert-${a.t}">${a.m}</div>`).join('');
+}
+
+// ══════════════════════════════════════════
+// DASHBOARD
+// ══════════════════════════════════════════
+function renderDashboard(){
+  const ativos=projetos.filter(p=>p.status==='em-andamento').length;
+  const totSem=alocacoes.reduce((s,a)=>s+semTot(a),0);
+  const totHrs=alocacoes.reduce((s,a)=>s+semTot(a)*40*(a.percentual/100),0);
+  const propAprov=propostas.filter(p=>p.status==='aprovada').length;
+  const ctAtivos=contratos.filter(c=>c.status==='ativo').length;
+  const overC=colaboradores.filter(c=>isOver(c.id)).length;
+
+  document.getElementById('dash-kpis').innerHTML=`
+    <div class="kpi"><div class="kpi-label">Projetos ativos</div><div class="kpi-val">${ativos}</div><div class="kpi-sub">de ${projetos.length} cadastrados</div><div class="kpi-bar"></div></div>
+    <div class="kpi"><div class="kpi-label">Propostas aprovadas</div><div class="kpi-val">${propAprov}</div><div class="kpi-sub">de ${propostas.length} total</div><div class="kpi-bar" style="background:var(--green)"></div></div>
+    <div class="kpi"><div class="kpi-label">Contratos ativos</div><div class="kpi-val">${ctAtivos}</div><div class="kpi-sub">colaboradores</div><div class="kpi-bar" style="background:#d97706"></div></div>
+    <div class="kpi"><div class="kpi-label">Semanas totais</div><div class="kpi-val">${totSem}</div><div class="kpi-sub">incl. extensões</div><div class="kpi-bar" style="background:#0369a1"></div></div>
+    <div class="kpi"><div class="kpi-label">Horas estimadas</div><div class="kpi-val">${Math.round(totHrs)}h</div><div class="kpi-sub">sobre sem. totais</div><div class="kpi-bar" style="background:#0369a1"></div></div>
+    <div class="kpi" style="${overC?'border-color:var(--red-bd)':''}"><div class="kpi-label">Over-alocados</div><div class="kpi-val" style="${overC?'color:var(--red)':''}">${overC}</div><div class="kpi-sub">${overC?'⚠ ação necessária':'Tudo ok'}</div><div class="kpi-bar" style="background:${overC?'var(--red)':'var(--green)'}"></div></div>
+  `;
+
+  // Status cards
+  const grupos = {
+    'em-andamento': {label:'Em andamento', items:[]},
+    'em-proposta':  {label:'Em proposta',  items:[]},
+    'pausado':      {label:'Pausados',      items:[]},
+    'encerrado':    {label:'Encerrados',    items:[]},
+  };
+  projetos.forEach(p=>{ if(grupos[p.status]) grupos[p.status].items.push(p); });
+
+  let html='';
+  Object.entries(grupos).forEach(([key,g])=>{
+    if(!g.items.length) return;
+    html+=`<div class="status-group"><div class="status-group-title">${g.label} (${g.items.length})</div><div class="proj-cards">`;
+    g.items.forEach(p=>{
+      const alocs=alocacoes.filter(a=>a.projetoId===p.id&&a.status==='alocado');
+      const fimEf=p.novaData||p.fim;
+      const pct=prazoP(p.inicio,fimEf);
+      const cor=prazoC(pct);
+      const dias=diasAte(fimEf);
+      const diasLabel=dias===Infinity?'':`${dias<0?Math.abs(dias)+'d atraso':dias+'d restantes'}`;
+      const chips=alocs.map(a=>{
+        const c=colaboradores.find(x=>x.id===a.colaboradorId);
+        return`<span class="team-chip${isOver(a.colaboradorId)?' over':''}">${c?c.nome.split(' ')[0]:'?'} ${a.percentual}%</span>`;
+      }).join('');
+      const proposta=propostas.find(x=>x.id===p.propostaId);
+      html+=`<div class="proj-card">
+        <div class="proj-card-top">
+          <div>
+            <div class="proj-card-client">${p.cliente}</div>
+            <div class="proj-card-title">${p.nome}</div>
+          </div>
+          ${statusBadge(p.status)}
+        </div>
+        <div class="proj-meta-row">
+          <div class="proj-meta-item">Início <span>${fmtD(p.inicio)}</span></div>
+          <div class="proj-meta-item">Fim <span>${fmtD(fimEf)}</span></div>
+          ${p.novaData?`<div class="proj-meta-item" style="color:var(--amber)">Ext. <span>${fmtD(p.novaData)}</span></div>`:''}
+          <div class="proj-meta-item">Valor <span>${fmtR(p.valor)}</span></div>
+        </div>
+        ${p.inicio&&fimEf?`<div class="prazo-bar"><div class="prazo-fill" style="width:${pct}%;background:${cor}"></div></div><div style="display:flex;justify-content:space-between;font-size:0.72em;color:var(--text3);margin-bottom:8px"><span>${pct}%</span><span style="color:${dias<0?'var(--red)':cor}">${diasLabel}</span></div>`:''}
+        ${chips?`<div class="proj-team">${chips}</div>`:''}
+        ${proposta?`<div style="font-size:0.74em;color:var(--text3);margin-bottom:6px">Proposta: ${proposta.titulo}</div>`:''}
+        <div class="proj-card-foot">
+          <span style="font-size:0.76em;color:var(--text3)">${alocs.length} pessoa${alocs.length!==1?'s':''} alocadas</span>
+          ${modoAdmin?`<button class="btn-edit btn-sm" onclick="openEditProjeto(${p.id})">Editar</button>`:''}
+        </div>
+      </div>`;
+    });
+    html+='</div></div>';
+  });
+  document.getElementById('dash-status').innerHTML=html;
+}
+
+// ══════════════════════════════════════════
+// PROPOSTAS
+// ══════════════════════════════════════════
+function salvarProposta(){
+  const cliente=document.getElementById('pCliente').value.trim();
+  const titulo=document.getElementById('pTitulo').value.trim();
+  if(!cliente||!titulo){alert('Preencha Cliente e Título');return;}
+  propostas.push({
+    id:Date.now(), cliente, titulo,
+    valor:parseFloat(document.getElementById('pValor').value)||0,
+    dataEnvio:document.getElementById('pDataEnvio').value,
+    validade:document.getElementById('pValidade').value,
+    status:document.getElementById('pStatus').value,
+    tipo:document.getElementById('pTipo').value,
+    obs:document.getElementById('pObs').value,
+  });
+  registrar('PROPOSTA','Nova proposta: '+cliente+' · '+titulo);
+  ['pCliente','pTitulo','pValor','pDataEnvio','pValidade','pObs'].forEach(id=>document.getElementById(id).value='');
+  preencherSelects(); renderPropostas(); renderDashboard(); renderAlertas();
+}
+function renderPropostas(){
+  const el=document.getElementById('propostas-list');if(!el)return;
+  el.innerHTML=propostas.sort((a,b)=>b.id-a.id).map(p=>`<tr>
+    <td>${p.cliente}</td><td>${p.titulo}</td><td>${fmtR(p.valor)}</td>
+    <td>${fmtD(p.dataEnvio)}</td><td>${fmtD(p.validade)}</td>
+    <td><span class="badge b-gray">${p.tipo}</span></td>
+    <td>${statusBadge(p.status)}</td>
+    ${modoAdmin?`<td><div class="td-actions"><button class="btn-del btn-sm" onclick="delProposta(${p.id})">✕</button></div></td>`:'<td>–</td>'}
+  </tr>`).join('');
+}
+function delProposta(id){if(!confirm('Remover proposta?'))return;propostas=propostas.filter(x=>x.id!==id);registrar('DEL','Proposta removida');renderPropostas();preencherSelects();}
+
+// ══════════════════════════════════════════
+// PROJETOS
+// ══════════════════════════════════════════
+function salvarProjeto(){
+  const cliente=document.getElementById('prjCliente').value.trim();
+  const nome=document.getElementById('prjNome').value.trim();
+  if(!cliente||!nome){alert('Preencha Cliente e Nome');return;}
+  projetos.push({
+    id:Date.now(), cliente, nome,
+    propostaId:parseInt(document.getElementById('prjProposta').value)||null,
+    tipo:document.getElementById('prjTipo').value,
+    status:document.getElementById('prjStatus').value,
+    inicio:document.getElementById('prjInicio').value,
+    fim:document.getElementById('prjFim').value,
+    novaData:'', motivoExt:'',
+    valor:parseFloat(document.getElementById('prjValor').value)||0,
+    obs:document.getElementById('prjObs').value,
+  });
+  registrar('PROJETO','Projeto criado: '+cliente+' · '+nome);
+  ['prjCliente','prjNome','prjInicio','prjFim','prjValor','prjObs'].forEach(id=>document.getElementById(id).value='');
+  preencherSelects(); renderProjetos(); renderDashboard(); renderAlertas();
+}
+
+let filtroProj2='todos';
+function filtrarProjetos(f){filtroProj2=f;renderProjetos();}
+function renderProjetos(){
+  const el=document.getElementById('projetos-list');if(!el)return;
+  const lista=filtroProj2==='todos'?projetos:projetos.filter(p=>p.status===filtroProj2);
+  if(!lista.length){el.innerHTML='<p style="color:var(--text3);text-align:center;padding:20px">Nenhum projeto</p>';return;}
+  el.innerHTML=lista.map(p=>{
+    const alocs=alocacoes.filter(a=>a.projetoId===p.id);
+    const fimEf=p.novaData||p.fim;
+    const pct=prazoP(p.inicio,fimEf);
+    const cor=prazoC(pct);
+    const dias=diasAte(fimEf);
+    const chips=alocs.filter(a=>a.status==='alocado').map(a=>{
+      const c=colaboradores.find(x=>x.id===a.colaboradorId);
+      return`<span class="team-chip">${c?c.nome.split(' ')[0]:'?'} ${a.percentual}%</span>`;
+    }).join('');
+    return`<div class="proj-card" style="margin-bottom:12px">
+      <div class="proj-card-top">
+        <div><div class="proj-card-client">${p.cliente}</div><div class="proj-card-title">${p.nome}</div></div>
+        <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
+          ${statusBadge(p.status)}
+          <span class="badge b-gray">${p.tipo}</span>
+        </div>
+      </div>
+      <div class="proj-meta-row">
+        <div class="proj-meta-item">Início <span>${fmtD(p.inicio)}</span></div>
+        <div class="proj-meta-item">Fim <span>${fmtD(p.fim)}</span></div>
+        ${p.novaData?`<div class="proj-meta-item" style="color:var(--amber)">Nova data <span>${fmtD(p.novaData)}</span></div>`:''}
+        <div class="proj-meta-item">Valor <span>${fmtR(p.valor)}</span></div>
+        <div class="proj-meta-item">Equipe <span>${alocs.filter(a=>a.status==='alocado').length} pessoas</span></div>
+      </div>
+      ${p.motivoExt?`<div style="font-size:0.76em;color:var(--amber);margin-bottom:8px">Extensão: ${p.motivoExt}</div>`:''}
+      ${p.inicio&&fimEf?`<div class="prazo-bar"><div class="prazo-fill" style="width:${pct}%;background:${cor}"></div></div>`:''}
+      ${chips?`<div class="proj-team" style="margin-top:8px">${chips}</div>`:''}
+      ${modoAdmin?`<div class="proj-card-foot"><span></span><div class="td-actions">
+        <button class="btn-edit btn-sm" onclick="openEditProjeto(${p.id})">Editar</button>
+        <button class="btn-del btn-sm" onclick="delProjeto(${p.id})">Remover</button>
+      </div></div>`:''}
+    </div>`;
+  }).join('');
+}
+function openEditProjeto(id){
+  editingProjId=id;
+  const p=projetos.find(x=>x.id===id);
+  document.getElementById('ep-cliente').value=p.cliente;
+  document.getElementById('ep-nome').value=p.nome;
+  document.getElementById('ep-tipo').value=p.tipo;
+  document.getElementById('ep-status').value=p.status;
+  document.getElementById('ep-inicio').value=p.inicio||'';
+  document.getElementById('ep-fim').value=p.fim||'';
+  document.getElementById('ep-nova').value=p.novaData||'';
+  document.getElementById('ep-motivo').value=p.motivoExt||'';
+  document.getElementById('ep-motivo-wrap').style.display=p.novaData?'block':'none';
+  document.getElementById('ep-valor').value=p.valor||'';
+  document.getElementById('ep-obs').value=p.obs||'';
+  openModal('editProjetoModal');
+}
+function saveEditProjeto(){
+  const p=projetos.find(x=>x.id===editingProjId);if(!p)return;
+  const novaNova=document.getElementById('ep-nova').value;
+  const motivoAntigo=p.motivoExt;
+  p.cliente=document.getElementById('ep-cliente').value.trim();
+  p.nome=document.getElementById('ep-nome').value.trim();
+  p.tipo=document.getElementById('ep-tipo').value;
+  p.status=document.getElementById('ep-status').value;
+  p.inicio=document.getElementById('ep-inicio').value;
+  p.fim=document.getElementById('ep-fim').value;
+  p.novaData=novaNova;
+  p.motivoExt=document.getElementById('ep-motivo').value.trim();
+  p.valor=parseFloat(document.getElementById('ep-valor').value)||0;
+  p.obs=document.getElementById('ep-obs').value.trim();
+  // sync alocacoes
+  alocacoes.filter(a=>a.projetoId===p.id).forEach(a=>{a.cliente=p.cliente;a.projeto=p.nome;});
+  registrar('EDIT','Projeto editado: '+p.cliente+' · '+p.nome+(novaNova&&novaNova!==motivoAntigo?' | Ext: '+fmtD(novaNova):''));
+  closeModal('editProjetoModal');
+  renderProjetos(); renderDashboard(); renderAlertas();
+}
+function delProjeto(id){
+  if(!confirm('Remover projeto e suas alocações?'))return;
+  const p=projetos.find(x=>x.id===id);
+  projetos=projetos.filter(x=>x.id!==id);
+  alocacoes=alocacoes.filter(a=>a.projetoId!==id);
+  registrar('DEL','Projeto removido: '+p.nome);
+  preencherSelects(); renderProjetos(); renderDashboard(); renderAlertas();
+}
+
+// ══════════════════════════════════════════
+// ALOCAÇÕES
+// ══════════════════════════════════════════
+function salvarAlocacao(){
+  const cId=parseInt(document.getElementById('aColab').value);
+  const pId=parseInt(document.getElementById('aProjeto').value);
+  const ini=document.getElementById('aInicio').value;
+  if(!cId||!pId||!ini){alert('Preencha Colaborador, Projeto e Início');return;}
+  const fim=document.getElementById('aFim').value;
+  const nova=document.getElementById('aNovaData').value;
+  const pct=parseInt(document.getElementById('aPct').value)||100;
+  const eff=nova||fim;
+  const proj=projetos.find(x=>x.id===pId);
+  alocacoes.push({
+    id:Date.now(), projetoId:pId,
+    cliente:proj?proj.cliente:'', projeto:proj?proj.nome:'',
+    colaboradorId:cId, dataInicio:ini, dataFim:fim, novaData:nova,
+    percentual:pct, status:document.getElementById('aStatus').value,
+    semanas:eff?calcSem(ini,eff):0,
+  });
+  const c=colaboradores.find(x=>x.id===cId);
+  registrar('ALOC','Alocação: '+(c?c.nome:'?')+' → '+(proj?proj.nome:'?'));
+  ['aColab','aProjeto','aInicio','aFim','aNovaData'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('aPct').value='100';
+  document.getElementById('aCliente').value='';
+  document.getElementById('over-warn').style.display='none';
+  preencherSelects(); renderAlocacoes(viewAloc); renderDashboard(); renderAlertas(); salvarLocal();
+}
+function renderAlocacoes(view){
+  viewAloc=view;
+  ['vCliente','vColab'].forEach(id=>{const el=document.getElementById(id);if(el)el.style.background='';el&&(el.style.color='');});
+  const btn=document.getElementById(view==='cliente'?'vCliente':'vColab');
+  if(btn){btn.style.background='var(--accent)';btn.style.color='#fff';}
+  const el=document.getElementById('alocacoes-list');if(!el)return;
+  const sorted=[...alocacoes].sort((a,b)=>(a.dataInicio||'').localeCompare(b.dataInicio||''));
+  let html='';
+  if(view==='cliente'){
+    const byC={};
+    sorted.forEach(a=>{if(!byC[a.cliente])byC[a.cliente]=[];byC[a.cliente].push(a);});
+    Object.entries(byC).forEach(([cli,list])=>{
+      html+=`<h3 style="font-size:0.85em;font-weight:600;color:var(--text);margin:18px 0 10px">${cli}</h3>`;
+      list.forEach(a=>html+=alocCard(a));
+    });
+  } else {
+    const byP={};
+    sorted.forEach(a=>{if(!byP[a.colaboradorId])byP[a.colaboradorId]=[];byP[a.colaboradorId].push(a);});
+    Object.entries(byP).forEach(([cid,list])=>{
+      const c=colaboradores.find(x=>x.id===parseInt(cid));
+      const over=isOver(parseInt(cid));
+      html+=`<h3 style="font-size:0.85em;font-weight:600;color:${over?'var(--red)':'var(--text)'};margin:18px 0 10px">👤 ${c?c.nome:'?'}${over?' ⚠':''}</h3>`;
+      list.forEach(a=>html+=alocCard(a,true));
+    });
+  }
+  el.innerHTML=html||'<p style="color:var(--text3);text-align:center;padding:20px">Nenhuma alocação</p>';
+}
+function alocCard(a,hideP){
+  const c=colaboradores.find(x=>x.id===a.colaboradorId);
+  const over=isOver(a.colaboradorId);
+  const sExt=semExt(a); const sTot=semTot(a);
+  const hrs=Math.round(sTot*40*(a.percentual/100));
+  return`<div style="background:var(--surface);border:1px solid ${over?'var(--red-bd)':'var(--border)'};border-radius:10px;padding:13px;margin-bottom:9px;${over?'background:#fff8f8':''}">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
+      <div style="font-size:0.88em;font-weight:600;color:var(--text)">${hideP?(c?c.nome:'?'):a.projeto}${over?' <span class="badge b-red">over</span>':''}</div>
+      ${statusBadge(a.status)}
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:5px;font-size:0.78em;color:var(--text2);margin-bottom:9px">
+      <div><strong style="color:var(--text);display:block">Pessoa</strong>${c?c.nome:'?'}</div>
+      <div><strong style="color:var(--text);display:block">Cargo</strong>${c?c.cargo:'–'}</div>
+      <div><strong style="color:var(--text);display:block">Início</strong>${fmtD(a.dataInicio)}</div>
+      <div><strong style="color:var(--text);display:block">Fim contrat.</strong>${fmtD(a.dataFim)}</div>
+      <div><strong style="color:var(--text);display:block">Nova data</strong>${fmtD(a.novaData)}</div>
+      <div><strong style="color:var(--text);display:block">Sem. totais</strong>${sTot}${sExt>0?` <span style="color:#d97706">(+${sExt})</span>`:''}</div>
+      <div><strong style="color:var(--text);display:block">Horas</strong>${hrs}h</div>
+      <div><strong style="color:var(--text);display:block">%</strong>${a.percentual}%</div>
+    </div>
+    ${modoAdmin?`<div style="display:flex;gap:6px">
+      <button class="btn-edit btn-sm" onclick="openEditAloc(${a.id})">Editar</button>
+      <button class="btn-del btn-sm" onclick="delAloc(${a.id})">Remover</button>
+    </div>`:''}
+  </div>`;
+}
+function openEditAloc(id){
+  editingAlocId=id;
+  const a=alocacoes.find(x=>x.id===id);
+  preencherSelects();
+  document.getElementById('ea-colab').value=a.colaboradorId;
+  document.getElementById('ea-proj').value=a.projetoId||'';
+  const p=projetos.find(x=>x.id===a.projetoId);
+  document.getElementById('ea-cliente').value=p?p.cliente:a.cliente;
+  document.getElementById('ea-inicio').value=a.dataInicio||'';
+  document.getElementById('ea-fim').value=a.dataFim||'';
+  document.getElementById('ea-nova').value=a.novaData||'';
+  document.getElementById('ea-sem').value=a.semanas||'';
+  document.getElementById('ea-pct').value=a.percentual;
+  document.getElementById('ea-status').value=a.status;
+  openModal('editAlocModal');
+}
+function saveEditAloc(){
+  const a=alocacoes.find(x=>x.id===editingAlocId);if(!a)return;
+  const cId=parseInt(document.getElementById('ea-colab').value);
+  const pId=parseInt(document.getElementById('ea-proj').value);
+  const p=projetos.find(x=>x.id===pId);
+  a.colaboradorId=cId; a.projetoId=pId;
+  a.cliente=p?p.cliente:document.getElementById('ea-cliente').value;
+  a.projeto=p?p.nome:a.projeto;
+  a.dataInicio=document.getElementById('ea-inicio').value;
+  a.dataFim=document.getElementById('ea-fim').value;
+  a.novaData=document.getElementById('ea-nova').value;
+  a.percentual=parseInt(document.getElementById('ea-pct').value)||100;
+  a.status=document.getElementById('ea-status').value;
+  const eff=a.novaData||a.dataFim;
+  a.semanas=eff?calcSem(a.dataInicio,eff):parseInt(document.getElementById('ea-sem').value)||0;
+  const c=colaboradores.find(x=>x.id===cId);
+  registrar('EDIT','Alocação editada: '+(c?c.nome:'?')+' → '+a.projeto);
+  closeModal('editAlocModal'); renderAlocacoes(viewAloc); renderDashboard(); renderAlertas(); salvarLocal();
+}
+function delAloc(id){
+  if(!confirm('Remover alocação?'))return;
+  const a=alocacoes.find(x=>x.id===id);
+  const c=colaboradores.find(x=>x.id===a.colaboradorId);
+  alocacoes=alocacoes.filter(x=>x.id!==id);
+  registrar('DEL','Alocação removida: '+(c?c.nome:'?')+' → '+a.projeto);
+  renderAlocacoes(viewAloc); renderDashboard(); renderAlertas(); salvarLocal();
+}
+
+// ══════════════════════════════════════════
+// COLABORADORES
+// ══════════════════════════════════════════
+function salvarColab(){
+  const nome=document.getElementById('cNome').value.trim();
+  const cargo=document.getElementById('cCargo').value.trim();
+  if(!nome||!cargo){alert('Preencha Nome e Cargo');return;}
+  colaboradores.push({id:Date.now(),nome,email:document.getElementById('cEmail').value.trim(),cargo,tipo:document.getElementById('cTipo').value});
+  registrar('COLAB','Colaborador adicionado: '+nome);
+  ['cNome','cEmail','cCargo'].forEach(id=>document.getElementById(id).value='');
+  preencherSelects(); renderColabs();
+}
+function renderColabs(){
+  const el=document.getElementById('colabs-list');if(!el)return;
+  el.innerHTML=colaboradores.map(c=>{
+    const alocs=alocacoes.filter(a=>a.colaboradorId===c.id&&a.status==='alocado');
+    const pct=pctTot(c.id);const over=pct>100;
+    return`<tr style="${over?'background:#fff8f8':''}">
+      <td>${c.nome}</td><td>${c.cargo}</td>
+      <td><span class="badge b-gray">${c.tipo}</span></td>
+      <td>${alocs.length}</td>
+      <td><span class="badge ${over?'b-red':'b-green'}">${pct}%</span></td>
+      ${modoAdmin?`<td><button class="btn-del btn-sm" onclick="delColab(${c.id})">✕</button></td>`:'<td>–</td>'}
+    </tr>`;
+  }).join('');
+}
+function delColab(id){
+  if(!confirm('Remover colaborador e suas alocações?'))return;
+  const c=colaboradores.find(x=>x.id===id);
+  colaboradores=colaboradores.filter(x=>x.id!==id);
+  alocacoes=alocacoes.filter(a=>a.colaboradorId!==id);
+  contratos=contratos.filter(ct=>ct.colaboradorId!==id);
+  registrar('DEL','Colaborador removido: '+c.nome);
+  preencherSelects(); renderColabs(); renderDashboard(); renderAlertas();
+}
+
+// ══════════════════════════════════════════
+// CONTRATOS
+// ══════════════════════════════════════════
+function salvarContrato(){
+  const cId=parseInt(document.getElementById('ctColab').value);
+  const ini=document.getElementById('ctInicio').value;
+  if(!cId||!ini){alert('Preencha Colaborador e Início');return;}
+  contratos.push({
+    id:Date.now(), colaboradorId:cId,
+    tipo:document.getElementById('ctTipo').value,
+    inicio:ini, fim:document.getElementById('ctFim').value,
+    valor:parseFloat(document.getElementById('ctValor').value)||0,
+    status:document.getElementById('ctStatus').value,
+    obs:document.getElementById('ctObs').value,
+  });
+  const c=colaboradores.find(x=>x.id===cId);
+  registrar('CONTRATO','Contrato criado: '+(c?c.nome:'?'));
+  ['ctColab','ctInicio','ctFim','ctValor','ctObs'].forEach(id=>document.getElementById(id).value='');
+  preencherSelects(); renderContratos(); renderAlertas();
+}
+function salvarExtContrato(){
+  const ctId=parseInt(document.getElementById('extCtId').value);
+  const novaFim=document.getElementById('extCtFim').value;
+  if(!ctId||!novaFim){alert('Preencha Contrato e Nova Data');return;}
+  const ct=contratos.find(x=>x.id===ctId);
+  if(!ct)return;
+  extContratos.push({
+    id:Date.now(), contratoId:ctId,
+    colaboradorId:ct.colaboradorId,
+    fimAnterior:ct.fim, novaFim,
+    novoValor:parseFloat(document.getElementById('extCtValor').value)||null,
+    motivo:document.getElementById('extCtMotivo').value.trim(),
+    data:new Date().toISOString().slice(0,10),
+  });
+  ct.fim=novaFim;
+  if(document.getElementById('extCtValor').value) ct.valor=parseFloat(document.getElementById('extCtValor').value);
+  const c=colaboradores.find(x=>x.id===ct.colaboradorId);
+  registrar('EXT_CT','Extensão de contrato: '+(c?c.nome:'?')+' → '+fmtD(novaFim));
+  ['extCtId','extCtFim','extCtValor','extCtMotivo'].forEach(id=>document.getElementById(id).value='');
+  preencherSelects(); renderContratos(); renderAlertas();
+}
+function renderContratos(){
+  const el=document.getElementById('contratos-list');if(!el)return;
+  el.innerHTML=contratos.sort((a,b)=>b.id-a.id).map(ct=>{
+    const c=colaboradores.find(x=>x.id===ct.colaboradorId);
+    const exts=extContratos.filter(e=>e.contratoId===ct.id).length;
+    const dias=ct.fim?diasAte(ct.fim):Infinity;
+    const vencendo=ct.fim&&ct.status==='ativo'&&dias<=30;
+    return`<tr style="${vencendo?'background:var(--amber-bg)':''}">
+      <td>${c?c.nome:'?'}</td>
+      <td><span class="badge b-gray">${ct.tipo}</span></td>
+      <td>${fmtD(ct.inicio)}</td>
+      <td style="${vencendo?'color:var(--amber);font-weight:600':''}">${fmtD(ct.fim)}${vencendo?` <span style="font-size:0.78em">(${dias}d)</span>`:''}</td>
+      <td>${fmtR(ct.valor)}</td>
+      <td>${statusBadge(ct.status)}</td>
+      <td>${exts>0?`<span class="badge b-amber">${exts} ext.</span>`:'–'}</td>
+      ${modoAdmin?`<td><button class="btn-del btn-sm" onclick="delContrato(${ct.id})">✕</button></td>`:'<td>–</td>'}
+    </tr>`;
+  }).join('');
+}
+function delContrato(id){
+  if(!confirm('Remover contrato?'))return;
+  contratos=contratos.filter(x=>x.id!==id);
+  extContratos=extContratos.filter(x=>x.contratoId!==id);
+  registrar('DEL','Contrato removido');
+  preencherSelects(); renderContratos();
+}
+
+// ══════════════════════════════════════════
+// HISTÓRICO
+// ══════════════════════════════════════════
+function switchHist(tab){
+  ['log','ext','arch'].forEach(t=>{
+    document.getElementById('hist-'+t).style.display=t===tab?'':'none';
+    const btn=document.getElementById('ht-'+t);
+    if(btn){btn.style.background=t===tab?'var(--accent)':'';btn.style.color=t===tab?'#fff':'';}
+  });
+}
+function renderHistorico(){
+  const el=document.getElementById('hist-list');if(!el)return;
+  if(!historico.length){el.innerHTML='<p style="color:var(--text3);text-align:center;padding:20px">Nenhum registro</p>';return;}
+  el.innerHTML=[...historico].reverse().map(h=>`<div class="hist-item">
+    <div style="font-weight:600;color:var(--text)">${h.tipo} <span style="color:var(--text3);font-weight:400">· ${h.ts} · ${h.user}</span></div>
+    <div style="color:var(--text2);margin-top:2px">${h.desc}</div>
+  </div>`).join('');
+}
+function renderExtProjetos(){
+  const el=document.getElementById('ext-proj-list');if(!el)return;
+  const lista=projetos.filter(p=>p.novaData);
+  if(!lista.length){el.innerHTML='<p style="color:var(--text3);text-align:center;padding:20px">Nenhuma extensão registrada</p>';return;}
+  el.innerHTML='<div class="timeline">'+lista.map(p=>`<div class="tl-item tl-ext">
+    <div class="tl-date">${p.cliente} · ${p.nome}</div>
+    <div class="tl-desc">Fim original: ${fmtD(p.fim)} → Nova data: ${fmtD(p.novaData)}</div>
+    ${p.motivoExt?`<div class="tl-detail">Motivo: ${p.motivoExt}</div>`:''}
+  </div>`).join('')+'</div>';
+}
+function renderArquivo(){
+  const el=document.getElementById('arch-list');if(!el)return;
+  const hoje=new Date();hoje.setHours(0,0,0,0);
+  const lista=alocacoes.filter(a=>{
+    if(a.status==='concluido'||a.status==='desalocada')return true;
+    const fimEf=a.novaData||a.dataFim;
+    if(fimEf){const d=new Date(fimEf);d.setHours(0,0,0,0);if(d<hoje)return true;}
+    return false;
+  });
+  if(!lista.length){el.innerHTML='<p style="color:var(--text3);text-align:center;padding:20px">Nenhuma alocação arquivada</p>';return;}
+  el.innerHTML='<div class="table-wrap"><table><thead><tr><th>Colaborador</th><th>Projeto</th><th>Cliente</th><th>Início</th><th>Fim</th><th>Nova data</th><th>Sem. totais</th><th>Horas</th><th>%</th><th>Status</th></tr></thead><tbody>'+
+  lista.map(a=>{
+    const c=colaboradores.find(x=>x.id===a.colaboradorId);
+    const st=semTot(a);const hrs=Math.round(st*40*(a.percentual/100));
+    return`<tr><td>${c?c.nome:'?'}</td><td>${a.projeto}</td><td>${a.cliente}</td><td>${fmtD(a.dataInicio)}</td><td>${fmtD(a.dataFim)}</td><td>${fmtD(a.novaData)}</td><td>${st}</td><td>${hrs}h</td><td>${a.percentual}%</td><td>${statusBadge(a.status)}</td></tr>`;
+  }).join('')+'</tbody></table></div>';
+}
+function limparHistorico(){if(!confirm('Limpar?'))return;historico=[];salvarLocal();renderHistorico();}
+
+// ══════════════════════════════════════════
+// EXPORT CSV
+// ══════════════════════════════════════════
+function exportCSV(tipo){
+  let csv='',nome='';
+  if(tipo==='historico'){
+    nome='historico.csv';csv='Timestamp,Tipo,Descrição,Usuário\n';
+    historico.forEach(h=>csv+=`"${h.ts}","${h.tipo}","${h.desc}","${h.user}"\n`);
+  } else if(tipo==='extProjetos'){
+    nome='extensoes-projetos.csv';csv='Cliente,Projeto,Fim Original,Nova Data,Motivo\n';
+    projetos.filter(p=>p.novaData).forEach(p=>csv+=`"${p.cliente}","${p.nome}","${fmtD(p.fim)}","${fmtD(p.novaData)}","${p.motivoExt}"\n`);
+  } else if(tipo==='arquivo'){
+    nome='arquivo-alocacoes.csv';csv='Colaborador,Projeto,Cliente,Início,Fim,Nova Data,Sem.Totais,Horas,%,Status\n';
+    const hoje=new Date();hoje.setHours(0,0,0,0);
+    alocacoes.filter(a=>{if(a.status==='concluido'||a.status==='desalocada')return true;const f=a.novaData||a.dataFim;if(f){const d=new Date(f);d.setHours(0,0,0,0);if(d<hoje)return true;}return false;})
+    .forEach(a=>{const c=colaboradores.find(x=>x.id===a.colaboradorId);const st=semTot(a);const hrs=Math.round(st*40*(a.percentual/100));csv+=`"${c?c.nome:'?'}","${a.projeto}","${a.cliente}","${fmtD(a.dataInicio)}","${fmtD(a.dataFim)}","${fmtD(a.novaData)}",${st},${hrs}h,${a.percentual}%,"${a.status}"\n`;});
+  }
+  const link=document.createElement('a');link.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);link.download=nome;link.click();
+}
+
+// ══════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════
+function salvarLocal(){
+  try {
+    localStorage.setItem('studioos',JSON.stringify({colaboradores,projetos,alocacoes,propostas,contratos,extContratos,ts:Date.now()}));
+    localStorage.setItem('studioos-hist',JSON.stringify(historico));
+  } catch(e){}
+}
+function carregarLocal(){
+  try {
+    const d=localStorage.getItem('studioos');
+    if(d){
+      const o=JSON.parse(d);
+      if(o.colaboradores) colaboradores=o.colaboradores;
+      if(o.projetos)      projetos=o.projetos;
+      if(o.alocacoes)     alocacoes=o.alocacoes;
+      if(o.propostas)     propostas=o.propostas;
+      if(o.contratos)     contratos=o.contratos;
+      if(o.extContratos)  extContratos=o.extContratos;
+    }
+    const h=localStorage.getItem('studioos-hist');
+    if(h) historico=JSON.parse(h);
+  } catch(e){}
+}
+function registrar(tipo,desc){
+  historico.push({ts:new Date().toLocaleString('pt-BR'),tipo,desc,user:'Admin'});
+  salvarLocal();
+}
+
+window.onload = function() {
+  modoAdmin = true;
+  aplicarModo();
+  carregarLocal();
+  preencherSelects();
+  renderDashboard();
+  renderAlertas();
+};
+</script>
 </body>
 </html>
