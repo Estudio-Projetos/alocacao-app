@@ -1,0 +1,1285 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Projetos 2026 — Môre Design</title>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    /* Studio palette */
+    --studio-050: #DDEAFF;
+    --studio-400: #4080FF;
+    --studio-700: #1A2FCC;
+    --studio-900: #0A0D3D;
+
+    /* Base */
+    --bg: #000000;
+    --surface: #07080f;
+    --surface2: #0d0f1e;
+    --border: #1a1e3a;
+    --text: #f0f2ff;
+    --muted: #3d4570;
+    --muted2: #7080b0;
+
+    /* Accent = Studio 400 */
+    --accent: #4080FF;
+
+    /* Project colors — all from Studio scale */
+    --vr: #4080FF;
+    --b3: #1A2FCC;
+    --gala: #6ea8ff;
+
+    /* Semantic */
+    --green: #4ade80;
+    --yellow: #fbbf24;
+    --red: #f87171;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #000000;
+    color: var(--text);
+    font-family: 'Manrope', sans-serif;
+    min-height: 100vh;
+  }
+
+  /* ══ NAVIGATION ══ */
+  .nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(0,0,0,0.97); border-bottom: 1px solid #1a1e3a;
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    padding: 0 40px;
+    gap: 0;
+    height: 56px;
+  }
+
+  .nav-brand {
+    font-size: 1rem;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    margin-right: 40px;
+    color: var(--text);
+    flex-shrink: 0;
+  }
+  .nav-brand span { color: var(--brand-400); }
+
+  .nav-tabs {
+    display: flex;
+    gap: 2px;
+    flex: 1;
+  }
+
+  .nav-tab {
+    padding: 0 20px;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'Manrope', sans-serif;
+    font-size: 0.65rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted2);
+    cursor: pointer;
+    border: none;
+    background: none;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .nav-tab:hover { color: var(--text); }
+  .nav-tab.active {
+    color: var(--text);
+    border-bottom-color: var(--studio-400);
+  }
+  .nav-tab .tab-num {
+    font-size: 0.55rem;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid var(--border);
+    padding: 1px 5px;
+    border-radius: 2px;
+  }
+  .nav-tab.active .tab-num { background: var(--studio-400); color: #fff; border-color: var(--studio-400); }
+
+  .nav-date {
+    font-family: 'Manrope', sans-serif;
+    font-size: 0.6rem;
+    color: var(--muted);
+    margin-left: auto;
+    flex-shrink: 0;
+  }
+
+  /* ══ PAGES ══ */
+  .page { display: none; padding: 48px 40px 80px; }
+  .page.active { display: block; }
+
+  /* ══ SHARED ══ */
+  .page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    padding-bottom: 32px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 48px;
+  }
+  .page-header h1 {
+    font-size: 2.4rem;
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    line-height: 1.05;
+  }
+  .page-header h1 em { font-style: normal; color: var(--studio-400); }
+  .page-header p {
+    margin-top: 8px;
+    font-family: 'Manrope', sans-serif;
+    font-size: 0.62rem;
+    color: var(--muted2);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+  .page-header-right {
+    font-family: 'Manrope', sans-serif;
+    font-size: 0.72rem;
+    color: var(--text);
+    text-align: right;
+    line-height: 2;
+    opacity: 0.85;
+  }
+
+  .section-title {
+    font-family: 'Manrope', sans-serif;
+    font-size: 0.58rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted2);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .section-title::after { content: ''; flex: 1; height: 1px; background: linear-gradient(90deg, var(--studio-400), var(--border)); opacity: 0.5; }
+
+  .mbadge {
+    display: inline-flex;
+    align-items: center;
+    font-family: 'Manrope', sans-serif;
+    font-size: 0.7rem;
+    font-weight: 500;
+    padding: 2px 8px;
+    border-radius: 3px;
+  }
+  .mbadge-green { background: rgba(64,128,255,0.12); color: var(--studio-400); border: 1px solid rgba(64,128,255,0.3); }
+  .mbadge-yellow { background: rgba(251,191,36,0.1); color: var(--yellow); border: 1px solid rgba(251,191,36,0.2); }
+  .mbadge-red { background: rgba(248,113,113,0.1); color: var(--red); border: 1px solid rgba(248,113,113,0.2); }
+  .mbadge-purple { background: rgba(155,48,255,0.1); color: var(--squads-400); border: 1px solid rgba(155,48,255,0.2); }
+  .mbadge-blue { background: rgba(61,107,255,0.1); color: var(--studio-400); border: 1px solid rgba(61,107,255,0.2); }
+
+  @keyframes fillBar { from { width: 0; } }
+
+  /* ══════════════════════════════════════════
+     PÁGINA 01 — ALOCAÇÃO
+  ══════════════════════════════════════════ */
+
+  .kpi-strip {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 2px;
+    margin-bottom: 48px;
+  }
+  .kpi {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 22px 20px;
+    position: relative;
+    overflow: hidden;
+  }
+  .kpi:first-child { border-radius: 8px 0 0 8px; }
+  .kpi:last-child  { border-radius: 0 8px 8px 0; }
+  .kpi::before { content: ''; position: absolute; top: 0; left: 0; width: 3px; height: 100%; }
+  .kpi:nth-child(1)::before { background: var(--studio-400); }
+  .kpi:nth-child(2)::before { background: var(--studio-400); }
+  .kpi:nth-child(3)::before { background: var(--studio-700); }
+  .kpi:nth-child(4)::before { background: #0A0D3D; border: 1px solid var(--studio-700); }
+  .kpi-val { font-size: 1.9rem; font-weight: 800; letter-spacing: -0.03em; line-height: 1; }
+  .kpi-label { margin-top: 6px; font-family: 'Manrope', sans-serif; font-size: 0.56rem; color: var(--muted2); text-transform: uppercase; letter-spacing: 0.1em; }
+
+  .alloc-block { margin-bottom: 40px; }
+
+  .alloc-block-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 10px;
+    padding: 12px 20px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 6px 6px 0 0;
+    border-bottom: none;
+  }
+  .alloc-client {
+    font-family: 'Manrope', sans-serif;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+  .alloc-project { font-size: 0.9rem; font-weight: 700; }
+  .alloc-period {
+    font-family: 'Manrope', sans-serif;
+    font-size: 0.6rem;
+    color: var(--muted2);
+    margin-left: auto;
+  }
+
+  .alloc-table { width: 100%; border-collapse: collapse; }
+  .alloc-table thead tr {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-bottom: 2px solid var(--border);
+  }
+  .alloc-table th {
+    font-family: 'Manrope', sans-serif;
+    font-size: 0.55rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding: 10px 16px;
+    text-align: left;
+    font-weight: 400;
+  }
+  .alloc-table tbody tr {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-top: none;
+    transition: background 0.15s;
+  }
+  .alloc-table tbody tr:hover { background: var(--surface2); }
+  .alloc-table tbody tr:last-child { border-radius: 0 0 6px 6px; }
+  .alloc-table td {
+    padding: 14px 16px;
+    font-size: 0.82rem;
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+  }
+  .alloc-table tbody tr:last-child td { border-bottom: none; }
+
+  .person-name { font-weight: 700; font-size: 0.88rem; }
+  .person-role { font-family: 'Manrope', sans-serif; font-size: 0.58rem; color: var(--muted2); margin-top: 2px; }
+
+  .pct-bar-wrap { display: flex; align-items: center; gap: 10px; min-width: 120px; }
+  .pct-bg { flex: 1; height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
+  .pct-fill { height: 100%; border-radius: 2px; animation: fillBar 1s ease-out forwards; }
+  .pct-num { font-family: 'Manrope', sans-serif; font-size: 0.72rem; font-weight: 500; min-width: 32px; text-align: right; }
+
+  .date-cell { font-family: 'Manrope', sans-serif; font-size: 0.72rem; color: var(--muted2); }
+  .date-new { color: var(--yellow); font-size: 0.65rem; margin-top: 2px; }
+
+  .weeks-badge {
+    font-family: 'Manrope', sans-serif;
+    font-size: 0.72rem;
+    padding: 3px 8px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    color: var(--muted2);
+  }
+
+  .status-pill {
+    font-family: 'Manrope', sans-serif;
+    font-size: 0.58rem;
+    padding: 3px 8px;
+    border-radius: 3px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  .sp-alocado { background: rgba(74,222,128,0.12); color: #4ade80; border: 1px solid rgba(74,222,128,0.3); }
+  .sp-contratar { background: rgba(251,191,36,0.1); color: var(--yellow); border: 1px solid rgba(251,191,36,0.2); }
+
+  /* ══════════════════════════════════════════
+     PÁGINA 02 — STATUS & ANDAMENTO
+  ══════════════════════════════════════════ */
+
+  .status-cards { display: flex; flex-direction: column; gap: 16px; margin-bottom: 48px; }
+
+  .status-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  .sc-top {
+    display: grid;
+    grid-template-columns: 240px 1fr 1fr;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .sc-identity {
+    padding: 24px;
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .sc-client {
+    font-family: 'Manrope', sans-serif;
+    font-size: 0.58rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+  }
+  .sc-project { font-size: 1.05rem; font-weight: 800; }
+  .sc-phase {
+    font-family: 'Manrope', sans-serif;
+    font-size: 0.62rem;
+    color: var(--muted2);
+    margin-top: 2px;
+  }
+
+  .sc-progress {
+    padding: 24px;
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 12px;
+  }
+  .sc-status-label { font-family: 'Manrope', sans-serif; font-size: 0.55rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; }
+  .sc-status-text { font-size: 0.85rem; font-weight: 600; }
+  .prog-wrap { display: flex; align-items: center; gap: 12px; }
+  .prog-bg { flex: 1; height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; }
+  .prog-fill { height: 100%; border-radius: 3px; animation: fillBar 1.2s ease-out forwards; }
+  .prog-pct { font-family: 'Manrope', sans-serif; font-size: 0.8rem; font-weight: 700; min-width: 36px; text-align: right; }
+
+  .sc-dates-wrap {
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 10px;
+  }
+  .sc-date-row { display: flex; justify-content: space-between; align-items: center; }
+  .sc-date-lbl { font-family: 'Manrope', sans-serif; font-size: 0.55rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; }
+  .sc-date-val { font-family: 'Manrope', sans-serif; font-size: 0.75rem; color: var(--muted2); }
+  .sc-date-val.highlight { color: var(--yellow); }
+
+  .sc-bottom {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .sc-flag {
+    padding: 20px 24px;
+    border-right: 1px solid var(--border);
+  }
+  .sc-flag:last-child { border-right: none; }
+  .sc-flag-label {
+    font-family: 'Manrope', sans-serif;
+    font-size: 0.52rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .sc-flag-text { font-size: 0.8rem; color: var(--muted2); line-height: 1.6; }
+
+  /* ══════════════════════════════════════════
+     PÁGINA 03 — FINANCEIRO
+  ══════════════════════════════════════════ */
+
+  .fin-pipeline {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 2px;
+    margin-bottom: 48px;
+  }
+  .fin-kpi {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 22px 20px;
+    position: relative;
+    overflow: hidden;
+  }
+  .fin-kpi:first-child { border-radius: 8px 0 0 8px; }
+  .fin-kpi:last-child  { border-radius: 0 8px 8px 0; }
+  .fin-kpi::before { content: ''; position: absolute; top: 0; left: 0; width: 3px; height: 100%; }
+  .fin-kpi:nth-child(1)::before { background: var(--studio-400); }
+  .fin-kpi:nth-child(2)::before { background: var(--studio-400); }
+  .fin-kpi:nth-child(3)::before { background: var(--studio-700); }
+  .fin-kpi:nth-child(4)::before { background: #0A0D3D; border-left: 3px solid var(--studio-700); }
+  .fin-kpi-val { font-size: 1.9rem; font-weight: 800; letter-spacing: -0.03em; line-height: 1; }
+  .fin-kpi-label { margin-top: 6px; font-family: 'Manrope', sans-serif; font-size: 0.56rem; color: var(--muted2); text-transform: uppercase; letter-spacing: 0.1em; }
+
+  .fin-cards { display: flex; flex-direction: column; gap: 2px; margin-bottom: 48px; }
+
+  .fin-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  .fin-card-body {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+  }
+
+  .fin-identity {
+    padding: 24px;
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+  }
+  .fin-client { font-family: 'Manrope', sans-serif; font-size: 0.58rem; letter-spacing: 0.2em; text-transform: uppercase; }
+  .fin-project { font-size: 1rem; font-weight: 700; }
+  .fin-period { font-family: 'Manrope', sans-serif; font-size: 0.58rem; color: var(--muted2); margin-top: 4px; }
+
+  .fin-data {
+    padding: 24px;
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 0;
+    align-items: center;
+  }
+  .fin-item { padding: 0 16px; }
+  .fin-item:first-child { padding-left: 0; }
+  .fin-item + .fin-item { border-left: 1px solid var(--border); }
+  .fin-item-label {
+    font-family: 'Manrope', sans-serif;
+    font-size: 0.52rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 6px;
+  }
+  .fin-item-value {
+    font-family: 'Manrope', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
+  .fin-item-sub {
+    font-family: 'Manrope', sans-serif;
+    font-size: 0.55rem;
+    margin-top: 3px;
+    color: var(--muted);
+  }
+
+  .fin-reading {
+    padding: 14px 24px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 0.78rem;
+    color: var(--muted2);
+    background: rgba(255,255,255,0.015);
+    line-height: 1.6;
+  }
+
+  /* SUMMARY TABLE */
+  .sum-table { width: 100%; border-collapse: collapse; }
+  .sum-table thead tr { border-bottom: 1px solid var(--border); }
+  .sum-table th {
+    font-family: 'Manrope', sans-serif;
+    font-size: 0.56rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding: 0 16px 14px;
+    text-align: left;
+    font-weight: 400;
+  }
+  .sum-table th:first-child { padding-left: 0; }
+  .sum-table td {
+    padding: 15px 16px;
+    border-bottom: 1px solid var(--border);
+    font-family: 'Manrope', sans-serif;
+    font-size: 0.8rem;
+  }
+  .sum-table td:first-child { padding-left: 0; font-family: 'Manrope', sans-serif; font-size: 0.88rem; font-weight: 700; }
+  .sum-table tfoot td {
+    padding-top: 18px;
+    border-top: 2px solid var(--border);
+    border-bottom: none;
+    font-weight: 700;
+  }
+  .sum-table tfoot td:first-child { color: var(--studio-400); }
+</style>
+</head>
+<body>
+
+<!-- ══ NAVIGATION ══ -->
+<div style="height:3px;background:linear-gradient(90deg,#4080FF 0%,#1A2FCC 60%,#0A0D3D 100%);"></div>
+<nav class="nav">
+  <div class="nav-brand"><div style="line-height:1.1">Môre</div><div style="font-size:0.55rem;font-weight:500;letter-spacing:0.18em;text-transform:uppercase;color:var(--muted2);line-height:1">estúdio</div></div>
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="goTo('p1', this)">
+      <span class="tab-num">01</span> Alocação
+    </button>
+    <button class="nav-tab" onclick="goTo('p2', this)">
+      <span class="tab-num">02</span> Status &amp; Andamento
+    </button>
+    <button class="nav-tab" onclick="goTo('p3', this)">
+      <span class="tab-num">03</span> Financeiro
+    </button>
+  </div>
+  <div class="nav-date">Projetos 2026 · 21/04/2026</div>
+</nav>
+
+<!-- ══════════════════════════════════════════
+     PÁGINA 01 — ALOCAÇÃO
+══════════════════════════════════════════ -->
+<div id="p1" class="page active">
+
+  <div class="page-header">
+    <div>
+      <h1>Alocação<br><em>de Projetos</em></h1>
+      <p>Môre Design · 2026 · Equipes ativas</p>
+    </div>
+    <div class="page-header-right">
+      3 projetos ativos<br>
+      11 pessoas alocadas<br>
+      137 semanas totais
+    </div>
+  </div>
+
+  <!-- KPIs -->
+  <div class="kpi-strip">
+    <div class="kpi">
+      <div class="kpi-val" style="color:var(--studio-400)">11</div>
+      <div class="kpi-label">Pessoas alocadas</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-val" style="color:var(--studio-400)">2</div>
+      <div class="kpi-label">VR · Personas PJ</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-val" style="color:var(--studio-700)">5</div>
+      <div class="kpi-label">B3 · Design System</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-val" style="color:#6ea8ff">4</div>
+      <div class="kpi-label">Galapagos · App</div>
+    </div>
+  </div>
+  <div style="display:flex;gap:2px;margin-top:2px;margin-bottom:48px;">
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:16px 20px;flex:1;position:relative;overflow:hidden;">
+      <div style="position:absolute;top:0;left:0;width:3px;height:100%;background:var(--studio-400)"></div>
+      <div style="font-size:1.6rem;font-weight:800;letter-spacing:-0.03em;color:var(--studio-400)">6.560h</div>
+      <div style="margin-top:5px;font-size:0.56rem;color:var(--muted2);text-transform:uppercase;letter-spacing:0.1em">Horas alocadas totais · ponderadas por % dedicação</div>
+    </div>
+  </div>
+
+  <!-- VR -->
+  <div class="section-title">VR · Personas PJ</div>
+  <div class="alloc-block">
+    <div class="alloc-block-header">
+      <span class="alloc-client" style="color:var(--studio-400)">VR</span>
+      <span class="alloc-project">Personas PJ</span>
+      <span class="alloc-period">26/01/2026 → 15/05/2026</span>
+    </div>
+    <table class="alloc-table">
+      <thead>
+        <tr>
+          <th>Colaborador</th>
+          <th>Cargo</th>
+          <th>Dedicação</th>
+          <th>Início</th>
+          <th>Fim Original</th>
+          <th>Nova Data</th>
+          <th>Semanas</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>
+            <div class="person-name">Marcela Souza</div>
+            <div class="person-role">UX Researcher SR</div>
+          </td>
+          <td style="font-family:'Manrope',sans-serif;font-size:0.72rem;color:var(--muted2)">UX Research</td>
+          <td>
+            <div class="pct-bar-wrap">
+              <div class="pct-bg"><div class="pct-fill" style="width:100%;background:var(--studio-400)"></div></div>
+              <span class="pct-num" style="color:var(--studio-400)">100%</span>
+            </div>
+          </td>
+          <td class="date-cell">26/01/26</td>
+          <td class="date-cell">09/04/26</td>
+          <td class="date-cell highlight" style="color:var(--yellow)">15/05/26</td>
+          <td><span class="weeks-badge">17 sem</span></td>
+          <td><span class="status-pill sp-alocado">Alocado</span></td>
+        </tr>
+        <tr>
+          <td>
+            <div class="person-name">IBAP</div>
+            <div class="person-role">IBPAD</div>
+          </td>
+          <td style="font-family:'Manrope',sans-serif;font-size:0.72rem;color:var(--muted2)">Analista de Dados</td>
+          <td>
+            <div class="pct-bar-wrap">
+              <div class="pct-bg"><div class="pct-fill" style="width:100%;background:var(--studio-400)"></div></div>
+              <span class="pct-num" style="color:var(--studio-400)">100%</span>
+            </div>
+          </td>
+          <td class="date-cell">19/01/26</td>
+          <td class="date-cell">—</td>
+          <td class="date-cell highlight" style="color:var(--yellow)">24/04/26</td>
+          <td><span class="weeks-badge">08 sem</span></td>
+          <td><span class="status-pill sp-alocado">Alocado</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- B3 -->
+  <div class="section-title">B3 · Design System</div>
+  <div class="alloc-block">
+    <div class="alloc-block-header">
+      <span class="alloc-client" style="color:var(--studio-700)">B3</span>
+      <span class="alloc-project">Design System</span>
+      <span class="alloc-period">05/01/2026 → 22/05/2026</span>
+    </div>
+    <table class="alloc-table">
+      <thead>
+        <tr>
+          <th>Colaborador</th>
+          <th>Cargo</th>
+          <th>Dedicação</th>
+          <th>Início</th>
+          <th>Fim Original</th>
+          <th>Nova Data</th>
+          <th>Semanas</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>
+            <div class="person-name">Tiago Martins</div>
+            <div class="person-role">Design Ops</div>
+          </td>
+          <td style="font-family:'Manrope',sans-serif;font-size:0.72rem;color:var(--muted2)">DS Ops</td>
+          <td>
+            <div class="pct-bar-wrap">
+              <div class="pct-bg"><div class="pct-fill" style="width:100%;background:var(--studio-700)"></div></div>
+              <span class="pct-num" style="color:var(--studio-700)">100%</span>
+            </div>
+          </td>
+          <td class="date-cell">05/01/26</td>
+          <td class="date-cell">06/04/26</td>
+          <td class="date-cell" style="color:var(--yellow)">22/05/26</td>
+          <td><span class="weeks-badge">19 sem</span></td>
+          <td><span class="status-pill sp-alocado">Alocado</span></td>
+        </tr>
+        <tr>
+          <td>
+            <div class="person-name">Priscila Nakajima</div>
+            <div class="person-role">PD Web</div>
+          </td>
+          <td style="font-family:'Manrope',sans-serif;font-size:0.72rem;color:var(--muted2)">PD Web</td>
+          <td>
+            <div class="pct-bar-wrap">
+              <div class="pct-bg"><div class="pct-fill" style="width:100%;background:var(--studio-700)"></div></div>
+              <span class="pct-num" style="color:var(--studio-700)">100%</span>
+            </div>
+          </td>
+          <td class="date-cell">05/01/26</td>
+          <td class="date-cell">06/04/26</td>
+          <td class="date-cell" style="color:var(--yellow)">22/05/26</td>
+          <td><span class="weeks-badge">19 sem</span></td>
+          <td><span class="status-pill sp-alocado">Alocado</span></td>
+        </tr>
+        <tr>
+          <td>
+            <div class="person-name">Cristopher Tomazini</div>
+            <div class="person-role">PD Mobile</div>
+          </td>
+          <td style="font-family:'Manrope',sans-serif;font-size:0.72rem;color:var(--muted2)">PD Mobile</td>
+          <td>
+            <div class="pct-bar-wrap">
+              <div class="pct-bg"><div class="pct-fill" style="width:100%;background:var(--studio-700)"></div></div>
+              <span class="pct-num" style="color:var(--studio-700)">100%</span>
+            </div>
+          </td>
+          <td class="date-cell">19/01/26</td>
+          <td class="date-cell">06/04/26</td>
+          <td class="date-cell" style="color:var(--yellow)">22/05/26</td>
+          <td><span class="weeks-badge">19 sem</span></td>
+          <td><span class="status-pill sp-alocado">Alocado</span></td>
+        </tr>
+        <tr>
+          <td>
+            <div class="person-name">Guilherme Vezula</div>
+            <div class="person-role">Dev01</div>
+          </td>
+          <td style="font-family:'Manrope',sans-serif;font-size:0.72rem;color:var(--muted2)">Dev</td>
+          <td>
+            <div class="pct-bar-wrap">
+              <div class="pct-bg"><div class="pct-fill" style="width:100%;background:var(--studio-700)"></div></div>
+              <span class="pct-num" style="color:var(--studio-700)">100%</span>
+            </div>
+          </td>
+          <td class="date-cell">26/01/26</td>
+          <td class="date-cell">06/04/26</td>
+          <td class="date-cell" style="color:var(--yellow)">22/05/26</td>
+          <td><span class="weeks-badge">19 sem</span></td>
+          <td><span class="status-pill sp-alocado">Alocado</span></td>
+        </tr>
+        <tr>
+          <td>
+            <div class="person-name">Letéicia Monteiro</div>
+            <div class="person-role">Dev02</div>
+          </td>
+          <td style="font-family:'Manrope',sans-serif;font-size:0.72rem;color:var(--muted2)">Dev</td>
+          <td>
+            <div class="pct-bar-wrap">
+              <div class="pct-bg"><div class="pct-fill" style="width:100%;background:var(--studio-700)"></div></div>
+              <span class="pct-num" style="color:var(--studio-700)">100%</span>
+            </div>
+          </td>
+          <td class="date-cell">13/04/26</td>
+          <td class="date-cell">22/05/26</td>
+          <td class="date-cell" style="color:var(--muted)">—</td>
+          <td><span class="weeks-badge">08 sem</span></td>
+          <td><span class="status-pill sp-alocado">Alocado</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- GALAPAGOS -->
+  <div class="section-title">Galapagos · App</div>
+  <div class="alloc-block">
+    <div class="alloc-block-header">
+      <span class="alloc-client" style="color:#6ea8ff">Galapagos</span>
+      <span class="alloc-project">App — Onda 01 Discovery</span>
+      <span class="alloc-period">23/03/2026 → 10/08/2026</span>
+    </div>
+    <table class="alloc-table">
+      <thead>
+        <tr>
+          <th>Colaborador</th>
+          <th>Cargo</th>
+          <th>Dedicação</th>
+          <th>Início</th>
+          <th>Fim</th>
+          <th>Nova Data</th>
+          <th>Semanas</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>
+            <div class="person-name">Luciano Alpes</div>
+            <div class="person-role">Product Design</div>
+          </td>
+          <td style="font-family:'Manrope',sans-serif;font-size:0.72rem;color:var(--muted2)">PD</td>
+          <td>
+            <div class="pct-bar-wrap">
+              <div class="pct-bg"><div class="pct-fill" style="width:100%;background:#6ea8ff"></div></div>
+              <span class="pct-num" style="color:#6ea8ff">100%</span>
+            </div>
+          </td>
+          <td class="date-cell">23/03/26</td>
+          <td class="date-cell">10/08/26</td>
+          <td class="date-cell">—</td>
+          <td><span class="weeks-badge">20 sem</span></td>
+          <td><span class="status-pill sp-alocado">Alocado</span></td>
+        </tr>
+        <tr>
+          <td>
+            <div class="person-name">Tamires Rabello</div>
+            <div class="person-role">PO</div>
+          </td>
+          <td style="font-family:'Manrope',sans-serif;font-size:0.72rem;color:var(--muted2)">PM</td>
+          <td>
+            <div class="pct-bar-wrap">
+              <div class="pct-bg"><div class="pct-fill" style="width:100%;background:#6ea8ff"></div></div>
+              <span class="pct-num" style="color:#6ea8ff">100%</span>
+            </div>
+          </td>
+          <td class="date-cell">23/03/26</td>
+          <td class="date-cell">10/08/26</td>
+          <td class="date-cell">—</td>
+          <td><span class="weeks-badge">20 sem</span></td>
+          <td><span class="status-pill sp-alocado">Alocado</span></td>
+        </tr>
+        <tr>
+          <td>
+            <div class="person-name">Miguel Young</div>
+            <div class="person-role">Head de Design</div>
+          </td>
+          <td style="font-family:'Manrope',sans-serif;font-size:0.72rem;color:var(--muted2)">Liderança Design</td>
+          <td>
+            <div class="pct-bar-wrap">
+              <div class="pct-bg"><div class="pct-fill" style="width:50%;background:#6ea8ff"></div></div>
+              <span class="pct-num" style="color:#6ea8ff">50%</span>
+            </div>
+          </td>
+          <td class="date-cell">23/03/26</td>
+          <td class="date-cell">10/08/26</td>
+          <td class="date-cell">—</td>
+          <td><span class="weeks-badge">20 sem</span></td>
+          <td><span class="status-pill sp-alocado">Alocado</span></td>
+        </tr>
+        <tr>
+          <td>
+            <div class="person-name">BAMSE</div>
+            <div class="person-role">Desenvolvedor</div>
+          </td>
+          <td style="font-family:'Manrope',sans-serif;font-size:0.72rem;color:var(--muted2)">Dev (Líder Técnico)</td>
+          <td>
+            <div class="pct-bar-wrap">
+              <div class="pct-bg"><div class="pct-fill" style="width:100%;background:#6ea8ff"></div></div>
+              <span class="pct-num" style="color:#6ea8ff">100%</span>
+            </div>
+          </td>
+          <td class="date-cell">23/03/26</td>
+          <td class="date-cell">27/04/26</td>
+          <td class="date-cell">—</td>
+          <td><span class="weeks-badge">05 sem</span></td>
+          <td><span class="status-pill sp-alocado">Alocado</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</div><!-- /p1 -->
+
+<!-- ══════════════════════════════════════════
+     PÁGINA 02 — STATUS & ANDAMENTO
+══════════════════════════════════════════ -->
+<div id="p2" class="page">
+
+  <div class="page-header">
+    <div>
+      <h1>Status &amp;<br><em>Andamento</em></h1>
+      <p>Môre Design · 2026 · Projetos ativos</p>
+    </div>
+    <div class="page-header-right">
+      VR · 90% concluído<br>
+      B3 · 75% concluído<br>
+      Galapagos · 20% concluído
+    </div>
+  </div>
+
+  <div class="section-title">Projetos em Andamento</div>
+  <div class="status-cards">
+
+    <!-- VR -->
+    <div class="status-card">
+      <div class="sc-top">
+        <div class="sc-identity">
+          <div class="sc-client" style="color:var(--studio-400)">VR</div>
+          <div class="sc-project">Personas PJ</div>
+          <div class="sc-phase">Fase final de consolidação</div>
+        </div>
+        <div class="sc-progress">
+          <div>
+            <div class="sc-status-label">Status</div>
+            <div class="sc-status-text">Fase final de consolidação</div>
+          </div>
+          <div>
+            <div class="sc-status-label">Conclusão</div>
+            <div class="prog-wrap">
+              <div class="prog-bg">
+                <div class="prog-fill" style="width:90%;background:var(--studio-400)"></div>
+              </div>
+              <span class="prog-pct" style="color:var(--studio-400)">90%</span>
+            </div>
+          </div>
+        </div>
+        <div class="sc-dates-wrap">
+          <div class="sc-date-row">
+            <span class="sc-date-lbl">Início</span>
+            <span class="sc-date-val">26/01/2026</span>
+          </div>
+          <div class="sc-date-row">
+            <span class="sc-date-lbl">Fim original</span>
+            <span class="sc-date-val">09/04/2026</span>
+          </div>
+          <div class="sc-date-row">
+            <span class="sc-date-lbl">Nova data</span>
+            <span class="sc-date-val highlight">15/05/2026</span>
+          </div>
+        </div>
+      </div>
+      <div class="sc-bottom">
+        <div class="sc-flag">
+          <div class="sc-flag-label">⚠ Ponto de Atenção</div>
+          <div class="sc-flag-text">Controle final nas solicitações de mudança; foco na síntese e entrega</div>
+        </div>
+        <div class="sc-flag">
+          <div class="sc-flag-label">→ Próximo Passo</div>
+          <div class="sc-flag-text">Finalização da síntese e apresentações</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- B3 -->
+    <div class="status-card">
+      <div class="sc-top">
+        <div class="sc-identity">
+          <div class="sc-client" style="color:var(--studio-700)">B3</div>
+          <div class="sc-project">Design System</div>
+          <div class="sc-phase">Execução contínua · Cenário 04</div>
+        </div>
+        <div class="sc-progress">
+          <div>
+            <div class="sc-status-label">Status</div>
+            <div class="sc-status-text">Execução contínua (Cenário 04)</div>
+          </div>
+          <div>
+            <div class="sc-status-label">Conclusão</div>
+            <div class="prog-wrap">
+              <div class="prog-bg">
+                <div class="prog-fill" style="width:75%;background:var(--studio-700)"></div>
+              </div>
+              <span class="prog-pct" style="color:var(--studio-700)">75%</span>
+            </div>
+          </div>
+        </div>
+        <div class="sc-dates-wrap">
+          <div class="sc-date-row">
+            <span class="sc-date-lbl">Início</span>
+            <span class="sc-date-val">05/01/2026</span>
+          </div>
+          <div class="sc-date-row">
+            <span class="sc-date-lbl">Fim original</span>
+            <span class="sc-date-val">06/04/2026</span>
+          </div>
+          <div class="sc-date-row">
+            <span class="sc-date-lbl">Nova data</span>
+            <span class="sc-date-val highlight">22/05/2026</span>
+          </div>
+        </div>
+      </div>
+      <div class="sc-bottom">
+        <div class="sc-flag">
+          <div class="sc-flag-label">⚠ Ponto de Atenção</div>
+          <div class="sc-flag-text">Definição de tipografia pode gerar impacto estrutural no projeto</div>
+        </div>
+        <div class="sc-flag">
+          <div class="sc-flag-label">→ Próximo Passo</div>
+          <div class="sc-flag-text">Alinhamento de tipografia e continuidade da entrega</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- GALAPAGOS -->
+    <div class="status-card">
+      <div class="sc-top">
+        <div class="sc-identity">
+          <div class="sc-client" style="color:#6ea8ff">Galapagos</div>
+          <div class="sc-project">App · Discovery</div>
+          <div class="sc-phase">Fechamento do Discovery</div>
+        </div>
+        <div class="sc-progress">
+          <div>
+            <div class="sc-status-label">Status</div>
+            <div class="sc-status-text">Fechamento do Discovery</div>
+          </div>
+          <div>
+            <div class="sc-status-label">Conclusão</div>
+            <div class="prog-wrap">
+              <div class="prog-bg">
+                <div class="prog-fill" style="width:20%;background:#6ea8ff"></div>
+              </div>
+              <span class="prog-pct" style="color:#6ea8ff">20%</span>
+            </div>
+          </div>
+        </div>
+        <div class="sc-dates-wrap">
+          <div class="sc-date-row">
+            <span class="sc-date-lbl">Início</span>
+            <span class="sc-date-val">23/03/2026</span>
+          </div>
+          <div class="sc-date-row">
+            <span class="sc-date-lbl">Fim previsto</span>
+            <span class="sc-date-val">10/08/2026</span>
+          </div>
+          <div class="sc-date-row">
+            <span class="sc-date-lbl">Nova data</span>
+            <span class="sc-date-val" style="color:var(--muted)">—</span>
+          </div>
+        </div>
+      </div>
+      <div class="sc-bottom">
+        <div class="sc-flag">
+          <div class="sc-flag-label">⚠ Ponto de Atenção</div>
+          <div class="sc-flag-text">Definição da estrutura de equipe para fase de Definição e Design para gerar eficiência</div>
+        </div>
+        <div class="sc-flag">
+          <div class="sc-flag-label">→ Próximo Passo</div>
+          <div class="sc-flag-text">Finalização da apresentação do Discovery</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div><!-- /p2 -->
+
+<!-- ══════════════════════════════════════════
+     PÁGINA 03 — FINANCEIRO
+══════════════════════════════════════════ -->
+<div id="p3" class="page">
+
+  <div class="page-header">
+    <div>
+      <h1>Financeiro<br><em>2026</em></h1>
+      <p>Môre Design · Status Consolidado · Projetos ativos</p>
+    </div>
+    <div class="page-header-right">
+      Pipeline total: R$ 1.642.254<br>
+      Margem média ponderada: 30%<br>
+      Extensões: R$ 267.254
+    </div>
+  </div>
+
+  <!-- KPIs -->
+  <div class="fin-pipeline">
+    <div class="fin-kpi">
+      <div class="fin-kpi-val" style="color:var(--studio-400)">R$ 1,64M</div>
+      <div class="fin-kpi-label">Pipeline total</div>
+    </div>
+    <div class="fin-kpi">
+      <div class="fin-kpi-val" style="color:var(--studio-400)">R$ 381k</div>
+      <div class="fin-kpi-label">VR · Personas PJ</div>
+    </div>
+    <div class="fin-kpi">
+      <div class="fin-kpi-val" style="color:var(--studio-700)">R$ 685k</div>
+      <div class="fin-kpi-label">B3 · Design System</div>
+    </div>
+    <div class="fin-kpi">
+      <div class="fin-kpi-val" style="color:#6ea8ff">R$ 575k</div>
+      <div class="fin-kpi-label">Galapagos · App</div>
+    </div>
+  </div>
+
+  <div class="section-title">Detalhamento por Projeto</div>
+  <div class="fin-cards">
+
+    <!-- VR -->
+    <div class="fin-card">
+      <div class="fin-card-body">
+        <div class="fin-identity">
+          <div class="fin-client" style="color:var(--studio-400)">VR</div>
+          <div class="fin-project">Personas PJ</div>
+          <div class="fin-period">26/01 → 15/05/2026</div>
+        </div>
+        <div class="fin-data">
+          <div class="fin-item">
+            <div class="fin-item-label">Base</div>
+            <div class="fin-item-value">R$ 250.000</div>
+            <div class="fin-item-sub">contrato original</div>
+          </div>
+          <div class="fin-item">
+            <div class="fin-item-label">Margem Base</div>
+            <div class="fin-item-value"><span class="mbadge mbadge-green">39%</span></div>
+          </div>
+          <div class="fin-item">
+            <div class="fin-item-label">Extensão</div>
+            <div class="fin-item-value" style="color:var(--yellow)">R$ 131.574</div>
+            <div class="fin-item-sub">adicionais</div>
+          </div>
+          <div class="fin-item">
+            <div class="fin-item-label">Total</div>
+            <div class="fin-item-value" style="color:var(--studio-400)">R$ 381.574</div>
+          </div>
+          <div class="fin-item">
+            <div class="fin-item-label">Margem Final</div>
+            <div class="fin-item-value"><span class="mbadge mbadge-yellow">22%</span></div>
+            <div class="fin-item-sub" style="color:var(--red)">↓ vs base</div>
+          </div>
+          <div class="fin-item">
+            <div class="fin-item-label">Δ Margem</div>
+            <div class="fin-item-value" style="color:var(--red)">− 17pp</div>
+            <div class="fin-item-sub">impacto extensões</div>
+          </div>
+        </div>
+      </div>
+      <div class="fin-reading">
+        <span>📉</span>
+        <span>Margem reduzida por extensões sucessivas — base rentável (39%), mas adicionais consumiram margem, chegando a 22% no total.</span>
+      </div>
+    </div>
+
+    <!-- B3 -->
+    <div class="fin-card">
+      <div class="fin-card-body">
+        <div class="fin-identity">
+          <div class="fin-client" style="color:var(--studio-700)">B3</div>
+          <div class="fin-project">Design System</div>
+          <div class="fin-period">05/01 → 22/05/2026</div>
+        </div>
+        <div class="fin-data">
+          <div class="fin-item">
+            <div class="fin-item-label">Base</div>
+            <div class="fin-item-value">R$ 550.000</div>
+            <div class="fin-item-sub">contrato original</div>
+          </div>
+          <div class="fin-item">
+            <div class="fin-item-label">Margem Base</div>
+            <div class="fin-item-value"><span class="mbadge mbadge-green">36%</span></div>
+          </div>
+          <div class="fin-item">
+            <div class="fin-item-label">Extensão</div>
+            <div class="fin-item-value" style="color:var(--yellow)">R$ 135.680</div>
+            <div class="fin-item-sub">adicionais</div>
+          </div>
+          <div class="fin-item">
+            <div class="fin-item-label">Total</div>
+            <div class="fin-item-value" style="color:var(--studio-700)">R$ 685.680</div>
+          </div>
+          <div class="fin-item">
+            <div class="fin-item-label">Margem Final</div>
+            <div class="fin-item-value"><span class="mbadge mbadge-yellow">30%</span></div>
+            <div class="fin-item-sub" style="color:var(--red)">↓ vs base</div>
+          </div>
+          <div class="fin-item">
+            <div class="fin-item-label">Δ Margem</div>
+            <div class="fin-item-value" style="color:var(--yellow)">− 6pp</div>
+            <div class="fin-item-sub">extensão mg zero</div>
+          </div>
+        </div>
+      </div>
+      <div class="fin-reading">
+        <span>⚖️</span>
+        <span>Base rentável (36%); extensão com margem zero reduz a média final para 30% — impacto menor que VR, mas a definir.</span>
+      </div>
+    </div>
+
+    <!-- GALAPAGOS -->
+    <div class="fin-card">
+      <div class="fin-card-body">
+        <div class="fin-identity">
+          <div class="fin-client" style="color:#6ea8ff">Galapagos</div>
+          <div class="fin-project">App · Discovery</div>
+          <div class="fin-period">23/03 → 10/08/2026</div>
+        </div>
+        <div class="fin-data">
+          <div class="fin-item">
+            <div class="fin-item-label">Base</div>
+            <div class="fin-item-value">R$ 575.000</div>
+            <div class="fin-item-sub">contrato original</div>
+          </div>
+          <div class="fin-item">
+            <div class="fin-item-label">Margem Base</div>
+            <div class="fin-item-value"><span class="mbadge mbadge-green">37%</span></div>
+          </div>
+          <div class="fin-item">
+            <div class="fin-item-label">Extensão</div>
+            <div class="fin-item-value" style="color:var(--muted)">—</div>
+            <div class="fin-item-sub">sem adicionais</div>
+          </div>
+          <div class="fin-item">
+            <div class="fin-item-label">Total</div>
+            <div class="fin-item-value" style="color:#6ea8ff">R$ 575.000</div>
+          </div>
+          <div class="fin-item">
+            <div class="fin-item-label">Margem Final</div>
+            <div class="fin-item-value"><span class="mbadge mbadge-green">37%</span></div>
+            <div class="fin-item-sub" style="color:var(--green)">= base</div>
+          </div>
+          <div class="fin-item">
+            <div class="fin-item-label">Δ Margem</div>
+            <div class="fin-item-value" style="color:var(--green)">0pp</div>
+            <div class="fin-item-sub">liderança a 20%</div>
+          </div>
+        </div>
+      </div>
+      <div class="fin-reading">
+        <span>✅</span>
+        <span>Margem definida com liderança técnica a 20% — sem extensões no momento. Atenção à estrutura de equipe para a próxima fase.</span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- SUMMARY TABLE -->
+  <div class="section-title">Comparativo Financeiro</div>
+  <table class="sum-table">
+    <thead>
+      <tr>
+        <th>Projeto</th>
+        <th>Base (R$)</th>
+        <th>Mg Base</th>
+        <th>Extensão (R$)</th>
+        <th>Total (R$)</th>
+        <th>Mg Final</th>
+        <th>Δ Margem</th>
+        <th>Conclusão</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td style="color:var(--studio-400)">VR · Personas PJ</td>
+        <td>250.000</td>
+        <td><span class="mbadge mbadge-green">39%</span></td>
+        <td style="color:var(--yellow)">131.574</td>
+        <td style="font-weight:600">381.574</td>
+        <td><span class="mbadge mbadge-yellow">22%</span></td>
+        <td style="color:var(--red)">− 17pp</td>
+        <td style="color:var(--muted2)">90%</td>
+      </tr>
+      <tr>
+        <td style="color:var(--studio-700)">B3 · Design System</td>
+        <td>550.000</td>
+        <td><span class="mbadge mbadge-green">36%</span></td>
+        <td style="color:var(--yellow)">135.680</td>
+        <td style="font-weight:600">685.680</td>
+        <td><span class="mbadge mbadge-yellow">30%</span></td>
+        <td style="color:var(--yellow)">− 6pp</td>
+        <td style="color:var(--muted2)">75%</td>
+      </tr>
+      <tr>
+        <td style="color:#6ea8ff">Galapagos · App</td>
+        <td>575.000</td>
+        <td><span class="mbadge mbadge-green">37%</span></td>
+        <td style="color:var(--muted)">—</td>
+        <td style="font-weight:600">575.000</td>
+        <td><span class="mbadge mbadge-green">37%</span></td>
+        <td style="color:var(--green)">0pp</td>
+        <td style="color:var(--muted2)">20%</td>
+      </tr>
+    </tbody>
+    <tfoot>
+      <tr>
+        <td>TOTAL</td>
+        <td>1.375.000</td>
+        <td><span class="mbadge mbadge-green">37%</span></td>
+        <td style="color:var(--yellow)">267.254</td>
+        <td style="color:var(--accent);font-weight:700">1.642.254</td>
+        <td><span class="mbadge mbadge-yellow">30%</span></td>
+        <td style="color:var(--yellow)">− 7pp</td>
+        <td></td>
+      </tr>
+    </tfoot>
+  </table>
+
+</div><!-- /p3 -->
+
+<script>
+  function goTo(pageId, btn) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.nav-tab').forEach(b => b.classList.remove('active'));
+    document.getElementById(pageId).classList.add('active');
+    btn.classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+</script>
+</body>
+</html>
