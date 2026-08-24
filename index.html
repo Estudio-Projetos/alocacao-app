@@ -7,58 +7,61 @@
 <style>
   /* ===================== Tokens ===================== */
   :root{
-    --bg:#FBF2EC;
+    --bg:#FFFFFF;
     --surface:#FFFFFF;
-    --surface-2:#F6EAE2;
-    --ink:#231710;
-    --ink-muted:#7A695F;
-    --ink-faint:#A8988D;
-    --line:#EAD9CE;
-    --accent:#8F1839;
-    --accent-strong:#6E1029;
-    --accent-tint:#FBE4EA;
+    --surface-2:#EEEFF2;
+    --ink:#141822;
+    --ink-muted:#4B5563;
+    --ink-faint:#9CA3AF;
+    --line:#E1E4EA;
+    --accent:#940036;
+    --accent-strong:#6E0029;
+    --accent-tint:#FBE4EC;
+    --accent-bright:#FA2F79;
     --good:#1F7A4D;    --good-tint:#E4F3EA;
     --warn:#A9760E;    --warn-tint:#FBEEDD;
     --crit:#B3261E;    --crit-tint:#FBE7E5;
     --info:#2C57A0;    --info-tint:#E7EDFA;
-    --shadow: 0 1px 2px rgba(35,23,16,.04), 0 8px 24px -12px rgba(35,23,16,.14);
-    --radius: 14px;
+    --shadow: none;
+    --radius: 3px;
   }
   @media (prefers-color-scheme: dark){
     :root:not([data-theme="light"]){
-      --bg:#181110;
-      --surface:#211917;
-      --surface-2:#2A201D;
-      --ink:#F4E9E3;
-      --ink-muted:#B7A69C;
-      --ink-faint:#7E6E65;
-      --line:#3B2D28;
-      --accent:#FF7CA3;
-      --accent-strong:#FF9BB9;
-      --accent-tint:rgba(255,124,163,.14);
+      --bg:#141822;
+      --surface:#1C2130;
+      --surface-2:#252B3D;
+      --ink:#F3F4F6;
+      --ink-muted:#B7BCC7;
+      --ink-faint:#7B8394;
+      --line:#333A4D;
+      --accent:#FA2F79;
+      --accent-strong:#FF5C93;
+      --accent-tint:rgba(250,47,121,.16);
+      --accent-bright:#FF5C93;
       --good:#5FCB8E;    --good-tint:rgba(95,203,142,.14);
       --warn:#F0B94A;    --warn-tint:rgba(240,185,74,.14);
       --crit:#FF7A73;    --crit-tint:rgba(255,122,115,.14);
       --info:#8FB0FF;    --info-tint:rgba(143,176,255,.14);
-      --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 28px -12px rgba(0,0,0,.55);
+      --shadow: none;
     }
   }
   :root[data-theme="dark"]{
-    --bg:#181110;
-    --surface:#211917;
-    --surface-2:#2A201D;
-    --ink:#F4E9E3;
-    --ink-muted:#B7A69C;
-    --ink-faint:#7E6E65;
-    --line:#3B2D28;
-    --accent:#FF7CA3;
-    --accent-strong:#FF9BB9;
-    --accent-tint:rgba(255,124,163,.14);
+    --bg:#141822;
+    --surface:#1C2130;
+    --surface-2:#252B3D;
+    --ink:#F3F4F6;
+    --ink-muted:#B7BCC7;
+    --ink-faint:#7B8394;
+    --line:#333A4D;
+    --accent:#FA2F79;
+    --accent-strong:#FF5C93;
+    --accent-tint:rgba(250,47,121,.16);
+    --accent-bright:#FF5C93;
     --good:#5FCB8E;    --good-tint:rgba(95,203,142,.14);
     --warn:#F0B94A;    --warn-tint:rgba(240,185,74,.14);
     --crit:#FF7A73;    --crit-tint:rgba(255,122,115,.14);
     --info:#8FB0FF;    --info-tint:rgba(143,176,255,.14);
-    --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 28px -12px rgba(0,0,0,.55);
+    --shadow: none;
   }
 
   *{box-sizing:border-box;}
@@ -100,9 +103,9 @@
   .pill{
     display:inline-flex; align-items:center; gap:6px;
     padding:6px 12px; border-radius:99px; font-size:12.5px; font-weight:700;
-    border:1px solid var(--line); color:var(--ink-muted); white-space:nowrap;
+    border:1px solid var(--ink); background:var(--surface); color:var(--ink); white-space:nowrap;
   }
-  .pill.strong{ background:var(--surface-2); color:var(--ink); }
+  .pill.strong{ background:var(--ink); color:var(--bg); border-color:var(--ink); }
 
   nav.jump{
     display:flex; gap:4px; overflow-x:auto; padding:10px 28px 0;
@@ -110,7 +113,8 @@
   }
   nav.jump::-webkit-scrollbar{ display:none; }
   nav.jump a{
-    flex:none; font-size:12.5px; font-weight:700; text-decoration:none;
+    flex:none; font-size:11.5px; font-weight:700; text-decoration:none;
+    text-transform:uppercase; letter-spacing:.06em;
     padding:8px 13px 10px; color:var(--ink-muted); border-bottom:2px solid transparent;
     white-space:nowrap;
   }
@@ -124,20 +128,20 @@
   .sec-head h2{ font-size:24px; font-weight:600; }
   .sec-sub{ color:var(--ink-muted); font-size:13.5px; max-width:56ch; }
   .eyebrow-tag{
-    display:inline-block; font-size:11px; font-weight:700; letter-spacing:.08em; text-transform:uppercase;
-    color:var(--ink-muted); background:var(--surface-2); border-radius:7px; padding:5px 10px; margin-bottom:10px;
+    display:block; font-family:'Fraunces', serif; font-style:italic; font-weight:500;
+    font-size:15px; letter-spacing:0; text-transform:none;
+    color:var(--ink-muted); background:none; border-radius:0; padding:0; margin-bottom:8px;
   }
 
   /* ===================== KPI strip ===================== */
   .kpi-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:14px; }
   .kpi-grid.cols-5{ grid-template-columns:repeat(5,1fr); }
   .kpi{
-    background:var(--surface); border:1px solid var(--line); border-radius:var(--radius);
-    padding:18px 20px; box-shadow:var(--shadow);
+    border-top:1px solid var(--ink); padding:16px 0 0;
   }
   .kpi .label{ font-size:11px; font-weight:700; letter-spacing:.07em; text-transform:uppercase; color:var(--ink-muted); }
-  .kpi .value{ font-family:'Fraunces', serif; font-weight:600; font-size:30px; margin-top:8px; font-variant-numeric:tabular-nums; }
-  .kpi .sub{ font-size:12.5px; color:var(--ink-faint); margin-top:4px; }
+  .kpi .value{ font-family:'Fraunces', serif; font-style:italic; font-weight:600; font-size:40px; margin-top:10px; font-variant-numeric:tabular-nums; line-height:1; }
+  .kpi .sub{ font-size:12.5px; color:var(--ink-faint); margin-top:8px; }
   .kpi .value.accent{ color:var(--accent); }
   .kpi .value.crit{ color:var(--crit); }
 
@@ -149,20 +153,23 @@
   .stack{ display:flex; flex-direction:column; gap:16px; }
   .proj-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
 
-  .status-dot{ width:9px; height:9px; border-radius:50%; display:inline-block; flex:none; }
-  .status-dot.good{ background:var(--good); }
+  .status-dot{
+    width:8px; height:8px; background:var(--good); display:inline-block; flex:none;
+    transform:rotate(45deg);
+  }
   .status-dot.warn{ background:var(--warn); }
   .status-dot.crit{ background:var(--crit); }
   .status-dot.info{ background:var(--info); }
 
-  .proj-card .head{ display:flex; align-items:center; justify-content:space-between; gap:10px; }
-  .proj-card h3{ font-size:19px; font-weight:600; }
+  .proj-card{ display:flex; flex-direction:column; border-left:none; border-right:none; border-top:none; border-bottom:none; border-radius:0; padding:0; }
+  .proj-card .head{ display:flex; align-items:center; justify-content:space-between; gap:10px; padding-bottom:14px; border-bottom:1px solid var(--ink); }
+  .proj-card h3{ font-size:20px; font-weight:600; }
   .proj-card .moment{ font-size:13px; color:var(--ink-muted); margin-top:3px; }
   .proj-card .move{ font-size:13.5px; margin-top:14px; line-height:1.55; }
-  .bar-track{ height:6px; border-radius:99px; background:var(--surface-2); margin-top:16px; overflow:hidden; }
-  .bar-fill{ height:100%; border-radius:99px; background:var(--accent); }
-  .bar-row{ display:flex; justify-content:space-between; align-items:center; margin-top:8px; }
-  .bar-row .pct{ font-weight:700; font-size:13px; font-variant-numeric:tabular-nums; }
+  .bar-track{ position:relative; height:1px; background:var(--line); margin-top:18px; }
+  .bar-fill{ position:absolute; top:0; left:0; height:1px; background:var(--accent-bright); }
+  .bar-row{ display:flex; justify-content:space-between; align-items:baseline; margin-top:auto; padding-top:10px; }
+  .bar-row .pct{ font-family:'Fraunces', serif; font-style:italic; font-weight:600; font-size:22px; font-variant-numeric:tabular-nums; }
   .bar-row .bar-label{ font-size:11.5px; color:var(--ink-faint); }
 
   /* ===================== Table ===================== */
@@ -192,7 +199,7 @@
   .aging-crit{ color:var(--crit); font-weight:800; }
 
   .callout{
-    border-left:3px solid var(--accent); background:var(--accent-tint);
+    border-left:3px solid var(--accent-bright); background:var(--surface-2);
     padding:12px 16px; border-radius:0 10px 10px 0; font-size:13.5px; line-height:1.6;
   }
   .callout b{ color:var(--accent-strong); }
@@ -219,8 +226,8 @@
   }
   .g-seg{ border-bottom:1px solid var(--line); position:relative; padding:6px 3px; }
   .g-bar{ height:14px; border-radius:5px; }
-  .g-bar.done{ background:var(--accent); opacity:.9; }
-  .g-bar.current{ background:var(--accent); opacity:.42; }
+  .g-bar.done{ background:var(--ink); opacity:.85; }
+  .g-bar.current{ background:var(--accent-bright); opacity:.55; }
   .g-bar.planned{ background:var(--surface-2); border:1px solid var(--line); }
   .g-diamond{ width:9px; height:9px; background:var(--ink); transform:rotate(45deg); margin:3px auto; }
   .g-legend{ display:flex; gap:18px; flex-wrap:wrap; margin-top:14px; font-size:12px; color:var(--ink-muted); }
@@ -261,7 +268,7 @@
     <a href="#capacidade">Chargeability e alocação</a>
     <a href="#projetos">Projetos</a>
     <a href="#financeiro">Saúde financeira</a>
-    <a href="#pipeline">Pipeline &amp; forecast</a>
+    <a href="#pipeline">Pipeline e forecast</a>
   </nav>
 </header>
 
@@ -277,29 +284,6 @@
       <p class="sec-sub">Foco da semana: fechar os gates de aprovação da Vivo e antecipar o pipeline para a capacidade que libera em outubro.</p>
     </div>
 
-    <div class="kpi-grid">
-      <div class="kpi">
-        <div class="label">Projetos ativos</div>
-        <div class="value">3</div>
-        <div class="sub">Vivo · GOL · Galápagos — todos saudáveis</div>
-      </div>
-      <div class="kpi">
-        <div class="label">Capacidade em risco</div>
-        <div class="value accent">7</div>
-        <div class="sub">profissionais encerram entre 09–15/10</div>
-      </div>
-      <div class="kpi">
-        <div class="label">Chargeability e alocação</div>
-        <div class="value">100%</div>
-        <div class="sub">6 alocações ativas — todas em capacidade plena</div>
-      </div>
-      <div class="kpi">
-        <div class="label">Saúde financeira</div>
-        <div class="value">2/3</div>
-        <div class="sub">saudável — GOL com margem em validação</div>
-      </div>
-    </div>
-
     <div class="proj-grid" style="margin-top:16px;">
       <div class="card proj-card">
         <div class="head"><h3>Vivo</h3><span class="status-dot good"></span></div>
@@ -310,7 +294,7 @@
       </div>
       <div class="card proj-card">
         <div class="head"><h3>GOL</h3><span class="status-dot good"></span></div>
-        <div class="moment">Bench &amp; Síntese → Formulação Estratégica</div>
+        <div class="moment">Semana 02 · Bench e Síntese → Formulação Estratégica</div>
         <div class="move">Consolidar rotas estratégicas e avançar na Estratégia v1.</div>
         <div class="bar-row"><span class="bar-label">03/08 a 13/10</span><span class="pct">30%</span></div>
         <div class="bar-track"><div class="bar-fill" style="width:30%"></div></div>
@@ -346,14 +330,18 @@
     <div class="card">
       <div class="table-scroll">
         <table>
-          <thead><tr><th>Projeto</th><th>Equipe</th><th>Alocação</th><th>Encerramento</th></tr></thead>
+          <thead><tr><th>Projeto</th><th>Equipe</th><th>Vínculo</th><th>Alocação</th><th>Encerramento</th></tr></thead>
           <tbody>
-            <tr><td class="name">Vivo</td><td>Bianca</td><td class="num">100%</td><td class="num">31/08</td></tr>
-            <tr><td class="name">Vivo</td><td>Nyu, Tiago, Roger e Cristopher</td><td class="num">100%</td><td class="num">09/10</td></tr>
-            <tr><td class="name">Vivo</td><td>Ju Ribeiral</td><td class="num">100%</td><td class="num">09/10</td></tr>
-            <tr><td class="name">GOL</td><td>Valdir e Diego</td><td class="num">100%</td><td class="num">15/10</td></tr>
-            <tr><td class="name">Môre Pesquisa</td><td>Bianca</td><td class="num">100%</td><td class="num">25/09</td></tr>
-            <tr><td class="name">Testify</td><td>Bianca</td><td class="num">100%</td><td class="num">30/10</td></tr>
+            <tr><td class="name">Vivo</td><td>Bianca</td><td class="num" style="color:var(--ink-muted);">Contrato</td><td class="num">100%</td><td class="num">31/08</td></tr>
+            <tr><td class="name">Vivo</td><td>Nyu</td><td class="num" style="color:var(--ink-muted);">Contrato</td><td class="num">100%</td><td class="num">09/10</td></tr>
+            <tr><td class="name">Vivo</td><td>Tiago</td><td class="num" style="color:var(--ink-muted);">Interno</td><td class="num">100%</td><td class="num">09/10</td></tr>
+            <tr><td class="name">Vivo</td><td>Roger</td><td class="num" style="color:var(--ink-muted);">Contrato</td><td class="num">100%</td><td class="num">09/10</td></tr>
+            <tr><td class="name">Vivo</td><td>Cristopher</td><td class="num" style="color:var(--ink-muted);">Interno</td><td class="num">100%</td><td class="num">09/10</td></tr>
+            <tr><td class="name">Vivo</td><td>Ju Ribeiral</td><td class="num" style="color:var(--ink-muted);">Contrato</td><td class="num">100%</td><td class="num">09/10</td></tr>
+            <tr><td class="name">GOL</td><td>Valdir</td><td class="num" style="color:var(--ink-muted);">Contrato</td><td class="num">100%</td><td class="num">15/10</td></tr>
+            <tr><td class="name">GOL</td><td>Diego</td><td class="num" style="color:var(--ink-muted);">Contrato</td><td class="num">100%</td><td class="num">15/10</td></tr>
+            <tr><td class="name">Môre Pesquisa</td><td>Bianca</td><td class="num" style="color:var(--ink-muted);">Contrato</td><td class="num">100%</td><td class="num">25/09</td></tr>
+            <tr><td class="name">Testify</td><td>Bianca</td><td class="num" style="color:var(--ink-muted);">Contrato</td><td class="num">100%</td><td class="num">30/10</td></tr>
           </tbody>
         </table>
       </div>
@@ -365,6 +353,7 @@
         <div class="field"><span class="k">Agosto</span>Capacidade concentrada principalmente em Vivo e GOL.</div>
         <div class="field"><span class="k">Setembro</span>Capacidade concentrada principalmente em Vivo e GOL.</div>
         <div class="field"><span class="k">Outubro</span>Liberação relevante com o encerramento de Vivo em 09/10 e GOL em 15/10.</div>
+        <div class="field"><span class="k">Vínculo</span>8 profissionais alocados — 2 internos (Tiago e Cristopher, 25%) e 6 contrato (75%).</div>
         <div class="callout" style="margin-top:14px;"><b>Ponto de atenção —</b> antecipar a conexão entre essa disponibilidade e o pipeline para proteger chargeability e receita.</div>
       </div>
       <div class="card">
@@ -406,7 +395,7 @@
           <h3 style="font-size:20px;">GOL — Visão de Futuro</h3>
           <span class="pct" style="font-size:15px;">30%</span>
         </div>
-        <div class="field" style="margin-top:8px;"><span class="k">Momento atual</span>Bench &amp; Síntese concluídos; projeto entra em Formulação Estratégica.</div>
+        <div class="field" style="margin-top:8px;"><span class="k">Momento atual</span>Bench e Síntese concluídos; projeto entra em Formulação Estratégica.</div>
         <div class="field"><span class="k">Em andamento</span>Consolidação dos benchmarks e oportunidades, rotas estratégicas e pilares da visão integrada GOL + Smiles.</div>
         <div class="field"><span class="k">Ponto de atenção</span>Preservar a estratégia como eixo central e utilizar os Concepts como materialização das decisões, evitando expansão para produção extensiva de telas.</div>
         <div class="gantt-wrap"><div id="gantt-gol" class="gantt"></div></div>
@@ -473,15 +462,6 @@
       <div class="field"><span class="k">Galápagos</span>Entrega atual concluída. A próxima fase deve ser estruturada como nova contratação.</div>
     </div>
 
-    <div class="card" style="margin-top:16px;">
-      <span class="eyebrow-tag">Indicador para evolução</span>
-      <div style="display:flex; align-items:center; gap:10px; margin-top:10px; font-weight:700; font-size:14px; flex-wrap:wrap;">
-        <span class="badge neutral">Margem prevista</span> →
-        <span class="badge neutral">Margem projetada atual</span> →
-        <span class="badge info">Tendência</span>
-      </div>
-      <p style="font-size:13.5px; color:var(--ink-muted); margin:12px 0 0;">O objetivo é identificar antecipadamente eventuais pressões sobre a rentabilidade durante a execução, e não apenas no encerramento do projeto.</p>
-    </div>
   </section>
 
   <div class="divider"></div>
@@ -500,7 +480,7 @@
           <tbody>
             <tr><td class="name">Agosto</td><td>Vivo e GOL concentram capacidade</td><td>Alta utilização.</td></tr>
             <tr><td class="name">Setembro</td><td>Continuidade dos projetos. Vivo e GOL concentram capacidade</td><td>Alta utilização.</td></tr>
-            <tr><td class="name">09/10</td><td>Encerramento das principais alocações de Vivo</td><td>5 profissionais disponíveis.</td></tr>
+            <tr><td class="name">09/10</td><td>Encerramento das principais alocações de Vivo</td><td>3 profissionais serão desalocados.</td></tr>
             <tr><td class="name">15/10</td><td>Encerramento de GOL</td><td>+2 profissionais disponíveis.</td></tr>
             <tr><td class="name">30/10</td><td>Encerramento previsto de Testify para Bianca</td><td>Nova disponibilidade.</td></tr>
             <tr><td class="name"><span class="farol"><span class="status-dot warn"></span>2ª quinzena de outubro</span></td><td>Redução relevante da carteira</td><td class="aging-crit">Risco de queda de chargeability e receita.</td></tr>
@@ -526,7 +506,7 @@
     </div>
 
     <div class="kpi-grid" style="grid-template-columns:repeat(3,1fr);">
-      <div class="kpi"><div class="label">Em aberto</div><div class="value">R$ 5.534.808,92</div><div class="sub">7 oportunidades</div></div>
+      <div class="kpi"><div class="label">Em aberto</div><div class="value">R$ 2.413.132,92</div><div class="sub">4 oportunidades</div></div>
       <div class="kpi"><div class="label">Ganho no período</div><div class="value" style="color:var(--good);">R$ 0,00</div><div class="sub">nenhum fechamento na semana</div></div>
       <div class="kpi"><div class="label">Aging crítico (60d+)</div><div class="value crit">1</div><div class="sub">GPA · 75 dias</div></div>
     </div>
@@ -536,9 +516,6 @@
         <table>
           <thead><tr><th>Empresa</th><th>Responsável</th><th>Farol</th><th>Status</th><th>Valor</th><th>Aging</th></tr></thead>
           <tbody>
-            <tr><td class="name">Porto</td><td>Léo Xavier</td><td><span class="farol"><span class="status-dot info"></span>Frio</span></td><td><span class="badge info">Proposta Enviada</span></td><td class="num">R$ 394.683,00</td><td class="num">37d</td></tr>
-            <tr><td class="name">RNP</td><td>Illan Stjeinman</td><td><span class="farol"><span class="status-dot info"></span>Frio</span></td><td><span class="badge info">Proposta Enviada</span></td><td class="num">R$ 756.993,00</td><td class="num">37d</td></tr>
-            <tr><td class="name">Inter</td><td>Léo Xavier</td><td><span class="farol"><span class="status-dot info"></span>Frio</span></td><td><span class="badge neutral">Entrar em Contato</span></td><td class="num">R$ 1.970.000,00</td><td class="num">44d</td></tr>
             <tr><td class="name">Vibra</td><td>Léo Xavier</td><td><span class="farol"><span class="status-dot info"></span>Frio</span></td><td><span class="badge neutral">Levantar Briefing</span></td><td class="num">R$ 500.000,00</td><td class="num">48d</td></tr>
             <tr><td class="name">Hapvida</td><td>Léo Xavier</td><td><span class="farol"><span class="status-dot warn"></span>Morno</span></td><td><span class="badge info">Proposta Enviada</span></td><td class="num">R$ 631.052,92</td><td class="num">52d</td></tr>
             <tr><td class="name">Claro</td><td>Léo Xavier</td><td><span class="farol"><span class="status-dot crit"></span>Quente</span></td><td><span class="badge info">Proposta Enviada</span></td><td class="num">R$ 318.658,00</td><td class="num">47d</td></tr>
